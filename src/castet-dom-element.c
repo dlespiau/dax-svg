@@ -19,14 +19,16 @@
 
 #include "castet-dom-element.h"
 
-G_DEFINE_TYPE (CastetDomElement, castet_dom_element, G_TYPE_OBJECT)
+G_DEFINE_ABSTRACT_TYPE (CastetDomElement,
+                        castet_dom_element,
+                        CASTET_TYPE_DOM_NODE)
 
 #define DOM_ELEMENT_PRIVATE(o)                                  \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
                                       CASTET_TYPE_DOM_ELEMENT,  \
                                       CastetDomElementPrivate))
 
-    struct _CastetDomElementPrivate
+struct _CastetDomElementPrivate
 {
 };
 
@@ -73,7 +75,7 @@ castet_dom_element_class_init (CastetDomElementClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    g_type_class_add_private (klass, sizeof (CastetDomElementPrivate));
+    /* g_type_class_add_private (klass, sizeof (CastetDomElementPrivate)); */
 
     object_class->get_property = castet_dom_element_get_property;
     object_class->set_property = castet_dom_element_set_property;
@@ -84,7 +86,7 @@ castet_dom_element_class_init (CastetDomElementClass *klass)
 static void
 castet_dom_element_init (CastetDomElement *self)
 {
-    self->priv = DOM_ELEMENT_PRIVATE (self);
+    /* self->priv = DOM_ELEMENT_PRIVATE (self); */
 }
 
 CastetDomElement *

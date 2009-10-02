@@ -19,11 +19,14 @@ source_c =				\
 	castet-dom-element.c		\
 	castet-dom-exception.c		\
 	castet-dom-node.c		\
-	castet-dom-parser.c		\
+	castet-document.c		\
+	castet-desc-element.c		\
 	castet-element.c		\
 	castet-element-traversal.c	\
 	castet-g-element.c		\
+	castet-parser.c			\
 	castet-polyline-element.c	\
+	castet-rect-element.c		\
 	castet-svg-element.c		\
 	castet-svg-exception.c		\
 	$(NULL)
@@ -34,11 +37,14 @@ source_h =				\
 	castet-dom-element.h		\
 	castet-dom-exception.h		\
 	castet-dom-node.h		\
-	castet-dom-parser.h		\
+	castet-document.h		\
+	castet-desc-element.h		\
 	castet-element.h		\
 	castet-element-traversal.h	\
 	castet-g-element.h		\
+	castet-parser.h			\
 	castet-polyline-element.h	\
+	castet-rect-element.h		\
 	castet-svg-element.h		\
 	castet-svg-exception.h		\
 	$(NULL)

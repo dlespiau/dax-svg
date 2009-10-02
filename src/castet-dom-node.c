@@ -36,7 +36,7 @@ struct _CastetDomNodePrivate
  */
 
 CastetDomNodeType
-castet_node_get_node_type(CastetDomNode *self)
+castet_dom_node_get_node_type(CastetDomNode *self)
 {
     CastetDomNodeClass *klass = CASTET_DOM_NODE_GET_CLASS(self);
 
@@ -48,16 +48,16 @@ castet_node_get_node_type(CastetDomNode *self)
     return CASTET_DOM_NODE_TYPE_NONE;
 }
 
-const char *
-castet_node_get_namespace_uri(CastetDomNode *self)
+const gchar *
+castet_dom_node_get_namespace_uri(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
     return self->namespace_uri;
 }
 
-const char *
-castet_node_get_node_name(CastetDomNode *self)
+const gchar *
+castet_dom_node_get_node_name(CastetDomNode *self)
 {
     CastetDomNodeClass *klass = CASTET_DOM_NODE_GET_CLASS(self);
 
@@ -69,8 +69,8 @@ castet_node_get_node_name(CastetDomNode *self)
     return NULL;
 }
 
-const char *
-castet_node_get_local_name(CastetDomNode *self)
+const gchar *
+castet_dom_node_get_local_name(CastetDomNode *self)
 {
     CastetDomNodeClass *klass = CASTET_DOM_NODE_GET_CLASS(self);
 
@@ -83,7 +83,7 @@ castet_node_get_local_name(CastetDomNode *self)
 }
 
 CastetDomNode *
-castet_node_get_parent_node(CastetDomNode *self)
+castet_dom_node_get_parent_node(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -91,7 +91,7 @@ castet_node_get_parent_node(CastetDomNode *self)
 }
 
 CastetDomNode *
-castet_node_get_first_child(CastetDomNode *self)
+castet_dom_node_get_first_child(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -99,7 +99,7 @@ castet_node_get_first_child(CastetDomNode *self)
 }
 
 CastetDomNode *
-castet_node_get_last_child(CastetDomNode *self)
+castet_dom_node_get_last_child(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -107,7 +107,7 @@ castet_node_get_last_child(CastetDomNode *self)
 }
 
 CastetDomNode *
-castet_node_get_previous_sibling(CastetDomNode *self)
+castet_dom_node_get_previous_sibling(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -115,7 +115,7 @@ castet_node_get_previous_sibling(CastetDomNode *self)
 }
 
 CastetDomNode *
-castet_node_get_next_sibling(CastetDomNode *self)
+castet_dom_node_get_next_sibling(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -123,7 +123,7 @@ castet_node_get_next_sibling(CastetDomNode *self)
 }
 
 CastetDomDocument *
-castet_node_get_owner_document(CastetDomNode *self)
+castet_dom_node_get_owner_document(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -135,7 +135,7 @@ castet_node_get_owner_document(CastetDomNode *self)
 /* DOM attributes */
 
 const char *
-castet_node_get_text_content(CastetDomNode *self)
+castet_dom_node_get_text_content(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -143,8 +143,8 @@ castet_node_get_text_content(CastetDomNode *self)
 }
 
 void
-castet_node_set_text_content(CastetDomNode *self,
-                             const char    *unused(text_content))
+castet_dom_node_set_text_content(CastetDomNode *self,
+                                 const gchar   *unused(text_content))
 {
     g_return_if_fail(CASTET_IS_DOM_NODE(self));
 
@@ -154,9 +154,9 @@ castet_node_set_text_content(CastetDomNode *self,
 /* DOM methods */
 
 CastetDomNode *
-castet_node_append_child (CastetDomNode  *self,
-                          CastetDomNode  *new_child,
-                          GError        **unused(err))
+castet_dom_node_append_child (CastetDomNode  *self,
+                              CastetDomNode  *new_child,
+                              GError        **unused(err))
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
     g_return_val_if_fail (new_child->parent_node == NULL, NULL);
@@ -175,10 +175,10 @@ castet_node_append_child (CastetDomNode  *self,
 }
 
 CastetDomNode *
-castet_node_insert_before(CastetDomNode  *self,
-                          CastetDomNode  *unused(new_child),
-                          CastetDomNode  *unused(ref_child),
-                          GError        **unused(err))
+castet_dom_node_insert_before(CastetDomNode  *self,
+                              CastetDomNode  *unused(new_child),
+                              CastetDomNode  *unused(ref_child),
+                              GError        **unused(err))
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -188,7 +188,7 @@ castet_node_insert_before(CastetDomNode  *self,
 }
 
 CastetDomNode *
-castet_node_remove_child(CastetDomNode  *self,
+castet_dom_node_remove_child(CastetDomNode  *self,
                          CastetDomNode  *unused(old_child),
                          GError        **unused(err))
 {
@@ -200,8 +200,8 @@ castet_node_remove_child(CastetDomNode  *self,
 }
 
 CastetDomNode *
-castet_node_clone_node(CastetDomNode  *self,
-                       const gboolean  unused(deep))
+castet_dom_node_clone_node(CastetDomNode  *self,
+                           const gboolean  unused(deep))
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
@@ -257,7 +257,7 @@ castet_dom_node_class_init (CastetDomNodeClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    g_type_class_add_private (klass, sizeof (CastetDomNodePrivate));
+    /* g_type_class_add_private (klass, sizeof (CastetDomNodePrivate)); */
 
     object_class->get_property = castet_dom_node_get_property;
     object_class->set_property = castet_dom_node_set_property;
@@ -268,7 +268,7 @@ castet_dom_node_class_init (CastetDomNodeClass *klass)
 static void
 castet_dom_node_init (CastetDomNode *self)
 {
-    self->priv = DOM_NODE_PRIVATE (self);
+    /* self->priv = DOM_NODE_PRIVATE (self); */
 }
 
 CastetDomNode *

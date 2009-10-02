@@ -19,8 +19,8 @@
 
 #include <libxml/xmlreader.h>
 
-#include "castet-dom-element.h"
-#include "castet-dom-parser.h"
+#include "castet-document.h"
+#include "castet-parser.h"
 
 typedef struct _ParserContext ParserContext;
 
@@ -83,7 +83,7 @@ castet_dom_document_new_from_file (const gchar  *filename,
     if (ctx.reader == NULL)
         return NULL;
 
-    document = castet_dom_document_new();
+    document = castet_document_new();
     ctx.current_node = CASTET_DOM_NODE (document);
 
     ret = xmlTextReaderRead(ctx.reader);

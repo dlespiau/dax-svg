@@ -111,43 +111,43 @@ struct _CastetDomNodeClass
     const gchar       *(* get_node_name)   (CastetDomNode *self);
 };
 
-GType              castet_dom_node_get_type          (void) G_GNUC_CONST;
+GType              castet_dom_node_get_type             (void) G_GNUC_CONST;
 
-CastetDomNode     *castet_dom_node_new               (void);
+CastetDomNode     *castet_dom_node_new                  (void);
 
 /* DOM readonly attributes */
 
 CastetDomNodeType  castet_dom_node_get_node_type        (CastetDomNode *self);
-const char*        castet_dom_node_get_namespace_uri    (CastetDomNode *self);
-const char*        castet_dom_node_get_node_name        (CastetDomNode *self);
-const char*        castet_dom_node_get_local_name       (CastetDomNode *self);
+const gchar       *castet_dom_node_get_namespace_uri    (CastetDomNode *self);
+const gchar       *castet_dom_node_get_node_name        (CastetDomNode *self);
+const gchar       *castet_dom_node_get_local_name       (CastetDomNode *self);
 CastetDomDocument *castet_dom_node_get_owner_document   (CastetDomNode *self);
-CastetDomNode*     castet_dom_node_get_parent_node      (CastetDomNode *self);
-CastetDomNode*     castet_dom_node_get_first_child      (CastetDomNode *self);
-CastetDomNode*     castet_dom_node_get_last_child       (CastetDomNode *self);
-CastetDomNode*     castet_dom_node_get_previous_sibling (CastetDomNode *self);
-CastetDomNode*     castet_dom_node_get_next_sibling     (CastetDomNode *self);
+CastetDomNode     *castet_dom_node_get_parent_node      (CastetDomNode *self);
+CastetDomNode     *castet_dom_node_get_first_child      (CastetDomNode *self);
+CastetDomNode     *castet_dom_node_get_last_child       (CastetDomNode *self);
+CastetDomNode     *castet_dom_node_get_previous_sibling (CastetDomNode *self);
+CastetDomNode     *castet_dom_node_get_next_sibling     (CastetDomNode *self);
 
 /* DOM attributes */
 
-const char*        castet_dom_node_get_text_content     (CastetDomNode *self);
+const gchar*       castet_dom_node_get_text_content     (CastetDomNode *self);
 void               castet_dom_node_set_text_content     (CastetDomNode *self,
-                                                         const char    *text_content);
+                                                         const gchar   *text_content);
 
 /* DOM methods */
 
-CastetDomNode*      castet_dom_node_append_child        (CastetDomNode  *self,
+CastetDomNode     *castet_dom_node_append_child         (CastetDomNode  *self,
                                                          CastetDomNode  *new_child,
                                                          GError        **err);
-CastetDomNode*      castet_dom_node_insert_before       (CastetDomNode  *self,
-                                                         CastetDomNode  *new_child,
-                                                         CastetDomNode  *ref_child,
-                                                         GError        **err);
-CastetDomNode*      castet_dom_node_remove_child        (CastetDomNode  *self,
-                                                         CastetDomNode  *old_child,
-                                                         GError        **err);
-CastetDomNode*      castet_dom_node_clone_node          (CastetDomNode  *self,
-                                                         const gboolean  deep);
+CastetDomNode     *castet_dom_node_insert_before       (CastetDomNode  *self,
+                                                        CastetDomNode  *new_child,
+                                                        CastetDomNode  *ref_child,
+                                                        GError        **err);
+CastetDomNode     *castet_dom_node_remove_child        (CastetDomNode  *self,
+                                                        CastetDomNode  *old_child,
+                                                        GError        **err);
+CastetDomNode     *castet_dom_node_clone_node          (CastetDomNode  *self,
+                                                        const gboolean  deep);
 G_END_DECLS
 
 #endif /* __CASTET_DOM_NODE_H__ */

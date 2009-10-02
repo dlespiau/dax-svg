@@ -73,7 +73,7 @@ castet_g_element_class_init (CastetGElementClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    g_type_class_add_private (klass, sizeof (CastetGElementPrivate));
+    /* g_type_class_add_private (klass, sizeof (CastetGElementPrivate)); */
 
     object_class->get_property = castet_g_element_get_property;
     object_class->set_property = castet_g_element_set_property;
@@ -84,10 +84,10 @@ castet_g_element_class_init (CastetGElementClass *klass)
 static void
 castet_g_element_init (CastetGElement *self)
 {
-    self->priv = G_ELEMENT_PRIVATE (self);
+    /* self->priv = G_ELEMENT_PRIVATE (self); */
 }
 
-CastetGElement *
+CastetDomElement *
 castet_g_element_new (void)
 {
     return g_object_new (CASTET_TYPE_G_ELEMENT, NULL);

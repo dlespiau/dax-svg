@@ -69,7 +69,7 @@ struct _CastetElementClass
 
 GType castet_element_get_type (void) G_GNUC_CONST;
 
-CastetElement *castet_element_new (void);
+CastetDomElement *castet_element_new (void);
 
 G_END_DECLS
 

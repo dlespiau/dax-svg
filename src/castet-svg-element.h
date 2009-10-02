@@ -69,7 +69,7 @@ struct _CastetSvgElementClass
 
 GType castet_svg_element_get_type (void) G_GNUC_CONST;
 
-CastetSvgElement *castet_svg_element_new (void);
+CastetDomElement *castet_svg_element_new (void);
 
 G_END_DECLS
 

@@ -22,9 +22,9 @@
 G_DEFINE_ABSTRACT_TYPE (CastetElement, castet_element, CASTET_TYPE_DOM_ELEMENT)
 
 #define ELEMENT_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), CASTET_TYPE_ELEMENT, CastetElementPrivate))
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o), CASTET_TYPE_ELEMENT, CastetElementPrivate))
 
-struct _CastetElementPrivate
+    struct _CastetElementPrivate
 {
 };
 
@@ -34,10 +34,10 @@ castet_element_get_property (GObject    *object,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  switch (property_id)
+    switch (property_id)
     {
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
 }
 
@@ -47,46 +47,46 @@ castet_element_set_property (GObject      *object,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  switch (property_id)
+    switch (property_id)
     {
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
 }
 
 static void
 castet_element_dispose (GObject *object)
 {
-  G_OBJECT_CLASS (castet_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (castet_element_parent_class)->dispose (object);
 }
 
 static void
 castet_element_finalize (GObject *object)
 {
-  G_OBJECT_CLASS (castet_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (castet_element_parent_class)->finalize (object);
 }
 
 static void
 castet_element_class_init (CastetElementClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+    GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  g_type_class_add_private (klass, sizeof (CastetElementPrivate));
+    /* g_type_class_add_private (klass, sizeof (CastetElementPrivate)); */
 
-  object_class->get_property = castet_element_get_property;
-  object_class->set_property = castet_element_set_property;
-  object_class->dispose = castet_element_dispose;
-  object_class->finalize = castet_element_finalize;
+    object_class->get_property = castet_element_get_property;
+    object_class->set_property = castet_element_set_property;
+    object_class->dispose = castet_element_dispose;
+    object_class->finalize = castet_element_finalize;
 }
 
 static void
 castet_element_init (CastetElement *self)
 {
-  self->priv = ELEMENT_PRIVATE (self);
+    /* self->priv = ELEMENT_PRIVATE (self); */
 }
 
-CastetElement *
+CastetDomElement *
 castet_element_new (void)
 {
-  return g_object_new (CASTET_TYPE_ELEMENT, NULL);
+    return g_object_new (CASTET_TYPE_ELEMENT, NULL);
 }

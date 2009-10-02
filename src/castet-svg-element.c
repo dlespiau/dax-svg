@@ -26,7 +26,7 @@ G_DEFINE_TYPE (CastetSvgElement, castet_svg_element, CASTET_TYPE_ELEMENT)
                                       CASTET_TYPE_SVG_ELEMENT,  \
                                       CastetSvgElementPrivate))
 
-    struct _CastetSvgElementPrivate
+struct _CastetSvgElementPrivate
 {
 };
 
@@ -73,7 +73,7 @@ castet_svg_element_class_init (CastetSvgElementClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    g_type_class_add_private (klass, sizeof (CastetSvgElementPrivate));
+    /* g_type_class_add_private (klass, sizeof (CastetSvgElementPrivate)); */
 
     object_class->get_property = castet_svg_element_get_property;
     object_class->set_property = castet_svg_element_set_property;
@@ -84,10 +84,10 @@ castet_svg_element_class_init (CastetSvgElementClass *klass)
 static void
 castet_svg_element_init (CastetSvgElement *self)
 {
-    self->priv = SVG_ELEMENT_PRIVATE (self);
+    /* self->priv = SVG_ELEMENT_PRIVATE (self); */
 }
 
-CastetSvgElement *
+CastetDomElement *
 castet_svg_element_new (void)
 {
     return g_object_new (CASTET_TYPE_SVG_ELEMENT, NULL);

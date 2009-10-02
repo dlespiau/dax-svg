@@ -90,7 +90,7 @@ AC_C_CONST
 # Check for header files
 AC_HEADER_STDC
 
-PKG_CHECK_MODULES([CASTET], [glib-2.0 gobject-2.0 clutter-1.0 clutter-gst-0.10])
+PKG_CHECK_MODULES([CASTET], [glib-2.0 >= 2.16 gobject-2.0 clutter-1.0 clutter-gst-0.10])
 AC_SUBST(CASTET_CFLAGS)
 AC_SUBST(CASTET_LIBS)
 
@@ -151,6 +151,7 @@ AC_OUTPUT([
     build/Makefile
     build/autotools/Makefile
     src/Makefile
+    tests/Makefile
 ])
 
 echo ""

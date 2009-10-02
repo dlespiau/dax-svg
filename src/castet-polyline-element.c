@@ -75,7 +75,8 @@ castet_polyline_element_class_init (CastetPolylineElementClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    g_type_class_add_private (klass, sizeof (CastetPolylineElementPrivate));
+    /* g_type_class_add_private (klass,
+                                 sizeof (CastetPolylineElementPrivate)); */
 
     object_class->get_property = castet_polyline_element_get_property;
     object_class->set_property = castet_polyline_element_set_property;
@@ -86,10 +87,10 @@ castet_polyline_element_class_init (CastetPolylineElementClass *klass)
 static void
 castet_polyline_element_init (CastetPolylineElement *self)
 {
-    self->priv = POLYLINE_ELEMENT_PRIVATE (self);
+    /* self->priv = POLYLINE_ELEMENT_PRIVATE (self); */
 }
 
-CastetPolylineElement *
+CastetDomElement *
 castet_polyline_element_new (void)
 {
     return g_object_new (CASTET_TYPE_POLYLINE_ELEMENT, NULL);

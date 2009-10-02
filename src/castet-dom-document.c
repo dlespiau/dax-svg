@@ -142,7 +142,7 @@ castet_dom_document_class_init (CastetDomDocumentClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    g_type_class_add_private (klass, sizeof (CastetDomDocumentPrivate));
+    /* g_type_class_add_private (klass, sizeof (CastetDomDocumentPrivate)); */
 
     object_class->get_property = castet_dom_document_get_property;
     object_class->set_property = castet_dom_document_set_property;
@@ -153,7 +153,7 @@ castet_dom_document_class_init (CastetDomDocumentClass *klass)
 static void
 castet_dom_document_init (CastetDomDocument *self)
 {
-    self->priv = DOM_DOCUMENT_PRIVATE (self);
+    /* self->priv = DOM_DOCUMENT_PRIVATE (self); */
 }
 
 CastetDomDocument *

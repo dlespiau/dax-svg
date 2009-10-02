@@ -23,6 +23,7 @@
 #include <glib-object.h>
 
 #include "castet-dom-forward.h"
+#include "castet-dom-node.h"
 
 G_BEGIN_DECLS
 
@@ -56,14 +57,14 @@ typedef struct _CastetDomElementPrivate CastetDomElementPrivate;
 
 struct _CastetDomElement
 {
-    GObject parent;
+    CastetDomNode parent;
 
     CastetDomElementPrivate *priv;
 };
 
 struct _CastetDomElementClass
 {
-    GObjectClass parent_class;
+    CastetDomNodeClass parent_class;
 };
 
 GType castet_dom_element_get_type (void) G_GNUC_CONST;
