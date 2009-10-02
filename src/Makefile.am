@@ -12,16 +12,40 @@ LDADD =						\
 	-export-symbol-regex "^castet.*"	\
 	$(NULL)
 
-source_c =		\
-	castet.c	\
-	castet-debug.c	\
+source_c =				\
+	castet.c			\
+	castet-debug.c			\
+	castet-dom-document.c		\
+	castet-dom-element.c		\
+	castet-dom-exception.c		\
+	castet-dom-node.c		\
+	castet-dom-parser.c		\
+	castet-element.c		\
+	castet-element-traversal.c	\
+	castet-g-element.c		\
+	castet-polyline-element.c	\
+	castet-svg-element.c		\
+	castet-svg-exception.c		\
 	$(NULL)
 
-source_h =	\
+source_h =				\
+	castet.h			\
+	castet-dom-document.h		\
+	castet-dom-element.h		\
+	castet-dom-exception.h		\
+	castet-dom-node.h		\
+	castet-dom-parser.h		\
+	castet-element.h		\
+	castet-element-traversal.h	\
+	castet-g-element.h		\
+	castet-polyline-element.h	\
+	castet-svg-element.h		\
+	castet-svg-exception.h		\
 	$(NULL)
 
 source_h_private = 		\
 	castet-debug.h		\
+	castet-internals.h	\
 	$(NULL)
 
 lib_LTLIBRARIES = libcastet-@CASTET_API_VERSION@.la
