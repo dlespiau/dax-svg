@@ -1,54 +1,43 @@
-/* vim: set ts=4 et sw=4 sws=4:
+/*
+ * Castet - Load and draw SVG
  *
- * wsvg-internals.c - A few handy macros for internal use only
+ * Copyright © 2009 Intel Corporation.
  *
- * This file is part of libwsvg
- * Copyright (C) 2009 Damien Lespiau
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms and conditions of the GNU Lesser General Public License,
+ * version 2.1, as published by the Free Software Foundation.
  *
- * libwsvg is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 3 as published
- * by the Free Software Foundation.
- *
- * libwsvg is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * This program is distributed in the hope it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with libwsvg.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Author:
- *   Damien Lespiau <damien.lespiau@gmail.com>
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __WSVG_INTERNALS_H__
-#define __WSVG_INTERNALS_H__
+#ifndef __CASTET_INTERNALS_H__
+#define __CASTET_INTERNALS_H__
 
 /*
  * Some useful macros
  */
 #ifdef __GNUC__
-#define WSVG_LIKELY(x)		__builtin_expect((x),1)
-#define WSVG_UNLIKELY(x)	__builtin_expect((x),0)
-#define WSVG_API		__attribute__ ((visibility ("default")))
-#define WSVG_CONSTRUCTOR	__attribute__((constructor))
-#define WSVG_UNUSED(x)		UNUSED_ ## x __attribute__((unused))
+#define CASTET_API              __attribute__ ((visibility ("default")))
+#define CASTET_CONSTRUCTOR      __attribute__((constructor))
+#define CASTET_UNUSED(x)        UNUSED_ ## x __attribute__((unused))
 #else
-/** mark a branch as very likeky to be taken */
-#define WSVG_LIKELY(x)		(x)
-/** mark a branch as very unlikeky to be taken */
-#define WSVG_UNLIKELY(x)	(x)
 /** mark a symbol as part of the API */
-#define WSVG_API
+#define CASTET_API
 /** mark a function to be executed before main() */
-#define WSVG_CONSTRUCTOR
+#define CASTET_CONSTRUCTOR
 /** tells the compiler this variable/argument is not used */
-#define WSVG_UNUSED(x)		x
+#define CASTET_UNUSED(x)		x
 #endif /* __GNUC__ */
 
-#define likely(x)		WSVG_LIKELY(x)
-#define unlikely(x)		WSVG_UNLIKELY(x)
-#define unused(x)		WSVG_UNUSED(x)
+#define likely(x)		G_LIKELY(x)
+#define unlikely(x)		G_UNLIKELY(x)
+#define unused(x)		CASTET_UNUSED(x)
 
-#endif /* __WSVG_INTERNALS_H__ */
-
+#endif /* __CASTET_INTERNALS_H__ */
