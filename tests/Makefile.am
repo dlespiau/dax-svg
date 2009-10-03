@@ -21,3 +21,7 @@ TESTS_ENVIRONMENT = srcdir=$(srcdir)
 TEST_PROGS          += test-parser
 test_parser_SOURCES  = test-parser.c
 test_parser_LDADD    = $(progs_ldadd)
+
+TEST_PROGS          += test-types
+test_types_SOURCES  = test-types.c
+test_types_LDADD    = $(progs_ldadd)

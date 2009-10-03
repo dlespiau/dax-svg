@@ -30,6 +30,7 @@ source_c =				\
 	castet-rect-element.c		\
 	castet-svg-element.c		\
 	castet-svg-exception.c		\
+	castet-types.c			\
 	$(NULL)
 
 source_h =				\
@@ -48,6 +49,7 @@ source_h =				\
 	castet-rect-element.h		\
 	castet-svg-element.h		\
 	castet-svg-exception.h		\
+	castet-types.h			\
 	$(NULL)
 
 source_h_private = 		\

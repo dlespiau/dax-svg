@@ -31,5 +31,6 @@
 #include "castet-polyline-element.h"
 #include "castet-rect-element.h"
 #include "castet-svg-element.h"
+#include "castet-types.h"
 
 #endif /* __CASTET_H__ */
