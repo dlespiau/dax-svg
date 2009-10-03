@@ -3,12 +3,12 @@
 
 #include <castet.h>
 
-
 static void
 test_simple_document_from_file (void)
 {
     CastetDomDocument *document, *temp_doc;
     CastetDomNode *svg, *desc, *rect, *temp;
+    ClutterUnits *units;
 
     document = castet_dom_document_new_from_file ("01_01.svg", NULL);
     g_assert (CASTET_IS_DOM_DOCUMENT (document));
@@ -46,6 +46,15 @@ test_simple_document_from_file (void)
 
     temp = castet_dom_node_get_next_sibling (desc);
     g_assert (temp == rect);
+
+    g_object_get (G_OBJECT (rect), "x", &units, NULL);
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 10.0f);
+    g_object_get (G_OBJECT (rect), "y", &units, NULL);
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 10.0f);
+    g_object_get (G_OBJECT (rect), "width", &units, NULL);
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 10.0f);
+    g_object_get (G_OBJECT (rect), "height", &units, NULL);
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 10.0f);
 
 }
 

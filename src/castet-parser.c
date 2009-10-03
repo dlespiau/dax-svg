@@ -54,6 +54,17 @@ castet_dom_document_read_node(CastetDomDocument *document,
                                       CASTET_DOM_NODE (new_element),
                                       NULL);
         ctx->current_node = CASTET_DOM_NODE (new_element);
+
+        /* Parse attributes */
+        while (xmlTextReaderMoveToNextAttribute (ctx->reader) == 1) {
+            const xmlChar *name = xmlTextReaderConstLocalName (ctx->reader);
+            const xmlChar *value = xmlTextReaderConstValue (ctx->reader);
+
+            castet_dom_element_set_attribute (new_element,
+                                              (const gchar *)name,
+                                              (const gchar *)value,
+                                              NULL);
+        }
         break;
     }
     case CASTET_DOM_NODE_TYPE_END_ELEMENT:

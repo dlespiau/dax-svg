@@ -21,6 +21,7 @@
 #define __CASTET_RECT_ELEMENT_H__
 
 #include <glib-object.h>
+#include <clutter/clutter.h>
 
 #include "castet-element.h"
 
@@ -69,7 +70,20 @@ struct _CastetRectElementClass
 
 GType castet_rect_element_get_type (void) G_GNUC_CONST;
 
-CastetDomElement *castet_rect_element_new (void);
+CastetDomElement *castet_rect_element_new       (void);
+
+void              castet_rect_element_set_x         (CastetRectElement  *self,
+                                                     const ClutterUnits *x);
+void              castet_rect_element_set_y         (CastetRectElement  *self,
+                                                     const ClutterUnits *y);
+void              castet_rect_element_set_width     (CastetRectElement  *self,
+                                                     const ClutterUnits *width);
+void              castet_rect_element_set_height    (CastetRectElement  *self,
+                                                     const ClutterUnits *height);
+void              castet_rect_element_set_rx        (CastetRectElement  *self,
+                                                     const ClutterUnits *rx);
+void              castet_rect_element_set_ry        (CastetRectElement  *self,
+                                                     const ClutterUnits *ry);
 
 G_END_DECLS
 

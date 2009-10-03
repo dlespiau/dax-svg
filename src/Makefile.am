@@ -9,6 +9,7 @@ AM_CFLAGS =				\
 
 LDADD =						\
 	$(CASTET_LT_LDFLAGS)			\
+	-no-undefined				\
 	-export-symbol-regex "^castet.*"	\
 	$(NULL)
 

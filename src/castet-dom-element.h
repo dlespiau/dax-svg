@@ -65,12 +65,25 @@ struct _CastetDomElement
 struct _CastetDomElementClass
 {
     CastetDomNodeClass parent_class;
+
+    const gchar *(*get_attribute)   (CastetDomElement *self,
+                                     const gchar      *name);
+    void         (*set_attribute)   (CastetDomElement  *self,
+                                     const gchar       *name,
+                                     const gchar       *value,
+                                     GError           **err);
 };
 
 GType castet_dom_element_get_type (void) G_GNUC_CONST;
 
 CastetDomElement *castet_dom_element_new (void);
 
+const gchar *castet_dom_element_get_attribute  (CastetDomElement *self,
+                                                const gchar      *name);
+void         castet_dom_element_set_attribute  (CastetDomElement  *self,
+                                                const gchar       *name,
+                                                const gchar       *value,
+                                                GError           **err);
 G_END_DECLS
 
 #endif /* __CASTET_DOM_ELEMENT_H__ */

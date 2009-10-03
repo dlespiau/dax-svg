@@ -32,6 +32,38 @@ struct _CastetDomElementPrivate
 {
 };
 
+const gchar *
+castet_dom_element_get_attribute(CastetDomElement *self,
+                                 const gchar      *name)
+{
+    CastetDomElementClass *klass = CASTET_DOM_ELEMENT_GET_CLASS(self);
+
+    g_return_val_if_fail(klass != NULL, NULL);
+
+    if (klass->get_attribute)
+        return klass->get_attribute(self, name);
+
+    return NULL;
+}
+
+void
+castet_dom_element_set_attribute (CastetDomElement  *self,
+                                  const char        *name,
+                                  const char        *value,
+                                  GError           **err)
+{
+    CastetDomElementClass *klass = CASTET_DOM_ELEMENT_GET_CLASS(self);
+
+    g_return_if_fail(klass != NULL);
+
+    if (klass->set_attribute)
+        klass->set_attribute(self, name, value, err);
+}
+
+/*
+ * GObject overloading
+ */
+
 static void
 castet_dom_element_get_property (GObject    *object,
                                  guint       property_id,

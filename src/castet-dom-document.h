@@ -22,8 +22,9 @@
 
 #include <glib-object.h>
 
-#include "castet-dom-node.h"
 #include "castet-dom-forward.h"
+#include "castet-dom-node.h"
+#include "castet-dom-element.h"
 
 G_BEGIN_DECLS
 

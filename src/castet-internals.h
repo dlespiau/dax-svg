@@ -20,6 +20,8 @@
 #ifndef __CASTET_INTERNALS_H__
 #define __CASTET_INTERNALS_H__
 
+#include <glib.h>
+
 /*
  * Some useful macros
  */
@@ -39,5 +41,22 @@
 #define likely(x)		G_LIKELY(x)
 #define unlikely(x)		G_UNLIKELY(x)
 #define unused(x)		CASTET_UNUSED(x)
+
+/* no, not the International Space Station. */
+#define ISS(s)       (g_intern_static_string((s)))
+
+/* GParamSpec related macros */
+#define CASTET_PARAM_READABLE                       \
+    G_PARAM_READABLE    | G_PARAM_STATIC_NAME  |    \
+    G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB
+
+#define CASTET_PARAM_WRITABLE                       \
+    G_PARAM_WRITABLE    | G_PARAM_STATIC_NAME  |    \
+    G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB
+
+#define CASTET_PARAM_READWRITE                      \
+    G_PARAM_READABLE    | G_PARAM_WRITABLE    |     \
+    G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |     \
+    G_PARAM_STATIC_BLURB
 
 #endif /* __CASTET_INTERNALS_H__ */
