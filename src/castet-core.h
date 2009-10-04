@@ -17,21 +17,16 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __CASTET_H__
-#define __CASTET_H__
+#include <glib.h>
 
-#include "castet-core.h"
-#include "castet-dom-document.h"
-#include "castet-dom-element.h"
-#include "castet-dom-exception.h"
-#include "castet-desc-element.h"
-#include "castet-element.h"
-#include "castet-element-traversal.h"
-#include "castet-g-element.h"
-#include "castet-parser.h"
-#include "castet-polyline-element.h"
-#include "castet-rect-element.h"
-#include "castet-svg-element.h"
-#include "castet-types.h"
+#ifndef __CASTET_CORE_H__
+#define __CASTET_CORE_H__
 
-#endif /* __CASTET_H__ */
+G_BEGIN_DECLS
+
+void        castet_init         (gint    *argc,
+                                 gchar ***argv);
+
+G_END_DECLS
+
+#endif /* __CASTET_CORE_H__ */

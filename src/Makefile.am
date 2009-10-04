@@ -14,7 +14,7 @@ LDADD =						\
 	$(NULL)
 
 source_c =				\
-	castet.c			\
+	castet-core.c			\
 	castet-debug.c			\
 	castet-dom-document.c		\
 	castet-dom-element.c		\
@@ -35,6 +35,7 @@ source_c =				\
 
 source_h =				\
 	castet.h			\
+	castet-core.h			\
 	castet-dom-document.h		\
 	castet-dom-element.h		\
 	castet-dom-exception.h		\

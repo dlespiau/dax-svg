@@ -17,6 +17,13 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "castet-debug.h"
+
+void
+castet_init (gint    *argc,
+             gchar ***argv)
+{
+#ifdef CASTET_ENABLE_DEBUG
+    _castet_debug_init ();
 #endif
+}

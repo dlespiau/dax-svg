@@ -35,6 +35,7 @@ G_BEGIN_DECLS
 
 typedef enum {
     CASTET_DEBUG_MISC            = 1 << 0,
+    CASTET_DEBUG_PARSING         = 1 << 1,
 } CastetDebugFlag;
 
 #ifdef __GNUC__

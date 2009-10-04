@@ -19,6 +19,7 @@
 
 #include <libxml/xmlreader.h>
 
+#include "castet-debug.h"
 #include "castet-document.h"
 #include "castet-parser.h"
 
@@ -50,6 +51,10 @@ castet_dom_document_read_node(CastetDomDocument *document,
             /* FIXME: issue a warning */
             break;
         }
+
+        CASTET_NOTE (PARSING, "append %s to %s",
+                     G_OBJECT_TYPE_NAME (new_element),
+                     G_OBJECT_TYPE_NAME (ctx->current_node));
         castet_dom_node_append_child (ctx->current_node,
                                       CASTET_DOM_NODE (new_element),
                                       NULL);
@@ -68,6 +73,8 @@ castet_dom_document_read_node(CastetDomDocument *document,
         break;
     }
     case CASTET_DOM_NODE_TYPE_END_ELEMENT:
+        CASTET_NOTE (PARSING,
+                     "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
         ctx->current_node = ctx->current_node->parent_node;
         break;
     default:

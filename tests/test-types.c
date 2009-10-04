@@ -39,6 +39,7 @@ main (int   argc,
 {
     g_type_init ();
     g_test_init (&argc, &argv, NULL);
+    castet_init (&argc, &argv);
 
     g_test_add_func ("/types/knot-sequence", test_knot_sequence);
     g_test_add_func ("/types/knot-sequence-string", test_knot_sequence_string);
