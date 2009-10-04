@@ -58,15 +58,46 @@ test_simple_document_from_file (void)
 
 }
 
+static void
+test_polyline (void)
+{
+    CastetDomDocument *document;
+    CastetDomNode *svg, *polyline;
+    CastetKnotSequence *seq;
+    const gfloat *array;
+
+    document = castet_dom_document_new_from_file ("09_06.svg", NULL);
+    g_assert (CASTET_IS_DOM_DOCUMENT (document));
+    svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
+    g_assert (CASTET_IS_SVG_ELEMENT (svg));
+
+    polyline = castet_dom_node_get_last_child (svg);
+    g_assert (polyline);
+    g_assert (CASTET_IS_POLYLINE_ELEMENT (polyline));
+
+    g_object_get (G_OBJECT (polyline), "points", &seq, NULL);
+    g_assert (castet_knot_sequence_get_size (seq) == 22);
+    array = castet_knot_sequence_get_array (seq);
+    g_assert_cmpfloat (array[0], ==, 50.0f);
+    g_assert_cmpfloat (array[1], ==, 375.0f);
+    g_assert_cmpfloat (array[13], ==, 250.0f);
+    g_assert_cmpfloat (array[14], ==, 450.0f);
+    g_assert_cmpfloat (array[42], ==, 1150.0f);
+    g_assert_cmpfloat (array[43], ==, 375.0f);
+}
+
+
 int
 main (int   argc,
       char *argv[])
 {
     g_type_init ();
     g_test_init (&argc, &argv, NULL);
+    castet_init (&argc, &argv);
 
     g_test_add_func ("/parser/simple-document-from-file",
                      test_simple_document_from_file);
+    g_test_add_func ("/parser/polyline", test_polyline);
 
     return g_test_run ();
 }
