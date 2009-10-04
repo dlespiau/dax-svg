@@ -25,12 +25,12 @@ source_c =				\
 	castet-element.c		\
 	castet-element-traversal.c	\
 	castet-g-element.c		\
+	castet-knot-sequence.c		\
 	castet-parser.c			\
 	castet-polyline-element.c	\
 	castet-rect-element.c		\
 	castet-svg-element.c		\
 	castet-svg-exception.c		\
-	castet-types.c			\
 	$(NULL)
 
 source_h =				\
@@ -45,12 +45,12 @@ source_h =				\
 	castet-element.h		\
 	castet-element-traversal.h	\
 	castet-g-element.h		\
+	castet-knot-sequence.h		\
 	castet-parser.h			\
 	castet-polyline-element.h	\
 	castet-rect-element.h		\
 	castet-svg-element.h		\
 	castet-svg-exception.h		\
-	castet-types.h			\
 	$(NULL)
 
 source_h_private = 		\

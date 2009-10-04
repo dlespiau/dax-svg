@@ -13,7 +13,7 @@ test_knot_sequence (void)
                                                       G_N_ELEMENTS (knots) / 2);
     g_assert (castet_knot_sequence_get_array (seq) == knots);
     g_assert (castet_knot_sequence_get_size (seq) == G_N_ELEMENTS (knots) / 2);
-    castet_knot_sequence_free (seq);
+    g_object_unref (seq);
 }
 
 static void
@@ -30,7 +30,7 @@ test_knot_sequence_string (void)
     g_assert_cmpfloat (array[1], ==, 20.0f);
     g_assert_cmpfloat (array[2], ==, 100.0f);
     g_assert_cmpfloat (array[3], ==, 200.0f);
-    castet_knot_sequence_free (seq);
+    g_object_unref (seq);
 }
 
 int
