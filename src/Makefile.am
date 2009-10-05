@@ -34,7 +34,7 @@ source_c =				\
 	castet-svg-element.c		\
 	castet-svg-exception.c		\
 	castet-traverser.c		\
-	clutter-polyline.c		\
+	clutter-shape.c			\
 	$(NULL)
 
 source_h =				\
@@ -58,7 +58,7 @@ source_h =				\
 	castet-svg-element.h		\
 	castet-svg-exception.h		\
 	castet-traverser.h		\
-	clutter-polyline.h		\
+	clutter-shape.h			\
 	$(NULL)
 
 source_h_private = 		\

@@ -18,7 +18,7 @@
  */
 
 #include "castet-knot-sequence.h"
-#include "clutter-polyline.h"
+#include "clutter-shape.h"
 #include "castet-build-traverser.h"
 
 G_DEFINE_TYPE (CastetBuildTraverser,
@@ -70,6 +70,27 @@ castet_build_traverser_traverse_rect (CastetTraverser   *traverser,
     clutter_container_add_actor (priv->container, rectangle);
 }
 
+static ClutterPath *
+clutter_path_new_from_knot_sequence (const CastetKnotSequence *seq)
+{
+    ClutterPath *path;
+    const float *knots;
+    guint nb_knots, i;
+
+    nb_knots = castet_knot_sequence_get_size (seq);
+    if (nb_knots == 0)
+        return NULL;
+    knots = castet_knot_sequence_get_array (seq);
+
+    path = clutter_path_new ();
+    clutter_path_add_move_to (path, knots[0], knots[1]);
+
+    for (i = 1; i < nb_knots; i++)
+        clutter_path_add_line_to (path, knots[i * 2], knots[i * 2 + 1]);
+
+    return path;
+}
+
 static void
 castet_build_traverser_traverse_polyline (CastetTraverser       *traverser,
                                           CastetPolylineElement *node)
@@ -77,11 +98,13 @@ castet_build_traverser_traverse_polyline (CastetTraverser       *traverser,
     CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
     CastetBuildTraverserPrivate *priv = build->priv;
     ClutterActor *polyline;
-    CastetKnotSequence *seq;
+    const CastetKnotSequence *seq;
+    ClutterPath *path;
 
-    polyline = clutter_polyline_new ();
+    polyline = clutter_shape_new ();
     g_object_get (G_OBJECT (node), "points", &seq, NULL);
-    g_object_set (G_OBJECT (polyline), "knots", seq, NULL);
+    path = clutter_path_new_from_knot_sequence (seq);
+    g_object_set (G_OBJECT (polyline), "path", path, NULL);
     if (priv->fill_color)
         g_object_set (G_OBJECT (polyline), "color", priv->fill_color, NULL);
 
