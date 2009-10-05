@@ -17,15 +17,28 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <clutter/clutter.h>
+
+#include "castet-internals.h"
 #include "castet-element.h"
 
 G_DEFINE_ABSTRACT_TYPE (CastetElement, castet_element, CASTET_TYPE_DOM_ELEMENT)
 
-#define ELEMENT_PRIVATE(o) \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o), CASTET_TYPE_ELEMENT, CastetElementPrivate))
+#define ELEMENT_PRIVATE(o)                                  \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
+                                      CASTET_TYPE_ELEMENT,  \
+                                      CastetElementPrivate))
+
+enum
+{
+    PROP_0,
+
+    PROP_FILL_COLOR,
+};
 
 struct _CastetElementPrivate
 {
+    ClutterColor *fill_color;
 };
 
 /*
@@ -90,8 +103,14 @@ castet_element_get_property (GObject    *object,
                              GValue     *value,
                              GParamSpec *pspec)
 {
+    CastetElement *element = CASTET_ELEMENT (object);
+    CastetElementPrivate *priv = element->priv;
+
     switch (property_id)
     {
+    case PROP_FILL_COLOR:
+        clutter_value_set_color (value, priv->fill_color);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -103,8 +122,18 @@ castet_element_set_property (GObject      *object,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
+    CastetElement *element = CASTET_ELEMENT (object);
+    CastetElementPrivate *priv = element->priv;
+
     switch (property_id)
     {
+    case PROP_FILL_COLOR:
+    {
+        const ClutterColor *color;
+        color = clutter_value_get_color (value);
+        priv->fill_color = clutter_color_copy (color);
+    }
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -127,8 +156,9 @@ castet_element_class_init (CastetElementClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     CastetDomElementClass *dom_element_class = CASTET_DOM_ELEMENT_CLASS (klass);
+    GParamSpec *pspec;
 
-    /* g_type_class_add_private (klass, sizeof (CastetElementPrivate)); */
+    g_type_class_add_private (klass, sizeof (CastetElementPrivate));
 
     object_class->get_property = castet_element_get_property;
     object_class->set_property = castet_element_set_property;
@@ -137,12 +167,19 @@ castet_element_class_init (CastetElementClass *klass)
 
     dom_element_class->get_attribute = castet_element_get_attribute;
     dom_element_class->set_attribute = castet_element_set_attribute;
+
+    pspec = g_param_spec_boxed ("fill",
+                                "Fill color",
+                                "The fille color of the element",
+                                CLUTTER_TYPE_COLOR,
+                                CASTET_PARAM_READWRITE);
+    g_object_class_install_property (object_class, PROP_FILL_COLOR, pspec);
 }
 
 static void
 castet_element_init (CastetElement *self)
 {
-    /* self->priv = ELEMENT_PRIVATE (self); */
+    self->priv = ELEMENT_PRIVATE (self);
 }
 
 CastetDomElement *

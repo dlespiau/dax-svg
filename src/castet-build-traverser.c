@@ -17,6 +17,8 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "castet-knot-sequence.h"
+#include "clutter-polyline.h"
 #include "castet-build-traverser.h"
 
 G_DEFINE_TYPE (CastetBuildTraverser,
@@ -31,7 +33,20 @@ G_DEFINE_TYPE (CastetBuildTraverser,
 struct _CastetBuildTraverserPrivate
 {
     ClutterContainer *container;
+    ClutterColor *fill_color;
 };
+
+static void
+castet_build_traverser_traverse_g (CastetTraverser *traverser,
+                                   CastetGElement  *node)
+{
+    CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
+    CastetBuildTraverserPrivate *priv = build->priv;
+    ClutterColor *fill_color;
+
+    g_object_get (G_OBJECT (node), "fill", &fill_color, NULL);
+    priv->fill_color = fill_color;
+}
 
 static void
 castet_build_traverser_traverse_rect (CastetTraverser   *traverser,
@@ -59,6 +74,18 @@ static void
 castet_build_traverser_traverse_polyline (CastetTraverser       *traverser,
                                           CastetPolylineElement *node)
 {
+    CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
+    CastetBuildTraverserPrivate *priv = build->priv;
+    ClutterActor *polyline;
+    CastetKnotSequence *seq;
+
+    polyline = clutter_polyline_new ();
+    g_object_get (G_OBJECT (node), "points", &seq, NULL);
+    g_object_set (G_OBJECT (polyline), "knots", seq, NULL);
+    if (priv->fill_color)
+        g_object_set (G_OBJECT (polyline), "color", priv->fill_color, NULL);
+
+    clutter_container_add_actor (priv->container, polyline);
 }
 
 /*
@@ -116,6 +143,7 @@ castet_build_traverser_class_init (CastetBuildTraverserClass *klass)
     object_class->dispose = castet_build_traverser_dispose;
     object_class->finalize = castet_build_traverser_finalize;
 
+    traverser_class->traverse_g = castet_build_traverser_traverse_g;
     traverser_class->traverse_rect = castet_build_traverser_traverse_rect;
     traverser_class->traverse_polyline =
         castet_build_traverser_traverse_polyline;
