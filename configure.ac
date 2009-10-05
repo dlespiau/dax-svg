@@ -47,7 +47,7 @@ AC_INIT([castet],
         [http://bugzilla.moblin.org])
 AC_CONFIG_MACRO_DIR([build/autotools])
 AC_CONFIG_AUX_DIR([.])
-AC_CONFIG_SRCDIR([src/castet.c])
+AC_CONFIG_SRCDIR([src/castet.h])
 AC_DISABLE_STATIC
 
 # Automake configuration
@@ -152,6 +152,7 @@ AC_OUTPUT([
     build/autotools/Makefile
     src/Makefile
     tests/Makefile
+    tools/Makefile
 ])
 
 echo ""

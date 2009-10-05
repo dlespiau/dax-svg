@@ -14,6 +14,8 @@ LDADD =						\
 	$(NULL)
 
 source_c =				\
+	castet-actor.c			\
+	castet-build-traverser.c	\
 	castet-core.c			\
 	castet-debug.c			\
 	castet-dom-document.c		\
@@ -31,10 +33,13 @@ source_c =				\
 	castet-rect-element.c		\
 	castet-svg-element.c		\
 	castet-svg-exception.c		\
+	castet-traverser.c		\
 	$(NULL)
 
 source_h =				\
 	castet.h			\
+	castet-actor.h			\
+	castet-build-traverser.h	\
 	castet-core.h			\
 	castet-dom-document.h		\
 	castet-dom-element.h		\
@@ -51,6 +56,7 @@ source_h =				\
 	castet-rect-element.h		\
 	castet-svg-element.h		\
 	castet-svg-exception.h		\
+	castet-traverser.h		\
 	$(NULL)
 
 source_h_private = 		\

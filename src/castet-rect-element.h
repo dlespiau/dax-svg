@@ -85,6 +85,13 @@ void              castet_rect_element_set_rx        (CastetRectElement  *self,
 void              castet_rect_element_set_ry        (CastetRectElement  *self,
                                                      const ClutterUnits *ry);
 
+gfloat            castet_rect_element_get_x_px      (CastetRectElement  *self);
+gfloat            castet_rect_element_get_y_px      (CastetRectElement  *self);
+gfloat            castet_rect_element_get_width_px  (CastetRectElement  *self);
+gfloat            castet_rect_element_get_height_px (CastetRectElement  *self);
+gfloat            castet_rect_element_set_rx_px     (CastetRectElement  *self);
+gfloat            castet_rect_element_set_ry_px     (CastetRectElement  *self);
+
 G_END_DECLS
 
 #endif /* __CASTET_RECT_ELEMENT_H__ */

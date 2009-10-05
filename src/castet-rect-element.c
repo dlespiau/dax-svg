@@ -17,8 +17,6 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <clutter/clutter.h>
-
 #include "castet-internals.h"
 #include "castet-rect-element.h"
 
@@ -310,4 +308,39 @@ CastetDomElement *
 castet_rect_element_new (void)
 {
     return g_object_new (CASTET_TYPE_RECT_ELEMENT, NULL);
+}
+
+gfloat
+castet_rect_element_get_x_px (CastetRectElement  *self)
+{
+    return clutter_units_to_pixels (self->priv->x);
+}
+
+gfloat
+castet_rect_element_get_y_px (CastetRectElement  *self)
+{
+    return clutter_units_to_pixels (self->priv->y);
+}
+
+gfloat
+castet_rect_element_get_width_px (CastetRectElement  *self)
+{
+    return clutter_units_to_pixels (self->priv->width);
+}
+
+gfloat
+castet_rect_element_get_height_px (CastetRectElement *self)
+{
+    return clutter_units_to_pixels (self->priv->height);
+}
+
+gfloat
+castet_rect_element_set_rx_px (CastetRectElement  *self)
+{
+    return clutter_units_to_pixels (self->priv->rx);
+}
+
+gfloat castet_rect_element_set_ry_px (CastetRectElement  *self)
+{
+    return clutter_units_to_pixels (self->priv->ry);
 }

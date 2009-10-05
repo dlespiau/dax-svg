@@ -17,24 +17,38 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __CASTET_H__
-#define __CASTET_H__
+#include <stdlib.h>
 
-#include "castet-actor.h"
-#include "castet-build-traverser.h"
-#include "castet-core.h"
-#include "castet-dom-document.h"
-#include "castet-dom-element.h"
-#include "castet-dom-exception.h"
-#include "castet-desc-element.h"
-#include "castet-element.h"
-#include "castet-element-traversal.h"
-#include "castet-g-element.h"
-#include "castet-knot-sequence.h"
-#include "castet-parser.h"
-#include "castet-polyline-element.h"
-#include "castet-rect-element.h"
-#include "castet-svg-element.h"
-#include "castet-traverser.h"
+#include <glib.h>
+#include <glib/gprintf.h>
+#include <clutter/clutter.h>
+#include <castet.h>
 
-#endif /* __CASTET_H__ */
+int
+main (int   argc,
+      char *argv[])
+{
+    ClutterActor *stage, *svg;
+
+    castet_init (&argc, &argv);
+    clutter_init (&argc, &argv);
+
+    if (argc < 2) {
+        g_printf ("Usage: castet-viewer filename\n");
+        return EXIT_FAILURE;
+    }
+
+    svg = castet_actor_new_from_file (argv[1], NULL);
+    if (svg == NULL) {
+        g_printf ("Could not create the SVG actor: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    stage = clutter_stage_get_default ();
+    clutter_container_add_actor (CLUTTER_CONTAINER (stage), svg);
+    clutter_actor_show_all (stage);
+
+    clutter_main();
+
+    return EXIT_SUCCESS;
+}

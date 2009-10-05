@@ -1,3 +1,3 @@
-SUBDIRS = build src tests
+SUBDIRS = build src tests tools
 
 ACLOCAL_AMFLAGS = -I build/autotools
