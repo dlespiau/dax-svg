@@ -21,6 +21,7 @@
 #define __CASTET_ELEMENT_H__
 
 #include <glib-object.h>
+#include <clutter/clutter.h>
 
 #include "castet-dom-element.h"
 
@@ -69,7 +70,9 @@ struct _CastetElementClass
 
 GType castet_element_get_type (void) G_GNUC_CONST;
 
-CastetDomElement *castet_element_new (void);
+CastetDomElement   *castet_element_new              (void);
+const ClutterColor *castet_element_get_fill_color   (CastetElement *element);
+const ClutterColor *castet_element_get_stroke_color (CastetElement *element);
 
 G_END_DECLS
 

@@ -37,32 +37,27 @@ struct _CastetBuildTraverserPrivate
 };
 
 static void
-castet_build_traverser_traverse_g (CastetTraverser *traverser,
-                                   CastetGElement  *node)
-{
-    CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
-    CastetBuildTraverserPrivate *priv = build->priv;
-    ClutterColor *fill_color;
-
-    g_object_get (G_OBJECT (node), "fill", &fill_color, NULL);
-    priv->fill_color = fill_color;
-}
-
-static void
 castet_build_traverser_traverse_path (CastetTraverser   *traverser,
                                       CastetPathElement *node)
 {
     CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
     CastetBuildTraverserPrivate *priv = build->priv;
+    CastetElement *element = CASTET_ELEMENT (node);
+    const ClutterColor *fill_color, *stroke_color;
     ClutterActor *shape;
     ClutterPath *path;
-    ClutterColor *fill_color;
 
     shape = clutter_shape_new ();
-    g_object_get (G_OBJECT (node), "fill", &fill_color, NULL);
-    g_object_set (G_OBJECT (shape), "color", fill_color, NULL);
-    g_object_get (G_OBJECT (node), "d", &path, NULL);
-    g_object_set (G_OBJECT (shape), "path", path, NULL);
+
+    fill_color = castet_element_get_fill_color (element);
+    stroke_color = castet_element_get_stroke_color (element);
+    if (fill_color)
+        g_object_set (shape, "color", fill_color, NULL);
+    if (stroke_color)
+        g_object_set (shape, "border-color", stroke_color, NULL);
+
+    g_object_get (node, "d", &path, NULL);
+    g_object_set (shape, "path", path, NULL);
 
     clutter_container_add_actor (priv->container, shape);
 }
@@ -73,13 +68,24 @@ castet_build_traverser_traverse_rect (CastetTraverser   *traverser,
 {
     CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
     CastetBuildTraverserPrivate *priv = build->priv;
+    CastetElement *element = CASTET_ELEMENT (node);
+    const ClutterColor *fill_color, *stroke_color;
     ClutterActor *rectangle;
-    ClutterColor color;
     ClutterGeometry geom;
 
-    clutter_color_from_hls (&color,
-                            g_random_double_range (0.0, 360.0), 0.5, 0.5);
-    rectangle = clutter_rectangle_new_with_color (&color);
+    rectangle = clutter_rectangle_new ();
+
+    fill_color = castet_element_get_fill_color (element);
+    stroke_color = castet_element_get_stroke_color (element);
+    if (fill_color)
+        clutter_rectangle_set_color (CLUTTER_RECTANGLE (rectangle),
+                                     fill_color);
+    if (stroke_color)
+        clutter_rectangle_set_border_color (CLUTTER_RECTANGLE (rectangle),
+                                            stroke_color);
+
+    /* FIXME castet_rect_element_get_geometry() sounds like it could be
+     * useful here */
     geom.x = castet_rect_element_get_x_px (node);
     geom.y = castet_rect_element_get_y_px (node);
     geom.width = castet_rect_element_get_width_px (node);
@@ -116,16 +122,25 @@ castet_build_traverser_traverse_polyline (CastetTraverser       *traverser,
 {
     CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
     CastetBuildTraverserPrivate *priv = build->priv;
+    CastetElement *element = CASTET_ELEMENT (node);
+    const ClutterColor *fill_color, *stroke_color;
     ClutterActor *polyline;
     const CastetKnotSequence *seq;
     ClutterPath *path;
 
     polyline = clutter_shape_new ();
+
     g_object_get (G_OBJECT (node), "points", &seq, NULL);
     path = clutter_path_new_from_knot_sequence (seq);
     g_object_set (G_OBJECT (polyline), "path", path, NULL);
-    if (priv->fill_color)
-        g_object_set (G_OBJECT (polyline), "color", priv->fill_color, NULL);
+
+    fill_color = castet_element_get_fill_color (element);
+    stroke_color = castet_element_get_stroke_color (element);
+    if (fill_color) {
+        g_object_set (polyline, "color", fill_color, NULL);
+    }
+    if (stroke_color)
+        g_object_set (polyline, "border-color", stroke_color, NULL);
 
     clutter_container_add_actor (priv->container, polyline);
 }
@@ -185,7 +200,6 @@ castet_build_traverser_class_init (CastetBuildTraverserClass *klass)
     object_class->dispose = castet_build_traverser_dispose;
     object_class->finalize = castet_build_traverser_finalize;
 
-    traverser_class->traverse_g = castet_build_traverser_traverse_g;
     traverser_class->traverse_path = castet_build_traverser_traverse_path;
     traverser_class->traverse_rect = castet_build_traverser_traverse_rect;
     traverser_class->traverse_polyline =

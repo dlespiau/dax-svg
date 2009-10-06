@@ -17,9 +17,8 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <clutter/clutter.h>
-
 #include "castet-internals.h"
+#include "castet-svg-element.h"
 #include "castet-element.h"
 
 G_DEFINE_ABSTRACT_TYPE (CastetElement, castet_element, CASTET_TYPE_DOM_ELEMENT)
@@ -33,12 +32,14 @@ enum
 {
     PROP_0,
 
-    PROP_FILL_COLOR,
+    PROP_FILL,
+    PROP_STROKE,
 };
 
 struct _CastetElementPrivate
 {
-    ClutterColor *fill_color;
+    ClutterColor *fill;
+    ClutterColor *stroke;
 };
 
 /*
@@ -108,8 +109,11 @@ castet_element_get_property (GObject    *object,
 
     switch (property_id)
     {
-    case PROP_FILL_COLOR:
-        clutter_value_set_color (value, priv->fill_color);
+    case PROP_FILL:
+        clutter_value_set_color (value, priv->fill);
+        break;
+    case PROP_STROKE:
+        clutter_value_set_color (value, priv->stroke);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -127,11 +131,18 @@ castet_element_set_property (GObject      *object,
 
     switch (property_id)
     {
-    case PROP_FILL_COLOR:
+    case PROP_FILL:
     {
         const ClutterColor *color;
         color = clutter_value_get_color (value);
-        priv->fill_color = clutter_color_copy (color);
+        priv->fill = clutter_color_copy (color);
+    }
+        break;
+    case PROP_STROKE:
+    {
+        const ClutterColor *color;
+        color = clutter_value_get_color (value);
+        priv->stroke = clutter_color_copy (color);
     }
         break;
     default:
@@ -170,10 +181,17 @@ castet_element_class_init (CastetElementClass *klass)
 
     pspec = g_param_spec_boxed ("fill",
                                 "Fill color",
-                                "The fille color of the element",
+                                "The fill color of the element",
                                 CLUTTER_TYPE_COLOR,
                                 CASTET_PARAM_READWRITE);
-    g_object_class_install_property (object_class, PROP_FILL_COLOR, pspec);
+    g_object_class_install_property (object_class, PROP_FILL, pspec);
+
+    pspec = g_param_spec_boxed ("stroke",
+                                "Stoke color",
+                                "The color of the outline of the element",
+                                CLUTTER_TYPE_COLOR,
+                                CASTET_PARAM_READWRITE);
+    g_object_class_install_property (object_class, PROP_STROKE, pspec);
 }
 
 static void
@@ -186,4 +204,44 @@ CastetDomElement *
 castet_element_new (void)
 {
     return g_object_new (CASTET_TYPE_ELEMENT, NULL);
+}
+
+const ClutterColor *
+castet_element_get_fill_color (CastetElement *element)
+{
+    CastetElementPrivate *priv;
+    CastetDomNode *parent;
+
+    g_return_val_if_fail (CASTET_IS_ELEMENT (element), NULL);
+
+    priv = element->priv;
+    if (priv->fill)
+        return priv->fill;
+
+    /* casting here as g_return_val_if_fail has already checked for the type */
+    parent = ((CastetDomNode  *)element)->parent_node;
+    if (CASTET_IS_SVG_ELEMENT (parent))
+        return NULL;
+
+    return castet_element_get_fill_color (CASTET_ELEMENT (parent));
+}
+
+const ClutterColor *
+castet_element_get_stroke_color (CastetElement *element)
+{
+    CastetElementPrivate *priv;
+    CastetDomNode *parent;
+
+    g_return_val_if_fail (CASTET_IS_ELEMENT (element), NULL);
+
+    priv = element->priv;
+    if (priv->stroke)
+        return priv->stroke;
+
+    /* casting here as g_return_val_if_fail has already checked for the type */
+    parent = ((CastetDomNode  *)element)->parent_node;
+    if (CASTET_IS_SVG_ELEMENT (parent))
+        return NULL;
+
+    return castet_element_get_stroke_color (CASTET_ELEMENT (parent));
 }

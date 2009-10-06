@@ -34,6 +34,7 @@ enum
 {
     PROP_0,
     PROP_COLOR,
+    PROP_BORDER_COLOR,
     PROP_PATH,
 };
 
@@ -44,7 +45,8 @@ enum
 
 struct _ClutterShapePrivate
 {
-    ClutterColor color;
+    ClutterColor *color;            /* NULL means fill color */
+    ClutterColor *border_color;     /* NULL means stroke color */
     ClutterPath *path;
 };
 
@@ -102,21 +104,40 @@ clutter_shape_pick (ClutterActor       *self,
 }
 
 static void
+_apply_opacity_to_color (ClutterActor *self,
+                         ClutterColor *color,
+                         ClutterColor *blended)
+{
+    *blended = *color;
+
+    blended->alpha =
+        clutter_actor_get_paint_opacity (self) * color->alpha / 255;
+}
+
+static void
 clutter_shape_paint (ClutterActor *self)
 {
   ClutterShape        *shape = CLUTTER_SHAPE(self);
   ClutterShapePrivate *priv = shape->priv;
   ClutterColor         tmp_col;
 
-  tmp_col = priv->color;
-  tmp_col.alpha = clutter_actor_get_paint_opacity (self)
-        * priv->color.alpha
-        / 255;
-
-  cogl_set_source_color ((CoglColor*)&tmp_col);
-
   clutter_path_foreach (priv->path, clutter_path_draw_cogl, NULL);
-  cogl_path_fill();
+
+  if (priv->color && priv->border_color) {
+      _apply_opacity_to_color (self, priv->color, &tmp_col);
+      cogl_set_source_color ((CoglColor*)&tmp_col);
+      cogl_path_fill_preserve();
+  } else if (priv->color) {
+      _apply_opacity_to_color (self, priv->color, &tmp_col);
+      cogl_set_source_color ((CoglColor*)&tmp_col);
+      cogl_path_fill ();
+  }
+
+  if (priv->border_color) {
+      _apply_opacity_to_color (self, priv->border_color, &tmp_col);
+      cogl_set_source_color ((CoglColor*)&tmp_col);
+      cogl_path_stroke ();
+  }
 }
 
 /*
@@ -135,7 +156,10 @@ clutter_shape_get_property (GObject    *object,
     switch (prop_id)
     {
     case PROP_COLOR:
-        g_value_set_boxed (value, &priv->color);
+        g_value_set_boxed (value, priv->color);
+        break;
+    case PROP_BORDER_COLOR:
+        g_value_set_boxed (value, priv->border_color);
         break;
     case PROP_PATH:
         g_value_set_object (value, priv->path);
@@ -160,7 +184,14 @@ clutter_shape_set_property (GObject      *object,
     case PROP_COLOR:
         {
             ClutterColor *color = g_value_get_boxed (value);
-            priv->color = *color;
+            priv->color = clutter_color_copy (color);
+            clutter_actor_queue_redraw (CLUTTER_ACTOR (object));
+        }
+        break;
+    case PROP_BORDER_COLOR:
+        {
+            ClutterColor *color = g_value_get_boxed (value);
+            priv->border_color = clutter_color_copy (color);
             clutter_actor_queue_redraw (CLUTTER_ACTOR (object));
         }
         break;
@@ -218,6 +249,13 @@ clutter_shape_class_init (ClutterShapeClass *klass)
                                 CLUTTER_PARAM_READWRITE);
     g_object_class_install_property (gobject_class, PROP_COLOR, pspec);
 
+    pspec = g_param_spec_boxed ("border-color",
+                                "Border Color",
+                                "The color of the outline of the shape",
+                                CLUTTER_TYPE_COLOR,
+                                CLUTTER_PARAM_READWRITE);
+    g_object_class_install_property (gobject_class, PROP_BORDER_COLOR, pspec);
+
     pspec = g_param_spec_object ("path",
                                  "A path describing the shape",
                                  "", /* FIXME */
@@ -229,14 +267,7 @@ clutter_shape_class_init (ClutterShapeClass *klass)
 static void
 clutter_shape_init (ClutterShape *self)
 {
-    ClutterShapePrivate *priv;
-
-    self->priv = priv = CLUTTER_SHAPE_GET_PRIVATE (self);
-
-    priv->color.red = 0xff;
-    priv->color.green = 0xff;
-    priv->color.blue = 0xff;
-    priv->color.alpha = 0xff;
+    self->priv = CLUTTER_SHAPE_GET_PRIVATE (self);
 }
 
 /**
