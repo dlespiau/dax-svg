@@ -23,10 +23,11 @@
 #include <glib-object.h>
 
 #include "castet-dom-node.h"
-#include "castet-svg-element.h"
 #include "castet-g-element.h"
-#include "castet-rect-element.h"
+#include "castet-path-element.h"
 #include "castet-polyline-element.h"
+#include "castet-rect-element.h"
+#include "castet-svg-element.h"
 
 G_BEGIN_DECLS
 
@@ -72,6 +73,8 @@ struct _CastetTraverserClass
                                  CastetSvgElement *node);
     void (*traverse_g)          (CastetTraverser *traverser,
                                  CastetGElement  *node);
+    void (*traverse_path)       (CastetTraverser   *traverser,
+                                 CastetPathElement *node);
     void (*traverse_rect)       (CastetTraverser   *traverser,
                                  CastetRectElement *node);
     void (*traverse_polyline)   (CastetTraverser       *traverser,
@@ -89,6 +92,8 @@ void             castet_traverser_traverse_svg      (CastetTraverser  *self,
                                                      CastetSvgElement *node);
 void             castet_traverser_traverse_g        (CastetTraverser *self,
                                                      CastetGElement  *node);
+void             castet_traverser_traverse_path     (CastetTraverser   *self,
+                                                     CastetPathElement *node);
 void             castet_traverser_traverse_rect     (CastetTraverser   *self,
                                                      CastetRectElement *node);
 void             castet_traverser_traverse_polyline (CastetTraverser      *self,

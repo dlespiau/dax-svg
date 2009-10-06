@@ -21,6 +21,7 @@
 
 #include "castet-desc-element.h"
 #include "castet-g-element.h"
+#include "castet-path-element.h"
 #include "castet-polyline-element.h"
 #include "castet-rect-element.h"
 #include "castet-svg-element.h"
@@ -50,12 +51,14 @@ castet_document_create_element(CastetDomDocument  *self,
         return castet_svg_element_new ();
     if (strcmp (tag_name, "g") == 0)
         return castet_g_element_new ();
-    if (strcmp (tag_name, "polyline") == 0)
-        return castet_polyline_element_new ();
-    if (strcmp (tag_name, "desc") == 0)
-        return castet_desc_element_new ();
+    if (strcmp (tag_name, "path") == 0)
+        return castet_path_element_new ();
     if (strcmp (tag_name, "rect") == 0)
         return castet_rect_element_new ();
+    if (strcmp (tag_name, "desc") == 0)
+        return castet_desc_element_new ();
+    if (strcmp (tag_name, "polyline") == 0)
+        return castet_polyline_element_new ();
 
     return NULL;
 }

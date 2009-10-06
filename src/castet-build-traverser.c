@@ -49,6 +49,25 @@ castet_build_traverser_traverse_g (CastetTraverser *traverser,
 }
 
 static void
+castet_build_traverser_traverse_path (CastetTraverser   *traverser,
+                                      CastetPathElement *node)
+{
+    CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
+    CastetBuildTraverserPrivate *priv = build->priv;
+    ClutterActor *shape;
+    ClutterPath *path;
+    ClutterColor *fill_color;
+
+    shape = clutter_shape_new ();
+    g_object_get (G_OBJECT (node), "fill", &fill_color, NULL);
+    g_object_set (G_OBJECT (shape), "color", fill_color, NULL);
+    g_object_get (G_OBJECT (node), "d", &path, NULL);
+    g_object_set (G_OBJECT (shape), "path", path, NULL);
+
+    clutter_container_add_actor (priv->container, shape);
+}
+
+static void
 castet_build_traverser_traverse_rect (CastetTraverser   *traverser,
                                       CastetRectElement *node)
 {
@@ -167,6 +186,7 @@ castet_build_traverser_class_init (CastetBuildTraverserClass *klass)
     object_class->finalize = castet_build_traverser_finalize;
 
     traverser_class->traverse_g = castet_build_traverser_traverse_g;
+    traverser_class->traverse_path = castet_build_traverser_traverse_path;
     traverser_class->traverse_rect = castet_build_traverser_traverse_rect;
     traverser_class->traverse_polyline =
         castet_build_traverser_traverse_polyline;

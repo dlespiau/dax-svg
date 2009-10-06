@@ -44,6 +44,12 @@ castet_traverser_traverse_g_real (CastetTraverser *self,
 }
 
 static void
+castet_traverser_traverse_path_real (CastetTraverser   *self,
+                                     CastetPathElement *node)
+{
+}
+
+static void
 castet_traverser_traverse_rect_real (CastetTraverser   *self,
                                      CastetRectElement *node)
 {
@@ -111,6 +117,7 @@ castet_traverser_class_init (CastetTraverserClass *klass)
 
     klass->traverse_svg = castet_traverser_traverse_svg_real;
     klass->traverse_g = castet_traverser_traverse_g_real;
+    klass->traverse_path = castet_traverser_traverse_path_real;
     klass->traverse_rect = castet_traverser_traverse_rect_real;
     klass->traverse_polyline = castet_traverser_traverse_polyline_real;
 }
@@ -154,6 +161,8 @@ castet_traverse_node (CastetTraverser *traverser,
         castet_traverser_traverse_svg (traverser, (CastetSvgElement *)node);
     else if (CASTET_IS_G_ELEMENT (node))
         castet_traverser_traverse_g (traverser, (CastetGElement *)node);
+    else if (CASTET_IS_PATH_ELEMENT (node))
+        castet_traverser_traverse_path (traverser, (CastetPathElement *)node);
     else if (CASTET_IS_RECT_ELEMENT (node))
         castet_traverser_traverse_rect (traverser, (CastetRectElement *)node);
     else if (CASTET_IS_POLYLINE_ELEMENT (node))
@@ -202,6 +211,15 @@ castet_traverser_traverse_g (CastetTraverser *self,
     CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
 
     klass->traverse_g (self, node);
+}
+
+void
+castet_traverser_traverse_path (CastetTraverser   *self,
+                                CastetPathElement *node)
+{
+    CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_path (self, node);
 }
 
 void

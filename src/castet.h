@@ -32,6 +32,7 @@
 #include "castet-g-element.h"
 #include "castet-knot-sequence.h"
 #include "castet-parser.h"
+#include "castet-path-element.h"
 #include "castet-polyline-element.h"
 #include "castet-rect-element.h"
 #include "castet-svg-element.h"

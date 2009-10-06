@@ -29,6 +29,7 @@ source_c =				\
 	castet-g-element.c		\
 	castet-knot-sequence.c		\
 	castet-parser.c			\
+	castet-path-element.c		\
 	castet-polyline-element.c	\
 	castet-rect-element.c		\
 	castet-svg-element.c		\
@@ -53,6 +54,7 @@ source_h =				\
 	castet-g-element.h		\
 	castet-knot-sequence.h		\
 	castet-parser.h			\
+	castet-path-element.h		\
 	castet-polyline-element.h	\
 	castet-rect-element.h		\
 	castet-svg-element.h		\

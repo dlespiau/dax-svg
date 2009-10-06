@@ -86,6 +86,38 @@ test_polyline (void)
     g_assert_cmpfloat (array[43], ==, 375.0f);
 }
 
+static void
+test_path (void)
+{
+    CastetDomDocument *document;
+    CastetDomNode *svg, *path;
+    ClutterPath *clutter_path;
+    ClutterPathNode node;
+
+    document = castet_dom_document_new_from_file ("08_01.svg", NULL);
+    g_assert (CASTET_IS_DOM_DOCUMENT (document));
+    svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
+    g_assert (CASTET_IS_SVG_ELEMENT (svg));
+
+    path = castet_dom_node_get_last_child (svg);
+    g_assert (CASTET_IS_PATH_ELEMENT (path));
+    clutter_path = castet_path_element_get_path (CASTET_PATH_ELEMENT (path));
+    g_assert (clutter_path_get_n_nodes (clutter_path) == 4);
+    clutter_path_get_node (clutter_path, 0, &node);
+    g_assert (node.type == CLUTTER_PATH_MOVE_TO);
+    g_assert_cmpint (node.points[0].x, ==, 100);
+    g_assert_cmpint (node.points[0].y, ==, 100);
+    clutter_path_get_node (clutter_path, 1, &node);
+    g_assert (node.type == CLUTTER_PATH_LINE_TO);
+    g_assert_cmpint (node.points[0].x, ==, 300);
+    g_assert_cmpint (node.points[0].y, ==, 100);
+    clutter_path_get_node (clutter_path, 2, &node);
+    g_assert (node.type == CLUTTER_PATH_LINE_TO);
+    g_assert_cmpint (node.points[0].x, ==, 200);
+    g_assert_cmpint (node.points[0].y, ==, 300);
+    clutter_path_get_node (clutter_path, 3, &node);
+    g_assert (node.type == CLUTTER_PATH_CLOSE);
+}
 
 int
 main (int   argc,
@@ -98,6 +130,7 @@ main (int   argc,
     g_test_add_func ("/parser/simple-document-from-file",
                      test_simple_document_from_file);
     g_test_add_func ("/parser/polyline", test_polyline);
+    g_test_add_func ("/parser/path", test_path);
 
     return g_test_run ();
 }

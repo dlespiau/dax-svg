@@ -47,6 +47,9 @@ main (int   argc,
     stage = clutter_stage_get_default ();
     clutter_container_add_actor (CLUTTER_CONTAINER (stage), svg);
     clutter_actor_show_all (stage);
+#if 0
+    clutter_actor_animate (svg, CLUTTER_LINEAR, 5000, "x", 1000.0f, NULL);
+#endif
 
     clutter_main();
 
