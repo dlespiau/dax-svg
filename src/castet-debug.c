@@ -35,8 +35,9 @@ guint _castet_debug_flags = 0;  /* global debug flag */
 static GTimer *castet_timer;
 
 static const GDebugKey castet_debug_keys[] = {
-  { "misc",    CASTET_DEBUG_MISC    },
-  { "parsing", CASTET_DEBUG_PARSING },
+  { "misc",      CASTET_DEBUG_MISC      },
+  { "parsing",   CASTET_DEBUG_PARSING   },
+  { "traverser", CASTET_DEBUG_TRAVERSER },
 };
 
 /**

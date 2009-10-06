@@ -17,6 +17,7 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "castet-debug.h"
 #include "castet-traverser.h"
 
 G_DEFINE_TYPE (CastetTraverser, castet_traverser, G_TYPE_OBJECT)
@@ -157,6 +158,8 @@ static void
 castet_traverse_node (CastetTraverser *traverser,
                       CastetDomNode   *node)
 {
+    CASTET_NOTE (TRAVERSER, "traversing %s", G_OBJECT_TYPE_NAME (node));
+
     if (CASTET_IS_SVG_ELEMENT (node))
         castet_traverser_traverse_svg (traverser, (CastetSvgElement *)node);
     else if (CASTET_IS_G_ELEMENT (node))
