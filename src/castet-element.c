@@ -18,6 +18,7 @@
  */
 
 #include "castet-internals.h"
+#include "castet-debug.h"
 #include "castet-svg-element.h"
 #include "castet-element.h"
 
@@ -91,6 +92,10 @@ castet_element_set_attribute (CastetDomElement  *self,
         return;
     }
 
+    CASTET_NOTE (PARSING, "set %s to %s on %s",
+                 name,
+                 value,
+                 G_OBJECT_TYPE_NAME (self));
     g_object_set_property (G_OBJECT (self), name, &new_value);
 }
 
