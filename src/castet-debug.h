@@ -33,7 +33,8 @@ G_BEGIN_DECLS
 
 #ifdef CASTET_ENABLE_DEBUG
 
-typedef enum {
+typedef enum
+{
     CASTET_DEBUG_MISC            = 1 << 0,
     CASTET_DEBUG_PARSING         = 1 << 1,
     CASTET_DEBUG_TRAVERSER       = 1 << 2,

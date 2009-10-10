@@ -83,6 +83,7 @@ AC_SUBST(CASTET_LT_LDFLAGS)
 # Check for programs
 AC_PROG_CC
 PKG_PROG_PKG_CONFIG
+AC_PATH_PROG([GLIB_MKENUMS], [glib-mkenums])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

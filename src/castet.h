@@ -21,6 +21,7 @@
 #define __CASTET_H__
 
 #include "castet-actor.h"
+#include "castet-animate-element.h"
 #include "castet-build-traverser.h"
 #include "castet-core.h"
 #include "castet-dom-document.h"
@@ -29,6 +30,7 @@
 #include "castet-desc-element.h"
 #include "castet-element.h"
 #include "castet-element-traversal.h"
+#include "castet-enum-types.h"
 #include "castet-g-element.h"
 #include "castet-knot-sequence.h"
 #include "castet-parser.h"
@@ -37,5 +39,6 @@
 #include "castet-rect-element.h"
 #include "castet-svg-element.h"
 #include "castet-traverser.h"
+#include "castet-types.h"
 
 #endif /* __CASTET_H__ */

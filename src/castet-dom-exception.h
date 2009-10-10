@@ -26,7 +26,8 @@ G_BEGIN_DECLS
 
 #define CASTET_DOM_EXCEPTION_ERROR    castet_dom_exception_error_quark()
 
-enum _CastetDomExceptionError {
+typedef enum /*< skip >*/
+{
     CASTET_DOM_EXCEPTION_ERROR_INDEX_SIZE = 1,
     CASTET_DOM_EXCEPTION_ERROR_DOMSTRING_SIZE,
     CASTET_DOM_EXCEPTION_ERROR_HIERARCHY_REQUEST,
@@ -44,8 +45,7 @@ enum _CastetDomExceptionError {
     CASTET_DOM_EXCEPTION_ERROR_INVALID_ACCESS,
     CASTET_DOM_EXCEPTION_ERROR_VALIDATION,
     CASTET_DOM_EXCEPTION_ERROR_TYPE_MISMATCH
-};
-typedef enum _CastetDomExceptionError CastetDomExceptionError;
+} CastetDomExceptionError;
 
 GQuark castet_dom_exception_error_quark(void);
 

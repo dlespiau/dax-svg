@@ -119,6 +119,40 @@ test_path (void)
     g_assert (node.type == CLUTTER_PATH_CLOSE);
 }
 
+static void
+test_animate (void)
+{
+    CastetDomDocument *document;
+    CastetDomNode *svg, *rect, *animate;
+    CastetAnimationAttributeType attribute_type;
+    CastetDuration *duration;
+    CastetRepeatCount *count;
+    gchar *string;
+
+    document = castet_dom_document_new_from_file ("19_011.svg", NULL);
+    g_assert (CASTET_IS_DOM_DOCUMENT (document));
+    svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
+    g_assert (CASTET_IS_SVG_ELEMENT (svg));
+
+    rect = castet_dom_node_get_last_child (svg);
+    g_assert (CASTET_IS_RECT_ELEMENT (rect));
+
+    animate = castet_dom_node_get_last_child (rect);
+    g_assert (CASTET_IS_ANIMATE_ELEMENT (animate));
+    g_object_get (animate, "attributeType", &attribute_type, NULL);
+    g_assert_cmpint (attribute_type, ==, CASTET_ANIMATION_ATTRIBUTE_TYPE_CSS);
+    g_object_get (animate, "attributeName", &string, NULL);
+    g_assert_cmpstr (string, ==, "fill-opacity");
+    g_object_get (animate, "from", &string, NULL);
+    g_assert_cmpstr (string, ==, "1");
+    g_object_get (animate, "to", &string, NULL);
+    g_assert_cmpstr (string, ==, "0");
+    g_object_get (animate, "dur", &duration, NULL);
+    g_assert_cmpfloat (castet_duration_to_ms (duration), ==, 5000.f);
+    g_object_get (animate, "repeatCount", &count, NULL);
+    g_assert (castet_repeat_count_is_indefinite (count));
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -131,6 +165,7 @@ main (int   argc,
                      test_simple_document_from_file);
     g_test_add_func ("/parser/polyline", test_polyline);
     g_test_add_func ("/parser/path", test_path);
+    g_test_add_func ("/parser/animate", test_animate);
 
     return g_test_run ();
 }

@@ -57,7 +57,8 @@ typedef struct _CastetDomNodePrivate CastetDomNodePrivate;
 /**
  * CastetDomNodeType: The type of a #CastetDomNode
  */
-enum _CastetDomNodeType {
+typedef enum /*< skip >*/
+{
     CASTET_DOM_NODE_TYPE_NONE,                    /* not part of DOM level 3 */
     CASTET_DOM_NODE_TYPE_ELEMENT,
     CASTET_DOM_NODE_TYPE_ATTRIBUTE,
@@ -76,8 +77,7 @@ enum _CastetDomNodeType {
     CASTET_DOM_NODE_TYPE_END_ELEMENT,             /* not part of DOM level 3 */
     CASTET_DOM_NODE_TYPE_END_ENTITY,              /* not part of DOM level 3 */
     CASTET_DOM_NODE_TYPE_XML_DECLARATION,         /* not part of DOM level 3 */
-};
-typedef enum _CastetDomNodeType CastetDomNodeType;
+} CastetDomNodeType;
 
 struct _CastetDomNode
 {

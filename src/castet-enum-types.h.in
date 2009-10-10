@@ -1,3 +1,4 @@
+/*** BEGIN file-header ***/
 /*
  * Castet - Load and draw SVG
  *
@@ -17,24 +18,28 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __CASTET_SVG_EXCEPTION_H__
-#define __CASTET_SVG_EXCEPTION_H__
+#ifndef __CASTET_ENUM_TYPES_H__
+#define __CASTET_ENUM_TYPES_H__
 
-#include <glib.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-#define CASTET_SVG_EXCEPTION_ERROR    wsvg_exception_error_quark()
+/*** END file-header ***/
 
-typedef enum /*< skip >*/
-{
-    CASTET_SVG_EXCEPTION_ERROR_WRONG_TYPE,
-    CASTET_SVG_EXCEPTION_ERROR_INVALID_VALUE,
-    CASTET_SVG_EXCEPTION_ERROR_MATRIX_NOT_INVERTABLE,
-} CastetSvgExceptionError;
+/*** BEGIN file-production ***/
+/* enumerations from "@filename@" */
+/*** END file-production ***/
 
-GQuark wsvg_exception_error_quark(void);
-
+/*** BEGIN file-tail ***/
 G_END_DECLS
 
-#endif /* __CASTET_SVG_EXCEPTION_H__ */
+#endif /* __CASTET_ENUM_TYPES_H__ */
+/*** END file-tail ***/
+
+/*** BEGIN value-header ***/
+GType @enum_name@_get_type (void) G_GNUC_CONST;
+#define CASTET_TYPE_@ENUMSHORT@ (@enum_name@_get_type())
+
+/*** END value-header ***/
+
