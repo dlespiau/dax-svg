@@ -9,6 +9,8 @@ test_simple_document_from_file (void)
     CastetDomDocument *document, *temp_doc;
     CastetDomNode *svg, *desc, *rect, *temp;
     ClutterUnits *units;
+    CastetSvgVersion version;
+    CastetSvgBaseProfile profile;
 
     document = castet_dom_document_new_from_file ("01_01.svg", NULL);
     g_assert (CASTET_IS_DOM_DOCUMENT (document));
@@ -22,6 +24,10 @@ test_simple_document_from_file (void)
     g_assert (temp == NULL);
     temp = castet_dom_node_get_next_sibling (svg);
     g_assert (temp == NULL);
+    g_object_get (svg, "version", &version, NULL);
+    g_assert_cmpint (version, ==, CASTET_SVG_VERSION_1_2);
+    g_object_get (svg, "baseProfile", &profile, NULL);
+    g_assert_cmpint (profile, ==, CASTET_SVG_BASE_PROFILE_TINY);
 
 #if 0
     temp_doc = castet_dom_node_get_owner_document (svg);
@@ -65,11 +71,21 @@ test_polyline (void)
     CastetDomNode *svg, *polyline;
     CastetKnotSequence *seq;
     const gfloat *array;
+    ClutterUnits *units;
 
     document = castet_dom_document_new_from_file ("09_06.svg", NULL);
     g_assert (CASTET_IS_DOM_DOCUMENT (document));
     svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
     g_assert (CASTET_IS_SVG_ELEMENT (svg));
+    /* let's test <svg> width and height attribute here as 09_06.svg had them
+     * with height != width */
+    g_object_get (G_OBJECT (svg), "width", &units, NULL);
+    g_assert_cmpint (clutter_units_get_unit_type (units), ==, CLUTTER_UNIT_CM);
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 12.0f);
+    g_object_get (G_OBJECT (svg), "height", &units, NULL);
+    g_assert_cmpint (clutter_units_get_unit_type (units), ==, CLUTTER_UNIT_CM);
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 4.0f);
+
 
     polyline = castet_dom_node_get_last_child (svg);
     g_assert (polyline);

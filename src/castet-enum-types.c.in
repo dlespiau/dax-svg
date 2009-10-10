@@ -56,7 +56,7 @@ transform_string_@enum_name@ (const GValue *src,
 #ifdef @ENUMNAME@_CASE_SENSITIVE
     const gchar *nick = g_value_get_string (src);
 #else
-    gchar *nick = g_ascii_tolower (g_value_get_string (src));
+    gchar *nick = g_ascii_strdown (g_value_get_string (src), -1);
 #endif
 
     /* enum_class can't be NULL here as the type had to be initialized to
@@ -67,6 +67,10 @@ transform_string_@enum_name@ (const GValue *src,
         g_value_set_enum (dest, enum_value->value);
     else
         g_value_set_enum (dest, @ENUMNAME@_DEFAULT);
+
+#ifndef @ENUMNAME@_CASE_SENSITIVE
+    g_free (nick);
+#endif
 }
 
 GType
