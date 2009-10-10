@@ -4,7 +4,6 @@ NULL =
 
 noinst_PROGRAMS = $(TEST_PROGS)
 
-INCLUDES = -I$(top_srcdir) $(CASTET_CFLAGS)
 progs_ldadd =							\
 	$(top_builddir)/src/libcastet-$(CASTET_API_VERSION).la	\
 	$(CASTET_LIBS)
@@ -12,6 +11,7 @@ progs_ldadd =							\
 AM_CPPFLAGS = 			\
 	-I$(top_srcdir)		\
 	-I$(top_srcdir)/src	\
+	$(CASTET_CFLAGS)	\
 	$(NULL)
 
 AM_CFLAGS = -g
