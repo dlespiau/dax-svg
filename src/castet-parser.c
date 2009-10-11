@@ -41,35 +41,45 @@ castet_dom_document_read_node(CastetDomDocument *document,
     case CASTET_DOM_NODE_TYPE_ELEMENT:
     {
         const xmlChar *local_name = xmlTextReaderConstLocalName(ctx->reader);
+        const gchar *name = (const gchar *)local_name;
         CastetDomElement *new_element;
+        gboolean is_empty = FALSE;
 
-        new_element =
-            castet_dom_document_create_element (document,
-                                                (const gchar *)local_name,
-                                                NULL);
+        new_element = castet_dom_document_create_element (document, name, NULL);
+
         if (G_UNLIKELY (new_element == NULL)) {
-            /* FIXME: issue a warning */
-            break;
+            g_message ("Unsupported element %s", name);
+            new_element =
+                castet_dom_document_create_element (document, "desc", NULL);
         }
 
         CASTET_NOTE (PARSING, "append %s to %s",
                      G_OBJECT_TYPE_NAME (new_element),
                      G_OBJECT_TYPE_NAME (ctx->current_node));
+
         castet_dom_node_append_child (ctx->current_node,
                                       CASTET_DOM_NODE (new_element),
                                       NULL);
         ctx->current_node = CASTET_DOM_NODE (new_element);
 
+        if (xmlTextReaderIsEmptyElement (ctx->reader))
+            is_empty = TRUE;
+
         /* Parse attributes */
         while (xmlTextReaderMoveToNextAttribute (ctx->reader) == 1) {
-            const xmlChar *name = xmlTextReaderConstLocalName (ctx->reader);
-            const xmlChar *value = xmlTextReaderConstValue (ctx->reader);
+            const xmlChar *_name = xmlTextReaderConstLocalName (ctx->reader);
+            const xmlChar *_value = xmlTextReaderConstValue (ctx->reader);
 
             castet_dom_element_set_attribute (new_element,
-                                              (const gchar *)name,
-                                              (const gchar *)value,
+                                              (const gchar *)_name,
+                                              (const gchar *)_value,
                                               NULL);
         }
+
+        /* if the element is empty a CASTET_DOM_NODE_TYPE_END_ELEMENT won't
+         * be emited, so update current_node here */
+        if (is_empty)
+            ctx->current_node = ctx->current_node->parent_node;
         break;
     }
     case CASTET_DOM_NODE_TYPE_END_ELEMENT:
@@ -85,9 +95,9 @@ castet_dom_document_read_node(CastetDomDocument *document,
 /**
  * wsvg_document_new:
  *
- * Creates a new #WSVGDocument. FIXME
+ * Creates a new #CastetDomDocument. FIXME
  *
- * Return value: the newly created #WSVGDocument instance
+ * Return value: the newly created #CastetDomDocument instance
  */
 CastetDomDocument *
 castet_dom_document_new_from_file (const gchar  *filename,

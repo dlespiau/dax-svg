@@ -4,7 +4,7 @@
   <desc>Example polyline01 - increasingly larger bars</desc>
   <!-- Show outline of canvas using 'rect' element -->
   <rect x="1" y="1" width="1198" height="398"
-        fill="none" stroke="blue" stroke-width="2"></rect>
+        fill="none" stroke="blue" stroke-width="2" />
   <polyline fill="none" stroke="blue" stroke-width="10"
             points="50,375
                     150,375 150,325 250,325 250,375

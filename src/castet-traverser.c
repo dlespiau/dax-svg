@@ -165,7 +165,8 @@ static void
 castet_traverse_node (CastetTraverser *traverser,
                       CastetDomNode   *node)
 {
-    CASTET_NOTE (TRAVERSER, "traversing %s", G_OBJECT_TYPE_NAME (node));
+    CASTET_NOTE (TRAVERSER, "traversing %s %p", G_OBJECT_TYPE_NAME (node),
+                 node);
 
     if (CASTET_IS_SVG_ELEMENT (node))
         castet_traverser_traverse_svg (traverser, (CastetSvgElement *)node);
@@ -188,10 +189,9 @@ castet_traverser_walk_tree (CastetTraverser *traverser,
                             CastetDomNode   *node)
 {
     castet_traverse_node (traverser, node);
-    if (node->first_child)
-        castet_traverser_walk_tree (traverser, node->first_child);
-    while (node->next_sibling) {
-        castet_traverser_walk_tree (traverser, node->next_sibling);
+    node = node->first_child;
+    while (node) {
+        castet_traverser_walk_tree (traverser, node);
         node = node->next_sibling;
     }
 }
