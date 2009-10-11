@@ -186,7 +186,7 @@ test_title_desc (void)
     title = castet_dom_node_get_first_child (svg);
     g_assert (CASTET_IS_TITLE_ELEMENT (title));
 
-    /* text node of <desc> */
+    /* text node of <title> */
     text = castet_dom_node_get_first_child (title);
     g_assert (CASTET_IS_DOM_TEXT (text));
     g_assert_cmpstr (
@@ -207,6 +207,50 @@ test_title_desc (void)
         "A path that draws a triangle");
 }
 
+static const gchar _18_91_script[] = "\n\
+    function circle_click(evt) {\n\
+       var circle = evt.target;\n\
+       var currentRadius = circle.getFloatTrait(\"r\");\n\
+       if (currentRadius == 100)\n\
+         circle.setFloatTrait(\"r\", currentRadius*2);\n\
+       else\n\
+         circle.setFloatTrait(\"r\", currentRadius*0.5);\n\
+    }\n\
+  ";
+
+static void
+test_script (void)
+{
+    CastetDomDocument *document;
+    CastetDomNode *svg, *desc, *script, *text;
+    CastetScriptType type;
+
+    document = castet_dom_document_new_from_file ("18_01.svg", NULL);
+    g_assert (CASTET_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
+    g_assert (CASTET_IS_SVG_ELEMENT (svg));
+
+    /* <desc> */
+    desc = castet_dom_node_get_first_child (svg);
+    g_assert (CASTET_IS_DESC_ELEMENT (desc));
+
+    /* <script> */
+    script = castet_dom_node_get_next_sibling (desc);
+    g_assert (CASTET_IS_SCRIPT_ELEMENT (script));
+    g_object_get (script, "type", &type, NULL);
+    g_assert_cmpint (type, ==, CASTET_SCRIPT_TYPE_ECMASCRIPT);
+
+    /* text node of <script> */
+    text = castet_dom_node_get_first_child (script);
+    g_assert (CASTET_IS_DOM_TEXT (text));
+    g_assert_cmpstr (
+        castet_dom_character_data_get_data (CASTET_DOM_CHARACTER_DATA (text)),
+        ==,
+        _18_91_script);
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -221,6 +265,7 @@ main (int   argc,
     g_test_add_func ("/parser/path", test_path);
     g_test_add_func ("/parser/animate", test_animate);
     g_test_add_func ("/parser/title-desc", test_title_desc);
+    g_test_add_func ("/parser/script", test_script);
 
     return g_test_run ();
 }

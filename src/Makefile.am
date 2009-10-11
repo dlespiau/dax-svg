@@ -43,6 +43,7 @@ source_c =				\
 	castet-path-element.c		\
 	castet-polyline-element.c	\
 	castet-rect-element.c		\
+	castet-script-element.c		\
 	castet-svg-element.c		\
 	castet-svg-exception.c		\
 	castet-title-element.c		\
@@ -74,6 +75,7 @@ source_h =				\
 	castet-path-element.h		\
 	castet-polyline-element.h	\
 	castet-rect-element.h		\
+	castet-script-element.h		\
 	castet-svg-element.h		\
 	castet-svg-exception.h		\
 	castet-title-element.h		\
