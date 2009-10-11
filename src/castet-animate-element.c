@@ -21,7 +21,6 @@
 
 #include "castet-internals.h"
 #include "castet-enum-types.h"
-#include "castet-types.h"
 #include "castet-animate-element.h"
 
 G_DEFINE_TYPE (CastetAnimateElement,
@@ -237,4 +236,56 @@ CastetDomElement *
 castet_animate_element_new (void)
 {
     return g_object_new (CASTET_TYPE_ANIMATE_ELEMENT, NULL);
+}
+
+CastetDuration *
+castet_animate_element_get_duration (const CastetAnimateElement *self)
+{
+    g_return_val_if_fail (CASTET_IS_ANIMATE_ELEMENT (self), NULL);
+
+    return self->priv->duration;
+}
+
+const gchar *
+castet_animate_element_get_attribute_name (const CastetAnimateElement *self)
+{
+    g_return_val_if_fail (CASTET_IS_ANIMATE_ELEMENT (self), NULL);
+
+    return self->priv->attribute_name;
+}
+
+const gchar *
+castet_animate_element_get_from (const CastetAnimateElement *self)
+{
+    g_return_val_if_fail (CASTET_IS_ANIMATE_ELEMENT (self), NULL);
+
+    return self->priv->from;
+}
+
+const gchar *
+castet_animate_element_get_to (const CastetAnimateElement *self)
+{
+    g_return_val_if_fail (CASTET_IS_ANIMATE_ELEMENT (self), NULL);
+
+    return self->priv->to;
+}
+
+const CastetRepeatCount *
+castet_animate_element_get_repeat_count (const CastetAnimateElement *self)
+{
+    g_return_val_if_fail (CASTET_IS_ANIMATE_ELEMENT (self), NULL);
+
+    return self->priv->repeat_count;
+}
+
+CastetDomElement *
+castet_animate_element_get_target (const CastetAnimateElement *self)
+{
+    CastetDomNode *node;
+
+    g_return_val_if_fail (CASTET_IS_ANIMATE_ELEMENT (self), NULL);
+
+    node = CASTET_DOM_NODE (self);
+
+    return CASTET_DOM_ELEMENT (node->parent_node);
 }

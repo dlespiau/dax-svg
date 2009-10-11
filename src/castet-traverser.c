@@ -62,6 +62,12 @@ castet_traverser_traverse_polyline_real (CastetTraverser      *self,
 {
 }
 
+static void
+castet_traverser_traverse_animate_real (CastetTraverser      *self,
+                                        CastetAnimateElement *node)
+{
+}
+
 /*
  * GObject overloading
  */
@@ -121,6 +127,7 @@ castet_traverser_class_init (CastetTraverserClass *klass)
     klass->traverse_path = castet_traverser_traverse_path_real;
     klass->traverse_rect = castet_traverser_traverse_rect_real;
     klass->traverse_polyline = castet_traverser_traverse_polyline_real;
+    klass->traverse_animate = castet_traverser_traverse_animate_real;
 }
 
 static void
@@ -171,6 +178,9 @@ castet_traverse_node (CastetTraverser *traverser,
     else if (CASTET_IS_POLYLINE_ELEMENT (node))
         castet_traverser_traverse_polyline (traverser,
                                             (CastetPolylineElement *)node);
+    else if (CASTET_IS_ANIMATE_ELEMENT (node))
+        castet_traverser_traverse_animate (traverser,
+                                           (CastetAnimateElement *)node);
 }
 
 static void
@@ -241,4 +251,13 @@ castet_traverser_traverse_polyline (CastetTraverser      *self,
     CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
 
     klass->traverse_polyline (self, node);
+}
+
+void
+castet_traverser_traverse_animate (CastetTraverser      *self,
+                                   CastetAnimateElement *node)
+{
+    CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_animate (self, node);
 }

@@ -73,6 +73,7 @@ GType castet_element_get_type (void) G_GNUC_CONST;
 CastetDomElement   *castet_element_new              (void);
 const ClutterColor *castet_element_get_fill_color   (CastetElement *element);
 const ClutterColor *castet_element_get_stroke_color (CastetElement *element);
+gfloat              castet_element_get_fill_opacity (CastetElement *element);
 
 G_END_DECLS
 

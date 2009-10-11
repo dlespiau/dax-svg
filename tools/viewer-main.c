@@ -51,6 +51,8 @@ main (int   argc,
     clutter_actor_animate (svg, CLUTTER_LINEAR, 5000, "x", 1000.0f, NULL);
 #endif
 
+    castet_actor_play (svg);
+
     clutter_main();
 
     return EXIT_SUCCESS;

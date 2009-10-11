@@ -69,10 +69,11 @@ struct _CastetBuildTraverserClass
 
 GType                   castet_build_traverser_get_type         (void) G_GNUC_CONST;
 
-CastetTraverser        *castet_build_traverser_new              (CastetDomNode    *node,
+CastetTraverser *       castet_build_traverser_new              (CastetDomNode    *node,
                                                                  ClutterContainer *container);
 void                    castet_build_traverser_set_container    (CastetBuildTraverser *self,
                                                                  ClutterContainer     *container);
+ClutterScore *          castet_build_traverser_get_score        (CastetBuildTraverser *self);
 
 G_END_DECLS
 

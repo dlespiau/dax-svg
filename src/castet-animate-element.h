@@ -25,6 +25,7 @@
 #include <glib-object.h>
 
 #include "castet-element.h"
+#include "castet-types.h"
 
 G_BEGIN_DECLS
 
@@ -67,9 +68,15 @@ struct _CastetAnimateElementClass
     CastetElementClass parent_class;
 };
 
-GType               castet_animate_element_get_type (void) G_GNUC_CONST;
+GType                       castet_animate_element_get_type             (void) G_GNUC_CONST;
 
-CastetDomElement   *castet_animate_element_new      (void);
+CastetDomElement *          castet_animate_element_new                  (void);
+CastetDuration *            castet_animate_element_get_duration         (const CastetAnimateElement *self);
+const gchar *               castet_animate_element_get_attribute_name   (const CastetAnimateElement *self);
+const gchar *               castet_animate_element_get_from             (const CastetAnimateElement *self);
+const gchar *               castet_animate_element_get_to               (const CastetAnimateElement *self);
+const CastetRepeatCount *   castet_animate_element_get_repeat_count     (const CastetAnimateElement *self);
+CastetDomElement *          castet_animate_element_get_target           (const CastetAnimateElement *self);
 
 G_END_DECLS
 

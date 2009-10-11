@@ -67,6 +67,7 @@ ClutterActor   *castet_actor_new_from_file      (const gchar  *filename,
                                                  GError      **error);
 void            castet_actor_set_document       (CastetActor       *actor,
                                                  CastetDomDocument *document);
+void            castet_actor_play               (CastetActor *self);
 
 G_END_DECLS
 

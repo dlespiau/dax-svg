@@ -36,12 +36,14 @@ enum
     PROP_0,
 
     PROP_FILL,
+    PROP_FILL_OPACITY,
     PROP_STROKE,
 };
 
 struct _CastetElementPrivate
 {
     ClutterColor *fill;
+    gfloat fill_opacity;
     ClutterColor *stroke;
 };
 
@@ -122,6 +124,9 @@ castet_element_get_property (GObject    *object,
     case PROP_STROKE:
         clutter_value_set_color (value, priv->stroke);
         break;
+    case PROP_FILL_OPACITY:
+        g_value_set_float (value, priv->fill_opacity);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -151,6 +156,9 @@ castet_element_set_property (GObject      *object,
         color = clutter_value_get_color (value);
         priv->stroke = clutter_color_copy (color);
     }
+        break;
+    case PROP_FILL_OPACITY:
+        priv->fill_opacity = g_value_get_float (value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -199,6 +207,15 @@ castet_element_class_init (CastetElementClass *klass)
                                 CLUTTER_TYPE_COLOR,
                                 CASTET_PARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_STROKE, pspec);
+
+    pspec = g_param_spec_float ("fill-opacity",
+                                "Fill opacity",
+                                "The opacity of the painting operation used to "
+                                "paint the interior of the element",
+                                0.0f, 1.0f,
+                                1.0f,
+                                CASTET_PARAM_READWRITE);
+    g_object_class_install_property (object_class, PROP_FILL_OPACITY, pspec);
 }
 
 static void
@@ -251,4 +268,12 @@ castet_element_get_stroke_color (CastetElement *element)
         return NULL;
 
     return castet_element_get_stroke_color (CASTET_ELEMENT (parent));
+}
+
+gfloat
+castet_element_get_fill_opacity (CastetElement *element)
+{
+    g_return_val_if_fail (CASTET_IS_ELEMENT (element), 1.0f);
+
+    return element->priv->fill_opacity;
 }

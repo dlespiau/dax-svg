@@ -111,8 +111,8 @@ void                castet_repeat_count_free            (CastetRepeatCount *coun
 void                castet_repeat_count_from_number     (CastetRepeatCount *count,
                                                          gfloat             ms);
 
-gboolean            castet_repeat_count_is_indefinite   (CastetRepeatCount *count);
-gfloat              castet_repeat_count_get_value       (CastetRepeatCount *count);
+gboolean            castet_repeat_count_is_indefinite   (const CastetRepeatCount *count);
+gfloat              castet_repeat_count_get_value       (const CastetRepeatCount *count);
 
 gboolean            castet_repeat_count_from_string     (CastetRepeatCount *count,
                                                          const gchar       *string);

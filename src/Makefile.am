@@ -46,6 +46,7 @@ source_c =				\
 	castet-traverser.c		\
 	castet-types.c			\
 	clutter-shape.c			\
+	castet-utils.c			\
 	$(NULL)
 
 source_h =				\
@@ -78,6 +79,7 @@ source_h =				\
 source_h_private = 		\
 	castet-debug.h		\
 	castet-internals.h	\
+	castet-utils.h		\
 	$(NULL)
 
 lib_LTLIBRARIES = libcastet-@CASTET_API_VERSION@.la

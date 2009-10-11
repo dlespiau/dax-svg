@@ -31,6 +31,7 @@ G_DEFINE_TYPE (CastetActor, castet_actor, CLUTTER_TYPE_GROUP)
 struct _CastetActorPrivate
 {
     CastetDomDocument *document;
+    ClutterScore *score;
 };
 
 static void
@@ -47,6 +48,7 @@ castet_actor_rebuild_scene_graph (CastetActor *self)
 {
     CastetActorPrivate *priv = self->priv;
     CastetTraverser *traverser;
+    CastetBuildTraverser *build_traverser;
 
     /* start by removing everyone */
     clutter_container_foreach (CLUTTER_CONTAINER (self), remove_actor, self);
@@ -54,6 +56,11 @@ castet_actor_rebuild_scene_graph (CastetActor *self)
     traverser = castet_build_traverser_new (CASTET_DOM_NODE (priv->document),
                                             CLUTTER_CONTAINER (self));
     castet_traverser_apply (traverser);
+
+    build_traverser = CASTET_BUILD_TRAVERSER (traverser);
+    priv->score = g_object_ref (castet_build_traverser_get_score (build_traverser));
+
+    g_object_unref (traverser);
 }
 
 /*
@@ -152,4 +159,13 @@ castet_actor_set_document (CastetActor       *actor,
     priv->document = document;
 
     castet_actor_rebuild_scene_graph (actor);
+}
+
+/* FIXME a real play/pause/stop api or hand back the ClutterScore ? */
+void
+castet_actor_play (CastetActor *actor)
+{
+    g_return_if_fail (CASTET_IS_ACTOR (actor));
+
+    clutter_score_start (actor->priv->score);
 }

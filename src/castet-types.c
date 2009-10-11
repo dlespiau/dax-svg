@@ -19,44 +19,11 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <stdlib.h>
 #include <string.h>
 
 #include "castet-internals.h"
+#include "castet-utils.h"
 #include "castet-types.h"
-
-static gboolean
-parse_simple_float (gchar  **string,
-                    gfloat  *number)
-{
-    gchar *str = *string;
-    gfloat value;
-
-    if (!g_ascii_isdigit (*str))
-        return FALSE;
-
-    /* integer part */
-    value = (gfloat) strtoul (str, (char **)&str, 10);
-
-    if ((*str) == '.') {
-        gfloat divisor = 0.1;
-
-        /* 5. is not a valid number */
-        if (!g_ascii_isdigit (*++str))
-            return FALSE;
-
-        while (g_ascii_isdigit (*str)) {
-            value += (*str - '0') * divisor;
-            divisor *= 0.1;
-            str++;
-        }
-    }
-
-    *string = str;
-    *number = value;
-
-    return TRUE;
-}
 
 /*
  * CastetDuration
@@ -156,7 +123,7 @@ castet_duration_from_string (CastetDuration *dur,
     while (g_ascii_isspace (*str))
         str++;
 
-    if (parse_simple_float (&str, &value) == FALSE)
+    if (_castet_utils_parse_simple_float (&str, &value) == FALSE)
         return FALSE;
 
     while (g_ascii_isspace (*str))
@@ -285,7 +252,7 @@ castet_repeat_count_from_number (CastetRepeatCount *count,
 }
 
 gboolean
-castet_repeat_count_is_indefinite (CastetRepeatCount *count)
+castet_repeat_count_is_indefinite (const CastetRepeatCount *count)
 {
     g_return_val_if_fail (count != NULL, 0.0f);
 
@@ -293,7 +260,7 @@ castet_repeat_count_is_indefinite (CastetRepeatCount *count)
 }
 
 gfloat
-castet_repeat_count_get_value (CastetRepeatCount *count)
+castet_repeat_count_get_value (const CastetRepeatCount *count)
 {
     g_return_val_if_fail (count != NULL, 0.0f);
 
@@ -316,7 +283,7 @@ castet_repeat_count_from_string (CastetRepeatCount *count,
     if (strncmp (str, "indefinite", 10) == 0) {
         value = 0.0f;
         str += 10;
-    } else if (parse_simple_float (&str, &value)) {
+    } else if (_castet_utils_parse_simple_float (&str, &value)) {
         /* value and str are updated by parse_simple_float () */
     } else
         return FALSE;
