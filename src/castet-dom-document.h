@@ -25,6 +25,7 @@
 #include "castet-dom-forward.h"
 #include "castet-dom-node.h"
 #include "castet-dom-element.h"
+#include "castet-dom-text.h"
 
 G_BEGIN_DECLS
 
@@ -92,6 +93,9 @@ CastetDomElement  *castet_dom_document_create_element_ns    (CastetDomDocument  
                                                              const gchar        *namespace_uri,
                                                              const gchar        *qualified_name,
                                                              GError            **err);
+
+CastetDomText     *castet_dom_document_create_text_node     (CastetDomDocument  *self,
+                                                             const gchar        *data);
 
 CastetDomElement  *castet_dom_document_get_element_by_id    (CastetDomDocument *self,
                                                              const gchar       *id);

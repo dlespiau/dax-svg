@@ -169,6 +169,44 @@ test_animate (void)
     g_assert (castet_repeat_count_is_indefinite (count));
 }
 
+static void
+test_title_desc (void)
+{
+    CastetDomDocument *document;
+    CastetDomNode *svg, *title, *desc, *text;
+
+    document = castet_dom_document_new_from_file ("08_01.svg", NULL);
+    g_assert (CASTET_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
+    g_assert (CASTET_IS_SVG_ELEMENT (svg));
+
+    /* <title> */
+    title = castet_dom_node_get_first_child (svg);
+    g_assert (CASTET_IS_TITLE_ELEMENT (title));
+
+    /* text node of <desc> */
+    text = castet_dom_node_get_first_child (title);
+    g_assert (CASTET_IS_DOM_TEXT (text));
+    g_assert_cmpstr (
+        castet_dom_character_data_get_data (CASTET_DOM_CHARACTER_DATA (text)),
+        ==,
+        "Example triangle01- simple example of a 'path'");
+
+    /* <desc> */
+    desc = castet_dom_node_get_next_sibling (title);
+    g_assert (CASTET_IS_DESC_ELEMENT (desc));
+
+    /* text node of <desc> */
+    text = castet_dom_node_get_first_child (desc);
+    g_assert (CASTET_IS_DOM_TEXT (text));
+    g_assert_cmpstr (
+        castet_dom_character_data_get_data (CASTET_DOM_CHARACTER_DATA (text)),
+        ==,
+        "A path that draws a triangle");
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -182,6 +220,7 @@ main (int   argc,
     g_test_add_func ("/parser/polyline", test_polyline);
     g_test_add_func ("/parser/path", test_path);
     g_test_add_func ("/parser/animate", test_animate);
+    g_test_add_func ("/parser/title-desc", test_title_desc);
 
     return g_test_run ();
 }

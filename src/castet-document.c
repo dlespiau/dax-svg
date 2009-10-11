@@ -26,6 +26,7 @@
 #include "castet-polyline-element.h"
 #include "castet-rect-element.h"
 #include "castet-svg-element.h"
+#include "castet-title-element.h"
 #include "castet-document.h"
 
 G_DEFINE_TYPE (CastetDocument, castet_document, CASTET_TYPE_DOM_DOCUMENT)
@@ -56,12 +57,14 @@ castet_document_create_element(CastetDomDocument  *self,
         return castet_path_element_new ();
     if (strcmp (tag_name, "rect") == 0)
         return castet_rect_element_new ();
-    if (strcmp (tag_name, "desc") == 0)
-        return castet_desc_element_new ();
     if (strcmp (tag_name, "animate") == 0)
         return castet_animate_element_new ();
     if (strcmp (tag_name, "polyline") == 0)
         return castet_polyline_element_new ();
+    if (strcmp (tag_name, "desc") == 0)
+        return castet_desc_element_new ();
+    if (strcmp (tag_name, "title") == 0)
+        return castet_title_element_new ();
 
     return NULL;
 }

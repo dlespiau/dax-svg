@@ -26,10 +26,12 @@ source_c =				\
 	castet-build-traverser.c	\
 	castet-core.c			\
 	castet-debug.c			\
+	castet-dom-character-data.c	\
 	castet-dom-document.c		\
 	castet-dom-element.c		\
 	castet-dom-exception.c		\
 	castet-dom-node.c		\
+	castet-dom-text.c		\
 	castet-document.c		\
 	castet-desc-element.c		\
 	castet-element.c		\
@@ -43,10 +45,11 @@ source_c =				\
 	castet-rect-element.c		\
 	castet-svg-element.c		\
 	castet-svg-exception.c		\
+	castet-title-element.c		\
 	castet-traverser.c		\
 	castet-types.c			\
-	clutter-shape.c			\
 	castet-utils.c			\
+	clutter-shape.c			\
 	$(NULL)
 
 source_h =				\
@@ -55,10 +58,12 @@ source_h =				\
 	castet-animate-element.h	\
 	castet-build-traverser.h	\
 	castet-core.h			\
+	castet-dom-character-data.h	\
 	castet-dom-document.h		\
 	castet-dom-element.h		\
 	castet-dom-exception.h		\
 	castet-dom-node.h		\
+	castet-dom-text.h		\
 	castet-document.h		\
 	castet-desc-element.h		\
 	castet-element.h		\
@@ -71,9 +76,10 @@ source_h =				\
 	castet-rect-element.h		\
 	castet-svg-element.h		\
 	castet-svg-exception.h		\
+	castet-title-element.h		\
 	castet-traverser.h		\
-	clutter-shape.h			\
 	castet-types.h			\
+	clutter-shape.h			\
 	$(NULL)
 
 source_h_private = 		\

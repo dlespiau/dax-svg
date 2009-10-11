@@ -31,16 +31,17 @@ struct _ParserContext {
 };
 
 static void
-castet_dom_document_read_node(CastetDomDocument *document,
-                              ParserContext     *ctx)
+castet_dom_document_read_node (CastetDomDocument *document,
+                               ParserContext     *ctx)
 {
     int type;
 
-    type = xmlTextReaderNodeType(ctx->reader);
+    type = xmlTextReaderNodeType (ctx->reader);
+
     switch (type) {
     case CASTET_DOM_NODE_TYPE_ELEMENT:
     {
-        const xmlChar *local_name = xmlTextReaderConstLocalName(ctx->reader);
+        const xmlChar *local_name = xmlTextReaderConstLocalName (ctx->reader);
         const gchar *name = (const gchar *)local_name;
         CastetDomElement *new_element;
         gboolean is_empty = FALSE;
@@ -53,7 +54,7 @@ castet_dom_document_read_node(CastetDomDocument *document,
                 castet_dom_document_create_element (document, "desc", NULL);
         }
 
-        CASTET_NOTE (PARSING, "append %s to %s",
+        CASTET_NOTE (PARSING, "Append %s to %s",
                      G_OBJECT_TYPE_NAME (new_element),
                      G_OBJECT_TYPE_NAME (ctx->current_node));
 
@@ -82,11 +83,36 @@ castet_dom_document_read_node(CastetDomDocument *document,
             ctx->current_node = ctx->current_node->parent_node;
         break;
     }
+
     case CASTET_DOM_NODE_TYPE_END_ELEMENT:
         CASTET_NOTE (PARSING,
                      "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
         ctx->current_node = ctx->current_node->parent_node;
         break;
+
+    case CASTET_DOM_NODE_TYPE_TEXT_NODE:
+    case CASTET_DOM_NODE_TYPE_CDATA_SECTION:
+    {
+        const xmlChar *value = xmlTextReaderConstValue (ctx->reader);
+        const gchar *data = (const gchar *)value;
+        CastetDomText *new_text;
+
+        new_text = castet_dom_document_create_text_node (document, data);
+
+        /* Happens if we are short on memory, hopefully never */
+        if (G_UNLIKELY (new_text == NULL)) {
+            g_critical ("Cannot create text node");
+            break;
+        }
+
+        CASTET_NOTE (PARSING, "Append text node to %s",
+                     G_OBJECT_TYPE_NAME (ctx->current_node));
+
+        castet_dom_node_append_child (ctx->current_node,
+                                      CASTET_DOM_NODE (new_text),
+                                      NULL);
+        break;
+    }
     default:
         break;
     }

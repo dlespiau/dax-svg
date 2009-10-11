@@ -93,7 +93,8 @@ struct _CastetDomNode
 
     gchar *namespace_uri;
     CastetDomDocument *owner_document;
-    gchar *text_content;
+    gchar *text_content;    /* FIXME this is bad, text_content has to be
+                               build using children text nodes */
 
     CastetDomNode *parent_node;
     CastetDomNode *first_child;

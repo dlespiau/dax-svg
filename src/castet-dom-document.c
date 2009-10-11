@@ -161,3 +161,15 @@ castet_dom_document_new (void)
 {
     return g_object_new (CASTET_TYPE_DOM_DOCUMENT, NULL);
 }
+
+CastetDomText *
+castet_dom_document_create_text_node (CastetDomDocument  *self,
+                                      const gchar        *data)
+{
+    CastetDomText *text;
+
+    text = castet_dom_text_new ();
+    castet_dom_character_data_set_data (CASTET_DOM_CHARACTER_DATA (text), data);
+
+    return text;
+}
