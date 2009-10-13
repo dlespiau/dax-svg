@@ -147,6 +147,10 @@ AS_CASE([$enable_debug],
 
 AC_SUBST(CASTET_DEBUG_CFLAGS)
 
+dnl === GObject-Introspection check ===========================================
+
+GOBJECT_INTROSPECTION_CHECK([0.6.4])
+
 AC_OUTPUT([
     Makefile
     build/Makefile
@@ -157,11 +161,12 @@ AC_OUTPUT([
 ])
 
 echo ""
-echo "             Castet $VERSION"
-echo "          ==================="
+echo "                   Castet $VERSION"
+echo "                ==================="
 echo ""
-echo "            prefix:   ${prefix}"
-echo "    Compiler flags:   ${MAINTAINER_CFLAGS} ${CPPFLAGS}"
+echo "                 prefix:   ${prefix}"
+echo "         Compiler flags:   ${MAINTAINER_CFLAGS} ${CPPFLAGS}"
 echo ""
-echo "       debug level:   ${enable_debug}"
+echo "            debug level:   ${enable_debug}"
+echo "  GObject introspection:   ${enable_introspection}"
 echo ""

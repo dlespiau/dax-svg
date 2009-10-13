@@ -1,11 +1,11 @@
 include $(top_srcdir)/build/autotools/Makefile.am.silent
 
 NULL = #
+CLEANFILES = #
 
 AM_CFLAGS =				\
 	$(CASTET_CFLAGS)		\
 	$(CASTET_DEBUG_CFLAGS)		\
-	$(MAINTAINER_CFLAGS)		\
 	-DG_LOG_DOMAIN=\"Castet\"	\
 	$(NULL)
 
@@ -106,6 +106,11 @@ libcastet_@CASTET_API_VERSION@_la_SOURCES =	\
 	$(source_h_private)			\
 	$(NULL)
 
+libcastet_@CASTET_API_VERSION@_la_CFLAGS =	\
+	$(AM_CFLAGS)				\
+	$(MAINTAINER_CFLAGS)			\
+	$(NULL)
+
 libcastet_@CASTET_API_VERSION@_la_LIBADD  = 	\
 	$(CASTET_LIBS)				\
 	$(NULL)
@@ -129,7 +134,47 @@ castet-enum-types.c: castet-enum-types.h castet-enum-types.c.in
 	cp xgen-cetc castet-enum-types.c && \
 	rm -f xgen-cetc
 
-CLEANFILES =		\
+if HAVE_INTROSPECTION
+BUILT_GIRSOURCES =
+
+Castet-@CASTET_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libcastet-@CASTET_API_VERSION@.la
+	$(QUIET_GEN)$(INTROSPECTION_SCANNER) -v \
+		--namespace Castet --nsversion=@CASTET_API_VERSION@ \
+		$(AM_CFLAGS) \
+		--c-include='castet/castet.h' \
+		--include=GObject-2.0 \
+		--include=Clutter-1.0 \
+		--library=libcastet-@CASTET_API_VERSION@.la \
+		--libtool="$(top_builddir)/libtool" \
+	        --pkg gobject-2.0 \
+	        --output $@ \
+		$(castet_HEADERS) \
+		$(source_c)
+
+BUILT_GIRSOURCES += Castet-@CASTET_API_VERSION@.gir
+#
+# INTROSPECTION_GIRDIR/INTROSPECTION_TYPELIBDIR aren't the right place to
+# install anything - we need to install inside our prefix.
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(BUILT_GIRSOURCES)
+
+typelibsdir = $(libdir)/girepository-1.0/
+
+typelibs_DATA = $(BUILT_GIRSOURCES:.gir=.typelib)
+
+%.typelib: %.gir $(INTROSPECTION_COMPILER)
+	$(QUIET_GEN) \
+	LD_LIBRARY_PATH=.libs$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH} \
+	$(INTROSPECTION_COMPILER) \
+		--includedir=$(srcdir) \
+		--includedir=. \
+		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+
+CLEANFILES += $(BUILT_GIRSOURCES) $(typelibs_DATA)
+
+endif # HAVE_INTROSPECTION
+
+CLEANFILES +=		\
 	$(ENUMFILES)	\
 	$(STAMPFILES)	\
 	$(NULL)
