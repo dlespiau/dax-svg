@@ -23,6 +23,7 @@
 #include "castet-actor.h"
 #include "castet-animate-element.h"
 #include "castet-build-traverser.h"
+#include "castet-circle-element.h"
 #include "castet-core.h"
 #include "castet-dom-character-data.h"
 #include "castet-dom-document.h"

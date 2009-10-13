@@ -24,6 +24,7 @@ source_c =				\
 	castet-actor.c			\
 	castet-animate-element.c	\
 	castet-build-traverser.c	\
+	castet-circle-element.c		\
 	castet-core.c			\
 	castet-debug.c			\
 	castet-dom-character-data.c	\
@@ -58,6 +59,7 @@ source_h =				\
 	castet-actor.h			\
 	castet-animate-element.h	\
 	castet-build-traverser.h	\
+	castet-circle-element.h		\
 	castet-core.h			\
 	castet-dom-character-data.h	\
 	castet-dom-document.h		\

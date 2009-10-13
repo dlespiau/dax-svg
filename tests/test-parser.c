@@ -251,6 +251,32 @@ test_script (void)
         _18_91_script);
 }
 
+static void
+test_circle (void)
+{
+    CastetDomDocument *document;
+    CastetDomNode *svg, *circle;
+    CastetScriptType type;
+    ClutterUnits *units;
+
+    document = castet_dom_document_new_from_file ("09_03.svg", NULL);
+    g_assert (CASTET_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
+    g_assert (CASTET_IS_SVG_ELEMENT (svg));
+
+    /* <circle> */
+    circle = castet_dom_node_get_last_child (svg);
+    g_assert (CASTET_IS_CIRCLE_ELEMENT (circle));
+    g_object_get (circle, "cx", &units, NULL);
+    g_assert_cmpfloat (clutter_units_get_unit_value (units), ==, 600.0f);
+    g_object_get (circle, "cy", &units, NULL);
+    g_assert_cmpfloat (clutter_units_get_unit_value (units), ==, 200.0f);
+    g_object_get (circle, "r", &units, NULL);
+    g_assert_cmpfloat (clutter_units_get_unit_value (units), ==, 100.0f);
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -266,6 +292,7 @@ main (int   argc,
     g_test_add_func ("/parser/animate", test_animate);
     g_test_add_func ("/parser/title-desc", test_title_desc);
     g_test_add_func ("/parser/script", test_script);
+    g_test_add_func ("/parser/circle", test_circle);
 
     return g_test_run ();
 }

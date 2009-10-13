@@ -68,6 +68,12 @@ castet_traverser_traverse_animate_real (CastetTraverser      *self,
 {
 }
 
+static void
+castet_traverser_traverse_circle_real (CastetTraverser     *self,
+                                       CastetCircleElement *node)
+{
+}
+
 /*
  * GObject overloading
  */
@@ -128,6 +134,7 @@ castet_traverser_class_init (CastetTraverserClass *klass)
     klass->traverse_rect = castet_traverser_traverse_rect_real;
     klass->traverse_polyline = castet_traverser_traverse_polyline_real;
     klass->traverse_animate = castet_traverser_traverse_animate_real;
+    klass->traverse_circle = castet_traverser_traverse_circle_real;
 }
 
 static void
@@ -182,6 +189,9 @@ castet_traverse_node (CastetTraverser *traverser,
     else if (CASTET_IS_ANIMATE_ELEMENT (node))
         castet_traverser_traverse_animate (traverser,
                                            (CastetAnimateElement *)node);
+    else if (CASTET_IS_CIRCLE_ELEMENT (node))
+        castet_traverser_traverse_circle (traverser,
+                                           (CastetCircleElement *)node);
 }
 
 static void
@@ -260,4 +270,13 @@ castet_traverser_traverse_animate (CastetTraverser      *self,
     CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
 
     klass->traverse_animate (self, node);
+}
+
+void
+castet_traverser_traverse_circle (CastetTraverser     *self,
+                                  CastetCircleElement *node)
+{
+    CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_circle (self, node);
 }

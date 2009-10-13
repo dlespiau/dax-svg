@@ -193,6 +193,65 @@ castet_build_traverser_traverse_polyline (CastetTraverser       *traverser,
 }
 
 static void
+castet_build_traverser_traverse_circle (CastetTraverser     *traverser,
+                                        CastetCircleElement *node)
+{
+    CastetBuildTraverser *build = CASTET_BUILD_TRAVERSER (traverser);
+    CastetBuildTraverserPrivate *priv = build->priv;
+    CastetElement *element = CASTET_ELEMENT (node);
+    const ClutterColor *fill_color, *stroke_color;
+    ClutterActor *circle;
+    ClutterPath *path;
+    ClutterUnits *cx_u, *cy_u, *r_u;
+    gfloat cx, cy, r;
+    static gfloat k = 4 * (G_SQRT2 - 1) / 3;
+
+    circle = clutter_shape_new ();
+
+    /* Build the ClutterPath */
+    cx_u = castet_circle_element_get_cx (node);
+    cy_u = castet_circle_element_get_cy (node);
+    r_u  = castet_circle_element_get_r (node);
+    cx = clutter_units_to_pixels (cx_u);
+    cy = clutter_units_to_pixels (cy_u);
+    r = clutter_units_to_pixels (r_u);
+
+    path = clutter_path_new ();
+
+    clutter_path_add_move_to (path, cx + r, cy);
+    clutter_path_add_curve_to (path,
+                               cx + r, cy + r * k,
+                               cx + r * k, cy + r,
+                               cx, cy + r);
+    clutter_path_add_curve_to (path,
+                               cx - r * k , cy + r,
+                               cx - r , cy + r * k,
+                               cx - r, cy);
+    clutter_path_add_curve_to (path,
+                               cx - r, cy - r * k,
+                               cx - r * k, cy - r,
+                               cx, cy - r);
+    clutter_path_add_curve_to (path,
+                               cx + r * k, cy - r,
+                               cx + r, cy - r * k,
+                               cx + r, cy);
+    clutter_path_add_close (path);
+
+    g_object_set (circle, "path", path, NULL);
+
+    /* handle fill / stroke colors */
+    fill_color = castet_element_get_fill_color (element);
+    stroke_color = castet_element_get_stroke_color (element);
+    if (fill_color) {
+        g_object_set (circle, "color", fill_color, NULL);
+    }
+    if (stroke_color)
+        g_object_set (circle, "border-color", stroke_color, NULL);
+
+    clutter_container_add_actor (priv->container, circle);
+}
+
+static void
 _string_to_value (const gchar *string,
                   GValue      *dest)
 {
@@ -351,6 +410,7 @@ castet_build_traverser_class_init (CastetBuildTraverserClass *klass)
     traverser_class->traverse_polyline =
         castet_build_traverser_traverse_polyline;
     traverser_class->traverse_animate = castet_build_traverser_traverse_animate;
+    traverser_class->traverse_circle = castet_build_traverser_traverse_circle;
 }
 
 static void
