@@ -8,7 +8,6 @@ Makefile.in
 TAGS
 aclocal.m4
 autom4te.cache
-autotools
 config.guess
 config.h
 config.h.in
