@@ -91,7 +91,7 @@ AC_C_CONST
 # Check for header files
 AC_HEADER_STDC
 
-PKG_CHECK_MODULES([CASTET], [glib-2.0 >= 2.16 gobject-2.0 clutter-1.0 clutter-gst-0.10 gjs-1.0])
+PKG_CHECK_MODULES([CASTET], [glib-2.0 >= 2.16 gobject-2.0 clutter-1.0 clutter-gst-1.0 gjs-gi-1.0  gjs-1.0])
 AC_SUBST(CASTET_CFLAGS)
 AC_SUBST(CASTET_LIBS)
 
