@@ -1,8 +1,9 @@
-/*** BEGIN file-header ***/
 /*
  * Castet - Load and draw SVG
  *
  * Copyright © 2009 Intel Corporation.
+ *
+ * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -18,30 +19,19 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __CASTET_ENUM_TYPES_H__
-#define __CASTET_ENUM_TYPES_H__
+/*
+ * Proxy the actual JS backend
+ */
+
+#ifndef __CASTET_JS_CONTEXT_H__
+#define __CASTET_JS_CONTEXT_H__
 
 #include <glib-object.h>
 
 G_BEGIN_DECLS
 
-const gchar *castet_enum_to_string (GType type, gint value);
+#include "castet-gjs-context.h"
 
-/*** END file-header ***/
-
-/*** BEGIN file-production ***/
-/* enumerations from "@filename@" */
-/*** END file-production ***/
-
-/*** BEGIN file-tail ***/
 G_END_DECLS
 
-#endif /* __CASTET_ENUM_TYPES_H__ */
-/*** END file-tail ***/
-
-/*** BEGIN value-header ***/
-GType @enum_name@_get_type (void) G_GNUC_CONST;
-#define CASTET_TYPE_@ENUMSHORT@ (@enum_name@_get_type())
-
-/*** END value-header ***/
-
+#endif /* __CASTET_JS_CONTEXT_H__ */

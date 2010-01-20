@@ -74,6 +74,18 @@ castet_traverser_traverse_circle_real (CastetTraverser     *self,
 {
 }
 
+static void
+castet_traverser_traverse_script_real (CastetTraverser     *self,
+                                       CastetScriptElement *node)
+{
+}
+
+static void
+castet_traverser_traverse_handler_real (CastetTraverser      *self,
+                                        CastetHandlerElement *node)
+{
+}
+
 /*
  * GObject overloading
  */
@@ -135,6 +147,8 @@ castet_traverser_class_init (CastetTraverserClass *klass)
     klass->traverse_polyline = castet_traverser_traverse_polyline_real;
     klass->traverse_animate = castet_traverser_traverse_animate_real;
     klass->traverse_circle = castet_traverser_traverse_circle_real;
+    klass->traverse_script = castet_traverser_traverse_script_real;
+    klass->traverse_handler = castet_traverser_traverse_handler_real;
 }
 
 static void
@@ -192,6 +206,12 @@ castet_traverse_node (CastetTraverser *traverser,
     else if (CASTET_IS_CIRCLE_ELEMENT (node))
         castet_traverser_traverse_circle (traverser,
                                            (CastetCircleElement *)node);
+    else if (CASTET_IS_SCRIPT_ELEMENT (node))
+        castet_traverser_traverse_script (traverser,
+                                           (CastetScriptElement *)node);
+    else if (CASTET_IS_HANDLER_ELEMENT (node))
+        castet_traverser_traverse_handler (traverser,
+                                           (CastetHandlerElement *)node);
 }
 
 static void
@@ -279,4 +299,22 @@ castet_traverser_traverse_circle (CastetTraverser     *self,
     CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
 
     klass->traverse_circle (self, node);
+}
+
+void
+castet_traverser_traverse_script (CastetTraverser     *self,
+                                  CastetScriptElement *node)
+{
+    CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_script (self, node);
+}
+
+void
+castet_traverser_traverse_handler (CastetTraverser      *self,
+                                   CastetHandlerElement *node)
+{
+    CastetTraverserClass *klass = CASTET_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_handler (self, node);
 }

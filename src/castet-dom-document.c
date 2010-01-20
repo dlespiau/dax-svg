@@ -17,6 +17,7 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "castet-dom-private.h"
 #include "castet-dom-element.h"
 #include "castet-dom-document.h"
 
@@ -31,7 +32,39 @@ G_DEFINE_ABSTRACT_TYPE (CastetDomDocument,
 
 struct _CastetDomDocumentPrivate
 {
+    GPtrArray *namespaces;
 };
+
+static gchar xml_ns[]        = "http://www.w3.org/XML/1998/namespace";
+static gchar xmlns_ns[]      = "http://www.w3.org/2000/xmlns/";
+
+/*
+ * private helpers
+ */
+
+void
+_castet_dom_document_add_namespace (CastetDomDocument *document,
+                                    const gchar       *uri,
+                                    const gchar       *prefix)
+{
+    CastetXmlNamespace *ns;
+
+    ns = g_slice_new (CastetXmlNamespace);
+    ns->uri = g_intern_static_string (uri);
+    ns->prefix = g_intern_static_string (prefix);
+
+    g_ptr_array_add (document->priv->namespaces, ns);
+}
+
+static void
+_castet_dom_document_free_namespaces (CastetDomDocument *document)
+{
+    CastetDomDocumentPrivate *priv = document->priv;
+    guint i;
+
+    for (i = 0; i < priv->namespaces->len; i++)
+        g_slice_free (CastetXmlNamespace, priv->namespaces->pdata[i]);
+}
 
 /*
  * CastetDomDocument
@@ -40,9 +73,15 @@ struct _CastetDomDocumentPrivate
 CastetDomElement *
 castet_dom_document_get_document_element(CastetDomDocument *self)
 {
-    g_return_val_if_fail(CASTET_IS_DOM_DOCUMENT(self), NULL);
+    CastetDomNode *document_node;
+    CastetDomNode *element_node;
 
-    return CASTET_DOM_ELEMENT(castet_dom_node_get_first_child(CASTET_DOM_NODE(self)));
+    g_return_val_if_fail (CASTET_IS_DOM_DOCUMENT (self), NULL);
+
+    document_node = CASTET_DOM_NODE (self);
+    element_node = castet_dom_node_get_first_child (document_node);
+
+    return CASTET_DOM_ELEMENT (element_node);
 }
 
 /* DOM attributes */
@@ -50,47 +89,49 @@ castet_dom_document_get_document_element(CastetDomDocument *self)
 /* DOM methods */
 
 CastetDomElement *
-castet_dom_document_create_element(CastetDomDocument  *self,
-                                   const gchar        *tag_name,
-                                   GError            **err)
+castet_dom_document_create_element (CastetDomDocument  *self,
+                                    const gchar        *tag_name,
+                                    GError            **err)
 {
-    CastetDomDocumentClass *klass = CASTET_DOM_DOCUMENT_GET_CLASS(self);
+    CastetDomDocumentClass *klass = CASTET_DOM_DOCUMENT_GET_CLASS (self);
 
-    g_return_val_if_fail(klass != NULL, NULL);
+    g_return_val_if_fail (klass != NULL, NULL);
 
     if (klass->create_element)
-        return klass->create_element(self, tag_name, err);
+        return klass->create_element (self, tag_name, err);
 
     return NULL;
 }
 
 CastetDomElement *
-castet_dom_document_create_element_ns(CastetDomDocument  *self,
-                                      const gchar        *namespace_uri,
-                                      const gchar        *qualified_name,
-                                      GError            **err)
+castet_dom_document_create_element_ns (CastetDomDocument  *self,
+                                       const gchar        *namespace_uri,
+                                       const gchar        *qualified_name,
+                                       GError            **err)
 {
-    CastetDomDocumentClass *klass = CASTET_DOM_DOCUMENT_GET_CLASS(self);
+    CastetDomDocumentClass *klass = CASTET_DOM_DOCUMENT_GET_CLASS (self);
 
-    g_return_val_if_fail(klass != NULL, NULL);
+    g_return_val_if_fail (klass != NULL, NULL);
 
     if (klass->create_element_ns)
-        return klass->create_element_ns(self, namespace_uri, qualified_name,
-                                        err);
+        return klass->create_element_ns (self,
+                                         namespace_uri,
+                                         qualified_name,
+                                         err);
 
     return NULL;
 }
 
 CastetDomElement *
-castet_dom_document_get_element_by_id(CastetDomDocument *self,
-                                      const gchar       *id)
+castet_dom_document_get_element_by_id (CastetDomDocument *self,
+                                       const gchar       *id)
 {
-    CastetDomDocumentClass *klass = CASTET_DOM_DOCUMENT_GET_CLASS(self);
+    CastetDomDocumentClass *klass = CASTET_DOM_DOCUMENT_GET_CLASS (self);
 
-    g_return_val_if_fail(klass != NULL, NULL);
+    g_return_val_if_fail (klass != NULL, NULL);
 
     if (klass->get_element_by_id)
-        return klass->get_element_by_id(self, id);
+        return klass->get_element_by_id (self, id);
 
     return NULL;
 }
@@ -134,6 +175,10 @@ castet_dom_document_dispose (GObject *object)
 static void
 castet_dom_document_finalize (GObject *object)
 {
+    CastetDomDocument *self = CASTET_DOM_DOCUMENT (object);
+
+    _castet_dom_document_free_namespaces (self);
+
     G_OBJECT_CLASS (castet_dom_document_parent_class)->finalize (object);
 }
 
@@ -142,7 +187,7 @@ castet_dom_document_class_init (CastetDomDocumentClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    /* g_type_class_add_private (klass, sizeof (CastetDomDocumentPrivate)); */
+    g_type_class_add_private (klass, sizeof (CastetDomDocumentPrivate));
 
     object_class->get_property = castet_dom_document_get_property;
     object_class->set_property = castet_dom_document_set_property;
@@ -153,7 +198,13 @@ castet_dom_document_class_init (CastetDomDocumentClass *klass)
 static void
 castet_dom_document_init (CastetDomDocument *self)
 {
-    /* self->priv = DOM_DOCUMENT_PRIVATE (self); */
+    CastetDomDocumentPrivate *priv;
+
+    self->priv = priv = DOM_DOCUMENT_PRIVATE (self);
+
+    priv->namespaces = g_ptr_array_sized_new (5);
+    _castet_dom_document_add_namespace (self, xml_ns, "xml");
+    _castet_dom_document_add_namespace (self, xmlns_ns, "xmlns");
 }
 
 CastetDomDocument *

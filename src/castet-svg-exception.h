@@ -24,7 +24,7 @@
 
 G_BEGIN_DECLS
 
-#define CASTET_SVG_EXCEPTION_ERROR    wsvg_exception_error_quark()
+#define CASTET_SVG_EXCEPTION_ERROR    castet_exception_error_quark()
 
 typedef enum /*< skip >*/
 {
@@ -33,7 +33,7 @@ typedef enum /*< skip >*/
     CASTET_SVG_EXCEPTION_ERROR_MATRIX_NOT_INVERTABLE,
 } CastetSvgExceptionError;
 
-GQuark wsvg_exception_error_quark(void);
+GQuark castet_exception_error_quark(void);
 
 G_END_DECLS
 

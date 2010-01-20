@@ -207,7 +207,7 @@ test_title_desc (void)
         "A path that draws a triangle");
 }
 
-static const gchar _18_91_script[] = "\n\
+static const gchar _18_01_script[] = "\n\
     function circle_click(evt) {\n\
        var circle = evt.target;\n\
        var currentRadius = circle.getFloatTrait(\"r\");\n\
@@ -248,7 +248,7 @@ test_script (void)
     g_assert_cmpstr (
         castet_dom_character_data_get_data (CASTET_DOM_CHARACTER_DATA (text)),
         ==,
-        _18_91_script);
+        _18_01_script);
 }
 
 static void
@@ -270,11 +270,58 @@ test_circle (void)
     circle = castet_dom_node_get_last_child (svg);
     g_assert (CASTET_IS_CIRCLE_ELEMENT (circle));
     g_object_get (circle, "cx", &units, NULL);
-    g_assert_cmpfloat (clutter_units_get_unit_value (units), ==, 600.0f);
+    g_assert_cmpfloat (clutter_units_get_unit_value (units), ==, 400.0f);
     g_object_get (circle, "cy", &units, NULL);
     g_assert_cmpfloat (clutter_units_get_unit_value (units), ==, 200.0f);
     g_object_get (circle, "r", &units, NULL);
     g_assert_cmpfloat (clutter_units_get_unit_value (units), ==, 100.0f);
+}
+
+static const gchar _18_01_handler[] = "\n\
+         circle_click(evt);\n\
+    ";
+
+static void
+test_handler (void)
+{
+    CastetDomDocument *document;
+    CastetDomNode *svg, *text, *circle, *handler, *text_node;
+    CastetScriptType type;
+    CastetXmlEventType event_type;
+
+    document = castet_dom_document_new_from_file ("18_01.svg", NULL);
+    g_assert (CASTET_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
+    g_assert (CASTET_IS_SVG_ELEMENT (svg));
+
+    /* <text> */
+    text = castet_dom_node_get_last_child (svg);
+#if 0
+    FIXME enable this when the text element is parsed
+    g_assert (CASTET_IS_TEXT_ELEMENT (text));
+#endif
+
+    /* <circle> */
+    circle = castet_dom_node_get_previous_sibling (text);
+    g_assert (CASTET_IS_CIRCLE_ELEMENT (circle));
+
+    /* <handler> */
+    handler = castet_dom_node_get_first_child (circle);
+    g_assert (CASTET_IS_HANDLER_ELEMENT (handler));
+    g_object_get (handler, "type", &type, NULL);
+    g_assert_cmpint (type, ==, CASTET_SCRIPT_TYPE_ECMASCRIPT);
+    g_object_get (handler, "event", &event_type, NULL);
+    g_assert_cmpint (event_type, ==, CASTET_XML_EVENT_TYPE_CLICK);
+
+    /* text node of <handler> */
+    text_node = castet_dom_node_get_first_child (handler);
+    g_assert (CASTET_IS_DOM_TEXT (text_node));
+    g_assert_cmpstr (
+        castet_dom_character_data_get_data (CASTET_DOM_CHARACTER_DATA (text_node)),
+        ==,
+        _18_01_handler);
 }
 
 int
@@ -293,6 +340,7 @@ main (int   argc,
     g_test_add_func ("/parser/title-desc", test_title_desc);
     g_test_add_func ("/parser/script", test_script);
     g_test_add_func ("/parser/circle", test_circle);
+    g_test_add_func ("/parser/handler", test_handler);
 
     return g_test_run ();
 }

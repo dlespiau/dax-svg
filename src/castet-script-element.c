@@ -21,6 +21,7 @@
 
 #include "castet-internals.h"
 #include "castet-enum-types.h"
+#include "castet-dom-text.h"
 #include "castet-script-element.h"
 
 G_DEFINE_TYPE (CastetScriptElement, castet_script_element, CASTET_TYPE_ELEMENT)
@@ -124,4 +125,28 @@ CastetDomElement *
 castet_script_element_new (void)
 {
     return g_object_new (CASTET_TYPE_SCRIPT_ELEMENT, NULL);
+}
+
+CastetScriptType
+castet_script_element_get_script_type (const CastetScriptElement *script)
+{
+    g_return_val_if_fail (CASTET_IS_SCRIPT_ELEMENT (script), 0);
+
+    return script->priv->type;
+}
+
+const gchar *
+castet_script_element_get_code (const CastetScriptElement *script)
+{
+    CastetDomNode *text;
+
+    g_return_val_if_fail (CASTET_IS_SCRIPT_ELEMENT (script), NULL);
+
+    text = castet_dom_node_get_first_child (CASTET_DOM_NODE (script));
+    if (text && CASTET_IS_DOM_TEXT (text)) {
+        CastetDomCharacterData *char_data = CASTET_DOM_CHARACTER_DATA (text);
+        return castet_dom_character_data_get_data (char_data);
+    }
+
+    return "";
 }

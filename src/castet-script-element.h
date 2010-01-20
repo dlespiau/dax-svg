@@ -57,7 +57,7 @@ typedef struct _CastetScriptElementPrivate CastetScriptElementPrivate;
 
 #define CASTET_SCRIPT_TYPE_DEFAULT      CASTET_SCRIPT_TYPE_ECMASCRIPT
 
-typedef enum
+typedef enum /*< prefix=CASTET_SCRIPT_TYPE >*/
 {
     CASTET_SCRIPT_TYPE_ECMASCRIPT,      /*< nick=application/ecmascript >*/
     CASTET_SCRIPT_TYPE_JAVA_ARCHIVE     /*< nick=application/java-archive >*/
@@ -75,9 +75,11 @@ struct _CastetScriptElementClass
     CastetElementClass parent_class;
 };
 
-GType               castet_script_element_get_type  (void) G_GNUC_CONST;
+GType               castet_script_element_get_type          (void) G_GNUC_CONST;
 
-CastetDomElement *  castet_script_element_new       (void);
+CastetDomElement *  castet_script_element_new               (void);
+CastetScriptType    castet_script_element_get_script_type   (const CastetScriptElement *script);
+const gchar *       castet_script_element_get_code          (const CastetScriptElement *script);
 
 G_END_DECLS
 

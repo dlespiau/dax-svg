@@ -25,6 +25,7 @@
 #include "castet-build-traverser.h"
 #include "castet-circle-element.h"
 #include "castet-core.h"
+#include "castet-dom-forward.h"
 #include "castet-dom-character-data.h"
 #include "castet-dom-document.h"
 #include "castet-dom-element.h"
@@ -36,6 +37,7 @@
 #include "castet-element-traversal.h"
 #include "castet-enum-types.h"
 #include "castet-g-element.h"
+#include "castet-handler-element.h"
 #include "castet-knot-sequence.h"
 #include "castet-parser.h"
 #include "castet-path-element.h"
@@ -46,5 +48,9 @@
 #include "castet-title-element.h"
 #include "castet-traverser.h"
 #include "castet-types.h"
+#include "castet-xml-forward.h"
+#include "castet-xml-event.h"
+#include "castet-xml-event-target.h"
+#include "castet-xml-event-listener.h"
 
 #endif /* __CASTET_H__ */

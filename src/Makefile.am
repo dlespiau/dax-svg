@@ -39,6 +39,8 @@ source_c =				\
 	castet-element-traversal.c	\
 	castet-enum-types.c		\
 	castet-g-element.c		\
+	castet-gjs-context.c		\
+	castet-handler-element.c	\
 	castet-knot-sequence.c		\
 	castet-parser.c			\
 	castet-path-element.c		\
@@ -51,6 +53,9 @@ source_c =				\
 	castet-traverser.c		\
 	castet-types.c			\
 	castet-utils.c			\
+	castet-xml-event.c		\
+	castet-xml-event-target.c	\
+	castet-xml-event-listener.c	\
 	clutter-shape.c			\
 	$(NULL)
 
@@ -61,6 +66,7 @@ source_h =				\
 	castet-build-traverser.h	\
 	castet-circle-element.h		\
 	castet-core.h			\
+	castet-dom-forward.h		\
 	castet-dom-character-data.h	\
 	castet-dom-document.h		\
 	castet-dom-element.h		\
@@ -72,6 +78,8 @@ source_h =				\
 	castet-element.h		\
 	castet-element-traversal.h	\
 	castet-g-element.h		\
+	castet-gjs-context.h		\
+	castet-handler-element.h	\
 	castet-knot-sequence.h		\
 	castet-parser.h			\
 	castet-path-element.h		\
@@ -83,6 +91,9 @@ source_h =				\
 	castet-title-element.h		\
 	castet-traverser.h		\
 	castet-types.h			\
+	castet-xml-event.h		\
+	castet-xml-event-target.h	\
+	castet-xml-event-listener.h	\
 	clutter-shape.h			\
 	$(NULL)
 
@@ -90,6 +101,8 @@ source_h_private = 		\
 	castet-debug.h		\
 	castet-internals.h	\
 	castet-utils.h		\
+	castet-xml-private.h	\
+	castet-dom-private.h	\
 	$(NULL)
 
 lib_LTLIBRARIES = libcastet-@CASTET_API_VERSION@.la

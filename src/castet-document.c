@@ -23,6 +23,7 @@
 #include "castet-circle-element.h"
 #include "castet-desc-element.h"
 #include "castet-g-element.h"
+#include "castet-handler-element.h"
 #include "castet-path-element.h"
 #include "castet-polyline-element.h"
 #include "castet-rect-element.h"
@@ -65,10 +66,12 @@ castet_document_create_element(CastetDomDocument  *self,
         return castet_polyline_element_new ();
     if (strcmp (tag_name, "circle") == 0)
         return castet_circle_element_new ();
-    if (strcmp (tag_name, "desc") == 0)
-        return castet_desc_element_new ();
+    if (strcmp (tag_name, "handler") == 0)
+        return castet_handler_element_new ();
     if (strcmp (tag_name, "script") == 0)
         return castet_script_element_new ();
+    if (strcmp (tag_name, "desc") == 0)
+        return castet_desc_element_new ();
     if (strcmp (tag_name, "title") == 0)
         return castet_title_element_new ();
 

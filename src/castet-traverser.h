@@ -27,9 +27,11 @@
 #include "castet-animate-element.h"
 #include "castet-circle-element.h"
 #include "castet-g-element.h"
+#include "castet-handler-element.h"
 #include "castet-path-element.h"
 #include "castet-polyline-element.h"
 #include "castet-rect-element.h"
+#include "castet-script-element.h"
 #include "castet-svg-element.h"
 
 G_BEGIN_DECLS
@@ -86,6 +88,10 @@ struct _CastetTraverserClass
                                  CastetAnimateElement  *node);
     void (*traverse_circle)     (CastetTraverser      *traverser,
                                  CastetCircleElement  *node);
+    void (*traverse_script)     (CastetTraverser      *traverser,
+                                 CastetScriptElement  *node);
+    void (*traverse_handler)    (CastetTraverser       *traverser,
+                                 CastetHandlerElement  *node);
 };
 
 GType            castet_traverser_get_type       (void) G_GNUC_CONST;
@@ -109,6 +115,10 @@ void             castet_traverser_traverse_animate  (CastetTraverser      *self,
                                                      CastetAnimateElement *node);
 void             castet_traverser_traverse_circle   (CastetTraverser     *self,
                                                      CastetCircleElement *node);
+void             castet_traverser_traverse_script   (CastetTraverser     *self,
+                                                     CastetScriptElement *node);
+void             castet_traverser_traverse_handler  (CastetTraverser      *self,
+                                                     CastetHandlerElement *node);
 
 G_END_DECLS
 

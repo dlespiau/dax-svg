@@ -75,6 +75,21 @@ const ClutterColor *castet_element_get_fill_color   (CastetElement *element);
 const ClutterColor *castet_element_get_stroke_color (CastetElement *element);
 gfloat              castet_element_get_fill_opacity (CastetElement *element);
 
+/*
+ * Trait API
+ */
+
+#define castet_element_get_float_trait(element, name) \
+    castet_element_getFloatTrait(element,name)
+#define castet_element_set_float_trait(element, name, value) \
+    castet_element_setFloatTrait(element, name, value)
+
+gfloat              castet_element_getFloatTrait    (CastetElement *element,
+                                                     const char    *name);
+void                castet_element_setFloatTrait    (CastetElement *element,
+                                                     const char    *name,
+                                                     gfloat         value);
+
 G_END_DECLS
 
 #endif /* __CASTET_ELEMENT_H__ */

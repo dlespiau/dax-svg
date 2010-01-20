@@ -1,8 +1,9 @@
-/*** BEGIN file-header ***/
 /*
  * Castet - Load and draw SVG
  *
  * Copyright © 2009 Intel Corporation.
+ *
+ * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -18,30 +19,29 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __CASTET_ENUM_TYPES_H__
-#define __CASTET_ENUM_TYPES_H__
+#ifndef __CASTET_DOM_PRIVATE_H__
+#define __CASTET_DOM_PRIVATE_H__
 
-#include <glib-object.h>
+#include <glib.h>
+
+#include "castet-xml-private.h"
+#include "castet-xml-event.h"
+#include "castet-dom-document.h"
+#include "castet-dom-element.h"
 
 G_BEGIN_DECLS
 
-const gchar *castet_enum_to_string (GType type, gint value);
+/* castet-dom-document.c */
 
-/*** END file-header ***/
+void    _castet_dom_document_add_namespace  (CastetDomDocument *document,
+                                             const gchar       *uri,
+                                             const gchar       *prefix);
 
-/*** BEGIN file-production ***/
-/* enumerations from "@filename@" */
-/*** END file-production ***/
+/* castet-dom-element.c */
 
-/*** BEGIN file-tail ***/
+void    _castet_dom_element_handle_event    (CastetDomElement *element,
+                                             CastetXmlEvent   *event);
+
 G_END_DECLS
 
-#endif /* __CASTET_ENUM_TYPES_H__ */
-/*** END file-tail ***/
-
-/*** BEGIN value-header ***/
-GType @enum_name@_get_type (void) G_GNUC_CONST;
-#define CASTET_TYPE_@ENUMSHORT@ (@enum_name@_get_type())
-
-/*** END value-header ***/
-
+#endif /* __CASTET_DOM_PRIVATE_H__ */

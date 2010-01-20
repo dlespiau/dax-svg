@@ -70,17 +70,22 @@ castet_dom_document_read_node (CastetDomDocument *document,
         while (xmlTextReaderMoveToNextAttribute (ctx->reader) == 1) {
             const xmlChar *_name = xmlTextReaderConstLocalName (ctx->reader);
             const xmlChar *_value = xmlTextReaderConstValue (ctx->reader);
+            const xmlChar *_ns = xmlTextReaderConstNamespaceUri (ctx->reader);
 
-            castet_dom_element_set_attribute (new_element,
-                                              (const gchar *)_name,
-                                              (const gchar *)_value,
-                                              NULL);
+            castet_dom_element_set_attribute_NS (new_element,
+                                                 (const gchar *)_ns,
+                                                 (const gchar *)_name,
+                                                 (const gchar *)_value,
+                                                 NULL);
         }
 
         /* if the element is empty a CASTET_DOM_NODE_TYPE_END_ELEMENT won't
          * be emited, so update current_node here */
-        if (is_empty)
+        if (is_empty) {
+            CASTET_NOTE (PARSING,
+                         "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
             ctx->current_node = ctx->current_node->parent_node;
+        }
         break;
     }
 
@@ -119,7 +124,7 @@ castet_dom_document_read_node (CastetDomDocument *document,
 }
 
 /**
- * wsvg_document_new:
+ * castet_dom_document_new_from_file:
  *
  * Creates a new #CastetDomDocument. FIXME
  *

@@ -19,6 +19,8 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <string.h>
+
 #include "castet-internals.h"
 #include "castet-debug.h"
 #include "castet-svg-element.h"
@@ -47,12 +49,14 @@ struct _CastetElementPrivate
     ClutterColor *stroke;
 };
 
+static const gchar svg_ns[] = "http://www.w3.org/2000/svg";
+
 /*
  * CastetDomElement overloading
  */
 
 static const gchar *
-castet_element_get_attribute(CastetDomElement *self,
+castet_element_get_attribute (CastetDomElement *self,
                              const gchar      *name)
 {
 #if 0
@@ -101,6 +105,39 @@ castet_element_set_attribute (CastetDomElement  *self,
                  value,
                  G_OBJECT_TYPE_NAME (self));
     g_object_set_property (G_OBJECT (self), name, &new_value);
+}
+
+static const gchar *
+castet_element_get_attribute_NS (CastetDomElement  *self,
+                                 const gchar       *ns,
+                                 const gchar       *name,
+                                 GError           **err)
+{
+    return NULL;
+}
+
+static void
+castet_element_set_attribute_NS (CastetDomElement  *self,
+                                 const gchar       *ns,
+                                 const gchar       *name,
+                                 const gchar       *value,
+                                 GError           **err)
+{
+    /* for now, ns is ignored */
+    castet_element_set_attribute (self, name, value, err);
+
+#if 0
+    CastetDomElementClass *parent_class;
+
+    if (ns == NULL || strcmp (ns, svg_ns) == 0) {
+        castet_element_set_attribute (self, name, value, err);
+        return;
+    }
+
+    /* Unknown ns, the DomElement implementation will handle that for us */
+    parent_class = CASTET_DOM_ELEMENT_CLASS (castet_element_parent_class);
+    parent_class->set_attribute_NS (self, ns, name, value, err);
+#endif
 }
 
 /*
@@ -191,6 +228,8 @@ castet_element_class_init (CastetElementClass *klass)
     object_class->dispose = castet_element_dispose;
     object_class->finalize = castet_element_finalize;
 
+    dom_element_class->get_attribute_NS = castet_element_get_attribute_NS;
+    dom_element_class->set_attribute_NS = castet_element_set_attribute_NS;
     dom_element_class->get_attribute = castet_element_get_attribute;
     dom_element_class->set_attribute = castet_element_set_attribute;
 
@@ -276,4 +315,70 @@ castet_element_get_fill_opacity (CastetElement *element)
     g_return_val_if_fail (CASTET_IS_ELEMENT (element), 1.0f);
 
     return element->priv->fill_opacity;
+}
+
+/*
+ * TraitAccess
+ */
+gfloat
+castet_element_getFloatTrait (CastetElement *element,
+                              const char    *name)
+{
+    GObjectClass *object_class;
+    GParamSpec *pspec;
+    gfloat value = 0.0f;
+
+    /* FIXME, ensure @name is a trait */
+
+    object_class = G_OBJECT_GET_CLASS (element);
+    pspec = g_object_class_find_property (object_class, name);
+    if (pspec == NULL) {
+        /* FIXME exception */
+        g_message ("Unsupported attribute %s for %s",
+                   name,
+                   G_OBJECT_CLASS_NAME (object_class));
+        return 0.0f;
+    }
+
+    g_message ("Type: %s", g_type_name (G_PARAM_SPEC_TYPE (pspec)));
+    if (G_PARAM_SPEC_TYPE (pspec) == G_TYPE_PARAM_FLOAT) {
+        g_object_get (element, name, &value, NULL);
+    } else if ((G_PARAM_SPEC_TYPE (pspec) == CLUTTER_TYPE_PARAM_UNITS) ||
+               (G_PARAM_SPEC_TYPE (pspec) == G_TYPE_PARAM_BOXED)) {
+        ClutterUnits *units;
+
+        g_object_get (element, name, &units, NULL);
+        value = clutter_units_to_pixels (units);
+    }
+
+    return value;
+}
+
+void
+castet_element_setFloatTrait (CastetElement *element,
+                              const char    *name,
+                              gfloat         value)
+{
+    GObjectClass *object_class;
+    GParamSpec *pspec;
+
+    object_class = G_OBJECT_GET_CLASS (element);
+    pspec = g_object_class_find_property (object_class, name);
+    if (pspec == NULL) {
+        /* FIXME exception */
+        g_message ("Unsupported attribute %s for %s",
+                   name,
+                   G_OBJECT_CLASS_NAME (object_class));
+        return;
+    }
+
+    if (G_PARAM_SPEC_TYPE (pspec) == G_TYPE_PARAM_FLOAT) {
+        g_object_set (element, name, value, NULL);
+    } else if ((G_PARAM_SPEC_TYPE (pspec) == CLUTTER_TYPE_PARAM_UNITS) ||
+               (G_PARAM_SPEC_TYPE (pspec) == G_TYPE_PARAM_BOXED)) {
+        ClutterUnits units;
+
+        clutter_units_from_pixels (&units, value);
+        g_object_set (element, name, &units, NULL);
+    }
 }
