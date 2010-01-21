@@ -181,13 +181,15 @@ castet_animate_element_class_init (CastetAnimateElementClass *klass)
     object_class->dispose = castet_animate_element_dispose;
     object_class->finalize = castet_animate_element_finalize;
 
-    pspec = g_param_spec_enum ("attributeType",
-                               "Attribute type",
-                               "The namespace in which the target attribute"
-                               "and its associated values are defined",
-                               CASTET_TYPE_ANIMATION_ATTRIBUTE_TYPE,
-                               CASTET_ANIMATION_ATTRIBUTE_TYPE_AUTO,
-                               CASTET_PARAM_READWRITE);
+    pspec = castet_param_spec_enum ("attributeType",
+                                    "Attribute type",
+                                    "The namespace in which the target "
+                                    "attribute and its associated values are "
+                                    "defined",
+                                    CASTET_TYPE_ANIMATION_ATTRIBUTE_TYPE,
+                                    CASTET_ANIMATION_ATTRIBUTE_TYPE_AUTO,
+                                    CASTET_PARAM_READWRITE,
+                                    CASTET_PARAM_NONE);
     g_object_class_install_property (object_class, PROP_ATTRIBUTE_TYPE, pspec);
 
     pspec = g_param_spec_string ("attributeName",

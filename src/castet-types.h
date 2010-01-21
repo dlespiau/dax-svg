@@ -118,6 +118,87 @@ gboolean            castet_repeat_count_from_string     (CastetRepeatCount *coun
                                                          const gchar       *string);
 gchar *             castet_repeat_count_to_string       (const CastetRepeatCount *count);
 
+/*
+ * CastetParamSpecs
+ */
+
+/**
+ * CastetParamFlags:
+ * @CASTET_PARAM_PROPERTY: if set the parameter is a SVG property, if not it's
+ * a SVG attribute
+ * @CASTET_PARAM_ANIMATABLE: the parameter can be animated
+ * @CASTET_PARAM_INHERITABLE: the parameter can be inherited from an ancestor
+ */
+typedef enum /*< skip >*/
+{
+    CASTET_PARAM_NONE        = 0,
+    CASTET_PARAM_PROPERTY    = 1 << 0,
+    CASTET_PARAM_ANIMATABLE  = 1 << 1,
+    CASTET_PARAM_INHERITABLE = 1 << 2
+} CastetParamFlags;
+
+/*
+ * CastetParamSpecEnum
+ */
+
+typedef struct _CastetParamSpecEnum CastetParamSpecEnum;
+
+/**
+ * CastetParamSpecEnum:
+ * @parent_instance: private #GParamSpec portion
+ * @enum_class: the #GEnumClass for the enum
+ * @default_value: default value for the property specified
+ *
+ * A #GParamSpec derived structure that contains the meta data for enum
+ * properties.
+ */
+struct _CastetParamSpecEnum
+{
+  GParamSpec        parent_instance;
+
+  GEnumClass       *enum_class;
+  gint              default_value;
+  CastetParamFlags  flags;
+};
+
+/**
+ * CASTET_TYPE_PARAM_ENUM:
+ *
+ * The #GType of #CastetParamSpecEnum.
+ */
+#define CASTET_TYPE_PARAM_ENUM          (castet_param_enum_get_type ())
+
+/**
+ * CASTET_IS_PARAM_SPEC_ENUM:
+ * @pspec: a valid #GParamSpec instance
+ *
+ * Checks whether the given #GParamSpec is of type %CASTET_TYPE_PARAM_ENUM.
+ *
+ * Returns: %TRUE on success.
+ */
+#define CASTET_IS_PARAM_SPEC_ENUM(pspec) \
+        (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), CASTET_TYPE_PARAM_ENUM))
+
+/**
+ * CASTET_PARAM_SPEC_ENUM:
+ * @pspec: a valid #GParamSpec instance
+ *
+ * Cast a #GParamSpec instance into a #CastetParamSpecEnum.
+ */
+#define CASTET_PARAM_SPEC_ENUM(pspec)                           \
+          (G_TYPE_CHECK_INSTANCE_CAST ((pspec),                 \
+                                       CASTET_TYPE_PARAM_ENUM,  \
+                                       CastetParamSpecEnum))
+
+GType               castet_param_enum_get_type      (void) G_GNUC_CONST;
+GParamSpec*         castet_param_spec_enum          (const gchar      *name,
+                                                     const gchar      *nick,
+                                                     const gchar      *blurb,
+                                                     GType             enum_type,
+                                                     gint              default_value,
+                                                     GParamFlags       g_flags,
+                                                     CastetParamFlags  castet_flags);
+
 G_END_DECLS
 
 #endif /* __CASTET_TYPES_H__ */

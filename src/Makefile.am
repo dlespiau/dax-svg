@@ -15,7 +15,7 @@ LDADD =						\
 	-export-symbol-regex "^castet.*"	\
 	$(NULL)
 
-ENUMFILES = castet-enum-types.c castet-enum-types.h
+ENUMFILES = castet-enum-types.h castet-enum-types.c
 STAMPFILES = stamp-castet-marshal.h stamp-castet-enum-types.h
 
 BUILT_SOURCES = $(ENUMFILES)

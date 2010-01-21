@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
@@ -23,6 +23,7 @@
 
 #include "castet-internals.h"
 #include "castet-enum-types.h"
+#include "castet-types.h"
 #include "castet-js-context.h"
 #include "castet-xml-event-listener.h"
 #include "castet-dom-text.h"
@@ -168,20 +169,22 @@ castet_handler_element_class_init (CastetHandlerElementClass *klass)
     object_class->dispose = castet_handler_element_dispose;
     object_class->finalize = castet_handler_element_finalize;
 
-    pspec = g_param_spec_enum ("type",
-                               "Type",
-                               "Identifies the programming language used",
-                               CASTET_TYPE_SCRIPT_TYPE,
-                               CASTET_SCRIPT_TYPE_DEFAULT,
-                               CASTET_PARAM_READWRITE);
+    pspec = castet_param_spec_enum ("type",
+                                    "Type",
+                                    "Identifies the programming language used",
+                                    CASTET_TYPE_SCRIPT_TYPE,
+                                    CASTET_SCRIPT_TYPE_DEFAULT,
+                                    CASTET_PARAM_READWRITE,
+                                    CASTET_PARAM_NONE);
     g_object_class_install_property (object_class, PROP_TYPE, pspec);
 
-    pspec = g_param_spec_enum ("event",
-                               "Event",
-                               "The name of the event to handle",
-                               CASTET_TYPE_XML_EVENT_TYPE,
-                               CASTET_XML_EVENT_TYPE_DEFAULT,
-                               CASTET_PARAM_READWRITE);
+    pspec = castet_param_spec_enum ("event",
+                                    "Event",
+                                    "The name of the event to handle",
+                                    CASTET_TYPE_XML_EVENT_TYPE,
+                                    CASTET_XML_EVENT_TYPE_DEFAULT,
+                                    CASTET_PARAM_READWRITE,
+                                    CASTET_PARAM_NONE);
     g_object_class_install_property (object_class, PROP_EVENT_TYPE, pspec);
 }
 

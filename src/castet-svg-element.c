@@ -19,6 +19,7 @@
 
 #include "castet-internals.h"
 #include "castet-enum-types.h"
+#include "castet-types.h"
 #include "castet-svg-element.h"
 
 G_DEFINE_TYPE (CastetSvgElement, castet_svg_element, CASTET_TYPE_ELEMENT)
@@ -155,22 +156,24 @@ castet_svg_element_class_init (CastetSvgElementClass *klass)
     object_class->dispose = castet_svg_element_dispose;
     object_class->finalize = castet_svg_element_finalize;
 
-    pspec = g_param_spec_enum ("version",
-                               "Version",
-                               "The SVG language version to which this "
-                               "document fragment conforms",
-                               CASTET_TYPE_SVG_VERSION,
-                               CASTET_SVG_VERSION_DEFAULT,
-                               CASTET_PARAM_READWRITE);
+    pspec = castet_param_spec_enum ("version",
+                                    "Version",
+                                    "The SVG language version to which this "
+                                    "document fragment conforms",
+                                    CASTET_TYPE_SVG_VERSION,
+                                    CASTET_SVG_VERSION_DEFAULT,
+                                    CASTET_PARAM_READWRITE,
+                                    CASTET_PARAM_NONE);
     g_object_class_install_property (object_class, PROP_VERSION, pspec);
 
-    pspec = g_param_spec_enum ("baseProfile",
-                               "Base profile",
-                               "The minimum SVG language profile believed "
-                               "necessary to correctly render the content",
-                               CASTET_TYPE_SVG_BASE_PROFILE,
-                               CASTET_SVG_BASE_PROFILE_DEFAULT,
-                               CASTET_PARAM_READWRITE);
+    pspec = castet_param_spec_enum ("baseProfile",
+                                    "Base profile",
+                                    "The minimum SVG language profile believed "
+                                    "necessary to correctly render the content",
+                                    CASTET_TYPE_SVG_BASE_PROFILE,
+                                    CASTET_SVG_BASE_PROFILE_DEFAULT,
+                                    CASTET_PARAM_READWRITE,
+                                    CASTET_PARAM_NONE);
     g_object_class_install_property (object_class, PROP_BASE_PROFILE, pspec);
 
     pspec = g_param_spec_boxed ("width",
