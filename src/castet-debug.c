@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright (C) 2009 Intel Corporation
+ * Copyright (C) 2009, 2010 Intel Corporation
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, version 2.1, as
@@ -37,6 +37,7 @@ static GTimer *castet_timer;
 static const GDebugKey castet_debug_keys[] = {
   { "misc",      CASTET_DEBUG_MISC      },
   { "parsing",   CASTET_DEBUG_PARSING   },
+  { "namespace", CASTET_DEBUG_NAMESPACE },
   { "traverser", CASTET_DEBUG_TRAVERSER },
 };
 

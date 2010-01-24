@@ -20,6 +20,7 @@
  */
 
 #include "castet-internals.h"
+#include "castet-private.h"
 #include "castet-enum-types.h"
 #include "castet-types.h"
 #include "castet-dom-text.h"
@@ -113,7 +114,8 @@ castet_script_element_class_init (CastetScriptElementClass *klass)
                                     CASTET_TYPE_SCRIPT_TYPE,
                                     CASTET_SCRIPT_TYPE_DEFAULT,
                                     CASTET_PARAM_READWRITE,
-                                    CASTET_PARAM_NONE);
+                                    CASTET_PARAM_NONE,
+                                    svg_ns);
     g_object_class_install_property (object_class, PROP_TYPE, pspec);
 }
 

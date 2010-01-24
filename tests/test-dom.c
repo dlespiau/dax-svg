@@ -3,11 +3,14 @@
 
 #include <castet.h>
 
+static const gchar svg_ns[] = "http://www.w3.org/2000/svg";
+
 static void
 test_dom_node (void)
 {
     CastetDomDocument *document, *temp_doc;
     CastetDomNode *svg, *desc, *rect, *temp;
+    const gchar *ns_uri;
 
     document = castet_dom_document_new_from_file ("01_01.svg", NULL);
     g_assert (CASTET_IS_DOM_DOCUMENT (document));
@@ -15,6 +18,8 @@ test_dom_node (void)
     /* <svg> */
     svg = CASTET_DOM_NODE (castet_dom_document_get_document_element (document));
     g_assert (CASTET_IS_SVG_ELEMENT (svg));
+    ns_uri = castet_dom_node_get_namespace_uri (svg);
+    g_assert_cmpstr (ns_uri, ==, svg_ns);
     temp = castet_dom_node_get_parent_node (svg);
     g_assert (temp == CASTET_DOM_NODE (document));
     temp = castet_dom_node_get_previous_sibling (svg);

@@ -66,17 +66,6 @@ struct _CastetDomElementClass
 {
     CastetDomNodeClass parent_class;
 
-    const gchar *(*get_attribute_NS)    (CastetDomElement  *self,
-                                         const gchar       *ns,
-                                         const gchar       *name,
-                                         GError           **err);
-
-    void         (*set_attribute_NS)    (CastetDomElement  *self,
-                                         const gchar       *ns,
-                                         const gchar       *name,
-                                         const gchar       *value,
-                                         GError           **err);
-
     const gchar *(*get_attribute)   (CastetDomElement *self,
                                      const gchar      *name);
 
@@ -90,21 +79,30 @@ GType castet_dom_element_get_type (void) G_GNUC_CONST;
 
 CastetDomElement *castet_dom_element_new (void);
 
-const gchar *castet_dom_element_get_attribute_NS    (CastetDomElement  *self,
-                                                     const gchar       *ns,
-                                                     const gchar       *name,
-                                                     GError           **err);
-void         castet_dom_element_set_attribute_NS    (CastetDomElement  *self,
-                                                     const gchar       *ns,
-                                                     const gchar       *name,
-                                                     const gchar       *value,
-                                                     GError           **err);
-const gchar *castet_dom_element_get_attribute       (CastetDomElement *self,
-                                                     const gchar      *name);
-void         castet_dom_element_set_attribute       (CastetDomElement  *self,
-                                                     const gchar       *name,
-                                                     const gchar       *value,
-                                                     GError           **err);
+#define castet_dom_element_get_attribute_ns \
+    castet_dom_element_getAttributeNS
+#define castet_dom_element_set_attribute_ns \
+    castet_dom_element_setAttributeNS
+#define castet_dom_element_get_attribute \
+    castet_dom_element_getAttribute
+#define castet_dom_element_set_attribute \
+    castet_dom_element_setAttribute
+
+const gchar *castet_dom_element_getAttributeNS  (CastetDomElement  *self,
+                                                 const gchar       *ns,
+                                                 const gchar       *name,
+                                                 GError           **err);
+void         castet_dom_element_setAttributeNS  (CastetDomElement  *self,
+                                                 const gchar       *ns,
+                                                 const gchar       *name,
+                                                 const gchar       *value,
+                                                 GError           **err);
+const gchar *castet_dom_element_getAttribute    (CastetDomElement *self,
+                                                 const gchar      *name);
+void         castet_dom_element_setAttribute    (CastetDomElement  *self,
+                                                 const gchar       *name,
+                                                 const gchar       *value,
+                                                 GError           **err);
 G_END_DECLS
 
 #endif /* __CASTET_DOM_ELEMENT_H__ */

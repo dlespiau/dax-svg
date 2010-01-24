@@ -17,8 +17,12 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <string.h>
+
 #include "castet-enum-types.h"
+#include "castet-debug.h"
 #include "castet-xml-event-target.h"
+#include "castet-dom-private.h"
 #include "castet-dom-document.h"
 #include "castet-dom-element.h"
 
@@ -52,6 +56,51 @@ struct _CastetDomElementPrivate
 /*
  * Private helpers
  */
+
+#if 0
+static const gchar *
+castet_dom_element_get_attribute_foreign (CastetDomElement  *self,
+                                          const gchar       *ns,
+                                          const gchar       *name,
+                                          GError           **err)
+{
+    return NULL;
+}
+#endif
+
+/*
+ * Fallback when we are trying to set an attribute that does not have
+ * the same namespace as the DomElement itself
+ * @ns: interned string
+ */
+static void
+castet_dom_element_set_attribute_foreign (CastetDomElement  *self,
+                                          const gchar       *namespace_uri,
+                                          const gchar       *qualified_name,
+                                          const gchar       *value,
+                                          GError           **err)
+{
+    CastetDomNode *node = CASTET_DOM_NODE (self);
+    const gchar *local_name;
+
+    local_name = strchr (qualified_name, ':');
+    if (G_UNLIKELY (local_name == NULL))
+        local_name = qualified_name;
+    else
+        local_name++;
+
+    /* handle xmlns declarations */
+    if (namespace_uri == xmlns_ns) {
+        CASTET_NOTE (NAMESPACE,
+                     "adding namespace '%s' with prefix %s", value, local_name);
+        _castet_dom_document_add_namespace (node->owner_document,
+                                            local_name,
+                                            value);
+        return;
+    }
+
+    castet_dom_element_set_attribute (self, local_name, value, err);
+}
 
 void
 _castet_dom_element_handle_event (CastetDomElement *element,
@@ -138,35 +187,6 @@ castet_xml_event_target_init (CastetXmlEventTargetIface *iface)
 }
 
 /*
- * CastetDomElement implementation
- */
-
-static const gchar *
-castet_dom_element_get_attribute_NS_real (CastetDomElement  *self,
-                                          const gchar       *ns,
-                                          const gchar       *name,
-                                          GError           **err)
-{
-    return NULL;
-}
-
-static void
-castet_dom_element_set_attribute_NS_real (CastetDomElement  *self,
-                                          const gchar       *ns,
-                                          const gchar       *name,
-                                          const gchar       *value,
-                                          GError           **err)
-{
-#if 0
-    CastetDomNode *node = CASTET_DOM_NODE (self);
-    CastetDomDocument *document;
-
-    document = castet_dom_node_get_owner_document (node);
-#endif
-    g_message ("Unsuported attribute %s (%s)", name, ns);
-}
-
-/*
  * GObject overloading
  */
 
@@ -225,9 +245,6 @@ castet_dom_element_class_init (CastetDomElementClass *klass)
     object_class->set_property = castet_dom_element_set_property;
     object_class->dispose = castet_dom_element_dispose;
     object_class->finalize = castet_dom_element_finalize;
-
-    klass->get_attribute_NS = castet_dom_element_get_attribute_NS_real;
-    klass->set_attribute_NS = castet_dom_element_set_attribute_NS_real;
 }
 
 static void
@@ -253,11 +270,12 @@ castet_dom_element_new (void)
 }
 
 const gchar *
-castet_dom_element_get_attribute_NS (CastetDomElement  *self,
-                                     const gchar       *ns,
-                                     const gchar       *name,
-                                     GError           **err)
+castet_dom_element_getAttributeNS (CastetDomElement  *self,
+                                   const gchar       *ns,
+                                   const gchar       *name,
+                                   GError           **err)
 {
+#if 0
     CastetDomElementClass *klass = CASTET_DOM_ELEMENT_GET_CLASS (self);
 
     g_return_val_if_fail (klass != NULL, NULL);
@@ -265,28 +283,95 @@ castet_dom_element_get_attribute_NS (CastetDomElement  *self,
     if (klass->get_attribute_NS)
         return klass->get_attribute_NS (self, ns, name, err);
 
+#endif
     return NULL;
 }
 
 void
-castet_dom_element_set_attribute_NS (CastetDomElement  *self,
-                                     const gchar       *ns,
-                                     const gchar       *name,
-                                     const gchar       *value,
-                                     GError           **err)
+castet_dom_element_setAttributeNS (CastetDomElement  *self,
+                                   const gchar       *namespace_uri,
+                                   const gchar       *qualified_name,
+                                   const gchar       *value,
+                                   GError           **err)
 {
-    CastetDomElementClass *klass = CASTET_DOM_ELEMENT_GET_CLASS (self);
+    const gchar *local_name, *interned_ns;
+    guint prefix_len = 0;
 
-    g_return_if_fail (klass != NULL);
+    interned_ns = g_intern_string (namespace_uri);
 
-    if (klass->set_attribute_NS)
-        klass->set_attribute_NS (self, ns, name, value, err);
+    /* search of a ASCII char in a UTF-8 string */
+    local_name = strchr (qualified_name, ':');
+    if (local_name) {
+        gssize max = local_name - qualified_name;
+        prefix_len = g_utf8_strlen (qualified_name, max);
+    }
+
+    /* the qualifiedName has a prefix and the namespaceURI is null */
+    if (G_UNLIKELY (local_name != NULL && namespace_uri == NULL)) {
+        g_warning ("NAMESPACE_ERR1");
+        /* FIXME: raise NAMESPACE_ERR */
+        return;
+    }
+
+    /* the qualifiedName has a prefix that is "xml" and the namespaceURI is
+     * different from "http://www.w3.org/XML/1998/namespace" */
+    if (G_UNLIKELY (local_name && strncmp (qualified_name, "xml:", 4) == 0 &&
+                    interned_ns != xml_ns ))
+    {
+        g_warning ("NAMESPACE_ERR2");
+        /* FIXME: raise NAMESPACE_ERR */
+        return;
+    }
+
+    /* the qualifiedName or its prefix is "xmlns" and the namespaceURI is
+     * different from "http://www.w3.org/2000/xmlns/" */
+    if (G_UNLIKELY (interned_ns != xmlns_ns &&
+                    ((local_name &&
+                      strncmp (qualified_name, "xmlns:", 6) == 0) ||
+                     strcmp (qualified_name, "xmlns") == 0)))
+    {
+        g_warning ("NAMESPACE_ERR3");
+        /* FIXME: raise NAMESPACE_ERR */
+        return;
+    }
+
+    /* the namespaceURI is "http://www.w3.org/2000/xmlns/" and neither the
+     * qualifiedName nor its prefix is "xmlns" */
+    if (G_UNLIKELY (interned_ns == xmlns_ns &&
+                    (local_name &&
+                      strncmp (qualified_name, "xmlns:", 6) != 0) &&
+                     strcmp (qualified_name, "xmlns") == 0))
+    {
+        g_warning ("NAMESPACE_ERR4");
+        /* FIXME: raise NAMESPACE_ERR */
+        return;
+    }
+
+    if (interned_ns == NULL) {
+        castet_dom_element_set_attribute (self, qualified_name, value, err);
+        return;
+    }
+
+    if (interned_ns == CASTET_DOM_NODE (self)->namespace_uri) {
+        if (local_name == NULL)
+            castet_dom_element_set_attribute (self, qualified_name, value, err);
+        else
+            castet_dom_element_set_attribute (self, local_name, value, err);
+        return;
+    }
+
+    /* handle the rest, xmlns attributes, ev:event, ... */
+    castet_dom_element_set_attribute_foreign (self,
+                                              interned_ns,
+                                              qualified_name,
+                                              value,
+                                              err);
 }
 
 
 const gchar *
-castet_dom_element_get_attribute (CastetDomElement *self,
-                                  const gchar      *name)
+castet_dom_element_getAttribute (CastetDomElement *self,
+                                 const gchar      *name)
 {
     CastetDomElementClass *klass = CASTET_DOM_ELEMENT_GET_CLASS (self);
 
@@ -299,10 +384,10 @@ castet_dom_element_get_attribute (CastetDomElement *self,
 }
 
 void
-castet_dom_element_set_attribute (CastetDomElement  *self,
-                                  const char        *name,
-                                  const char        *value,
-                                  GError           **err)
+castet_dom_element_setAttribute (CastetDomElement  *self,
+                                 const char        *name,
+                                 const char        *value,
+                                 GError           **err)
 {
     CastetDomElementClass *klass = CASTET_DOM_ELEMENT_GET_CLASS (self);
 
@@ -311,4 +396,3 @@ castet_dom_element_set_attribute (CastetDomElement  *self,
     if (klass->set_attribute)
         klass->set_attribute (self, name, value, err);
 }
-

@@ -374,7 +374,7 @@ castet_repeat_count_get_type (void)
 static void
 param_enum_init (GParamSpec *pspec)
 {
-    GParamSpecEnum *espec = G_PARAM_SPEC_ENUM (pspec);
+    CastetParamSpecEnum *espec = CASTET_PARAM_SPEC_ENUM (pspec);
 
     espec->enum_class = NULL;
     espec->default_value = 0;
@@ -383,8 +383,10 @@ param_enum_init (GParamSpec *pspec)
 static void
 param_enum_finalize (GParamSpec *pspec)
 {
-    GParamSpecEnum *espec = G_PARAM_SPEC_ENUM (pspec);
-    GParamSpecClass *parent_class = g_type_class_peek (g_type_parent (G_TYPE_PARAM_ENUM));
+    CastetParamSpecEnum *espec = CASTET_PARAM_SPEC_ENUM (pspec);
+    GParamSpecClass *parent_class;
+
+    parent_class = g_type_class_peek (g_type_parent (CASTET_TYPE_PARAM_ENUM));
 
     if (espec->enum_class) {
         g_type_class_unref (espec->enum_class);
@@ -398,14 +400,14 @@ static void
 param_enum_set_default (GParamSpec *pspec,
                         GValue     *value)
 {
-    value->data[0].v_long = G_PARAM_SPEC_ENUM (pspec)->default_value;
+    value->data[0].v_long = CASTET_PARAM_SPEC_ENUM (pspec)->default_value;
 }
 
 static gboolean
 param_enum_validate (GParamSpec *pspec,
                      GValue     *value)
 {
-    GParamSpecEnum *espec = G_PARAM_SPEC_ENUM (pspec);
+    CastetParamSpecEnum *espec = CASTET_PARAM_SPEC_ENUM (pspec);
     glong oval = value->data[0].v_long;
 
     if (!espec->enum_class ||
@@ -434,14 +436,14 @@ castet_param_enum_get_type (void)
     if (g_once_init_enter (&castet_param_enum_type__volatile)) {
         GType type;
         static const GParamSpecTypeInfo pspec_info = {
-            sizeof (GParamSpecEnum),  /* instance_size */
-            16,                       /* n_preallocs */
-            param_enum_init,          /* instance_init */
-            G_TYPE_ENUM,              /* value_type */
-            param_enum_finalize,      /* finalize */
-            param_enum_set_default,   /* value_set_default */
-            param_enum_validate,      /* value_validate */
-            param_long_values_cmp,    /* values_cmp */
+            sizeof (CastetParamSpecEnum),   /* instance_size */
+            16,                             /* n_preallocs */
+            param_enum_init,                /* instance_init */
+            G_TYPE_ENUM,                    /* value_type */
+            param_enum_finalize,            /* finalize */
+            param_enum_set_default,         /* value_set_default */
+            param_enum_validate,            /* value_validate */
+            param_long_values_cmp,          /* values_cmp */
         };
         type = g_param_type_register_static (ISS("CastetParamEnum"),
                                              &pspec_info);
@@ -458,7 +460,10 @@ castet_param_enum_get_type (void)
  * @blurb: description of the property specified
  * @enum_type: a #GType derived from %G_TYPE_ENUM
  * @default_value: default value for the property specified
- * @flags: flags for the property specified
+ * @g_flags: flags for the underlying GParamSpec property
+ * @castet_flags: flags specific to Castet
+ * @namespace_uri: the namespace URI for the parameter. The string given has to
+ *                 be an interned string.
  *
  * Creates a new #GParamSpecEnum instance specifying a %G_TYPE_ENUM
  * property.
@@ -474,7 +479,8 @@ castet_param_spec_enum (const gchar      *name,
                         GType             enum_type,
                         gint              default_value,
                         GParamFlags       g_flags,
-                        CastetParamFlags  castet_flags)
+                        CastetParamFlags  castet_flags,
+                        const char       *namespace_uri)
 {
     CastetParamSpecEnum *castet_enum_spec;
     GEnumClass *enum_class;
@@ -486,7 +492,7 @@ castet_param_spec_enum (const gchar      *name,
     g_return_val_if_fail (g_enum_get_value (enum_class, default_value) != NULL,
                           NULL);
 
-    castet_enum_spec = g_param_spec_internal (G_TYPE_PARAM_ENUM,
+    castet_enum_spec = g_param_spec_internal (CASTET_TYPE_PARAM_ENUM,
                                               name,
                                               nick,
                                               blurb,
@@ -495,6 +501,7 @@ castet_param_spec_enum (const gchar      *name,
     castet_enum_spec->enum_class = enum_class;
     castet_enum_spec->default_value = default_value;
     castet_enum_spec->flags = castet_flags;
+    castet_enum_spec->namespace_uri = namespace_uri;
     G_PARAM_SPEC (castet_enum_spec)->value_type = enum_type;
 
     return G_PARAM_SPEC (castet_enum_spec);

@@ -99,10 +99,11 @@ source_h =				\
 
 source_h_private = 		\
 	castet-debug.h		\
+	castet-dom-private.h	\
 	castet-internals.h	\
+	castet-private.h	\
 	castet-utils.h		\
 	castet-xml-private.h	\
-	castet-dom-private.h	\
 	$(NULL)
 
 lib_LTLIBRARIES = libcastet-@CASTET_API_VERSION@.la

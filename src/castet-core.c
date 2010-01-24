@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -18,9 +18,21 @@
  */
 
 #include <glib-object.h>
+#include <clutter/clutter.h>
 
+#include "castet-internals.h"
 #include "castet-debug.h"
 #include "castet-utils.h"
+
+#define XML_NS_URI          "http://www.w3.org/XML/1998/namespace"
+#define XMLNS_NS_URI        "http://www.w3.org/2000/xmlns/"
+#define XML_EVENTS_NS_URI   "http://www.w3.org/2001/xml-events"
+#define SVG_NS_URI          "http://www.w3.org/2000/svg"
+
+const gchar *xml_ns;
+const gchar *xmlns_ns;
+const gchar *xmlevents_ns;
+const gchar *svg_ns;
 
 static void
 _transform_string_float (const GValue *src,
@@ -43,6 +55,12 @@ castet_init (gint    *argc,
 #endif
 
     g_type_init ();
+    clutter_init (argc, argv);
+
+    xml_ns = ISS(XML_NS_URI);
+    xmlns_ns = ISS(XMLNS_NS_URI);
+    xmlevents_ns = ISS(XML_EVENTS_NS_URI);
+    svg_ns = ISS(SVG_NS_URI);
 
 #if 0
     g_value_register_transform_func (G_TYPE_FLOAT,

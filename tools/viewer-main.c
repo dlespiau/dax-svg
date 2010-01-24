@@ -51,7 +51,7 @@ main (int   argc,
     clutter_actor_animate (svg, CLUTTER_LINEAR, 5000, "x", 1000.0f, NULL);
 #endif
 
-    castet_actor_play (svg);
+    castet_actor_play (CASTET_ACTOR (svg));
 
     clutter_main();
 

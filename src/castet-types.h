@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
@@ -159,6 +159,7 @@ struct _CastetParamSpecEnum
   GEnumClass       *enum_class;
   gint              default_value;
   CastetParamFlags  flags;
+  const gchar      *namespace_uri;
 };
 
 /**
@@ -197,7 +198,8 @@ GParamSpec*         castet_param_spec_enum          (const gchar      *name,
                                                      GType             enum_type,
                                                      gint              default_value,
                                                      GParamFlags       g_flags,
-                                                     CastetParamFlags  castet_flags);
+                                                     CastetParamFlags  castet_flags,
+                                                     const gchar      *namespace_uri);
 
 G_END_DECLS
 

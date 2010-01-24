@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -127,9 +127,7 @@ castet_dom_node_get_owner_document(CastetDomNode *self)
 {
     g_return_val_if_fail(CASTET_IS_DOM_NODE(self), NULL);
 
-    g_warning("Not implemented");
-
-    return NULL;
+    return self->owner_document;
 }
 
 /* DOM attributes */

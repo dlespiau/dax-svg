@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -18,6 +18,7 @@
  */
 
 #include "castet-internals.h"
+#include "castet-private.h"
 #include "castet-enum-types.h"
 #include "castet-types.h"
 #include "castet-svg-element.h"
@@ -163,7 +164,8 @@ castet_svg_element_class_init (CastetSvgElementClass *klass)
                                     CASTET_TYPE_SVG_VERSION,
                                     CASTET_SVG_VERSION_DEFAULT,
                                     CASTET_PARAM_READWRITE,
-                                    CASTET_PARAM_NONE);
+                                    CASTET_PARAM_NONE,
+                                    svg_ns);
     g_object_class_install_property (object_class, PROP_VERSION, pspec);
 
     pspec = castet_param_spec_enum ("baseProfile",
@@ -173,7 +175,8 @@ castet_svg_element_class_init (CastetSvgElementClass *klass)
                                     CASTET_TYPE_SVG_BASE_PROFILE,
                                     CASTET_SVG_BASE_PROFILE_DEFAULT,
                                     CASTET_PARAM_READWRITE,
-                                    CASTET_PARAM_NONE);
+                                    CASTET_PARAM_NONE,
+                                    svg_ns);
     g_object_class_install_property (object_class, PROP_BASE_PROFILE, pspec);
 
     pspec = g_param_spec_boxed ("width",

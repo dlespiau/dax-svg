@@ -22,6 +22,8 @@
 #include <string.h>
 
 #include "castet-internals.h"
+#include "castet-private.h"
+#include "castet-dom-private.h"
 #include "castet-enum-types.h"
 #include "castet-types.h"
 #include "castet-js-context.h"
@@ -175,7 +177,8 @@ castet_handler_element_class_init (CastetHandlerElementClass *klass)
                                     CASTET_TYPE_SCRIPT_TYPE,
                                     CASTET_SCRIPT_TYPE_DEFAULT,
                                     CASTET_PARAM_READWRITE,
-                                    CASTET_PARAM_NONE);
+                                    CASTET_PARAM_NONE,
+                                    svg_ns);
     g_object_class_install_property (object_class, PROP_TYPE, pspec);
 
     pspec = castet_param_spec_enum ("event",
@@ -184,7 +187,8 @@ castet_handler_element_class_init (CastetHandlerElementClass *klass)
                                     CASTET_TYPE_XML_EVENT_TYPE,
                                     CASTET_XML_EVENT_TYPE_DEFAULT,
                                     CASTET_PARAM_READWRITE,
-                                    CASTET_PARAM_NONE);
+                                    CASTET_PARAM_NONE,
+                                    xmlevents_ns);
     g_object_class_install_property (object_class, PROP_EVENT_TYPE, pspec);
 }
 

@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright (C) 2009 Intel Corporation
+ * Copyright (C) 2009, 2010 Intel Corporation
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, version 2.1, as
@@ -37,7 +37,8 @@ typedef enum
 {
     CASTET_DEBUG_MISC            = 1 << 0,
     CASTET_DEBUG_PARSING         = 1 << 1,
-    CASTET_DEBUG_TRAVERSER       = 1 << 2,
+    CASTET_DEBUG_NAMESPACE       = 1 << 2,
+    CASTET_DEBUG_TRAVERSER       = 1 << 3,
 } CastetDebugFlag;
 
 #ifdef __GNUC__

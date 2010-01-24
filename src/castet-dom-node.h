@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -87,11 +87,11 @@ struct _CastetDomNode
     CastetDomNodePrivate *priv;
 
     /* this fields are private and should be accessed with the appropriate
-     * API. They are here so internals functions can access them without the
+     * API. They are here so internal functions can access them without the
      * function call overhead */
     CastetDomNodeType node_type;
 
-    gchar *namespace_uri;
+    const gchar *namespace_uri; /* interned string */
     CastetDomDocument *owner_document;
     gchar *text_content;    /* FIXME this is bad, text_content has to be
                                build using children text nodes */

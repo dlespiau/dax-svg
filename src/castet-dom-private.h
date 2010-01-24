@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
@@ -33,14 +33,24 @@ G_BEGIN_DECLS
 
 /* castet-dom-document.c */
 
-void    _castet_dom_document_add_namespace  (CastetDomDocument *document,
-                                             const gchar       *uri,
-                                             const gchar       *prefix);
+const gchar *xml_ns;
+const gchar *xmlns_ns;
+const gchar *xmlevents_ns;
+
+void            _castet_dom_document_add_namespace                  (CastetDomDocument *document,
+                                                                     const gchar       *uri,
+                                                                     const gchar       *prefix);
+void            _castet_dom_document_add_namespace_static           (CastetDomDocument *document,
+                                                                     const gchar       *uri,
+                                                                     const gchar       *prefix);
+const gchar *   _castet_dom_document_get_prefix_for_interned_uri    (CastetDomDocument *document,
+                                                                     const gchar       *uri);
+
 
 /* castet-dom-element.c */
 
-void    _castet_dom_element_handle_event    (CastetDomElement *element,
-                                             CastetXmlEvent   *event);
+void            _castet_dom_element_handle_event                    (CastetDomElement *element,
+                                                                     CastetXmlEvent   *event);
 
 G_END_DECLS
 

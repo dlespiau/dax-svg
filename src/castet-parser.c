@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -68,11 +68,11 @@ castet_dom_document_read_node (CastetDomDocument *document,
 
         /* Parse attributes */
         while (xmlTextReaderMoveToNextAttribute (ctx->reader) == 1) {
-            const xmlChar *_name = xmlTextReaderConstLocalName (ctx->reader);
+            const xmlChar *_name = xmlTextReaderConstName (ctx->reader);
             const xmlChar *_value = xmlTextReaderConstValue (ctx->reader);
             const xmlChar *_ns = xmlTextReaderConstNamespaceUri (ctx->reader);
 
-            castet_dom_element_set_attribute_NS (new_element,
+            castet_dom_element_set_attribute_ns (new_element,
                                                  (const gchar *)_ns,
                                                  (const gchar *)_name,
                                                  (const gchar *)_value,

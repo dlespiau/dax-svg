@@ -1,7 +1,7 @@
 /*
  * Castet - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
@@ -21,6 +21,7 @@
 
 #include "castet-internals.h"
 #include "castet-enum-types.h"
+#include "castet-private.h"
 #include "castet-animate-element.h"
 
 G_DEFINE_TYPE (CastetAnimateElement,
@@ -189,7 +190,8 @@ castet_animate_element_class_init (CastetAnimateElementClass *klass)
                                     CASTET_TYPE_ANIMATION_ATTRIBUTE_TYPE,
                                     CASTET_ANIMATION_ATTRIBUTE_TYPE_AUTO,
                                     CASTET_PARAM_READWRITE,
-                                    CASTET_PARAM_NONE);
+                                    CASTET_PARAM_NONE,
+                                    svg_ns);
     g_object_class_install_property (object_class, PROP_ATTRIBUTE_TYPE, pspec);
 
     pspec = g_param_spec_string ("attributeName",

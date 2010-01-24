@@ -6,8 +6,6 @@
   </desc>
   <!-- ECMAScript to change the radius with each click -->
   <script type="application/ecmascript"> <![CDATA[
-    /* needed for now, remove when castet does it itself */
-    const Castet = imports.gi.Castet;
     function circle_click(evt) {
        var circle = evt.target;
        var currentRadius = circle.getFloatTrait("r");
