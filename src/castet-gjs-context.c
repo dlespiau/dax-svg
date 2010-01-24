@@ -147,11 +147,15 @@ castet_js_context_init (CastetJsContext *self)
 {
     CastetJsContextPrivate *priv;
     JSObject *xml_event_prototype;
+    static const gchar *import = "const Castet = imports.gi.Castet";
 
     self->priv = priv = JS_CONTEXT_PRIVATE (self);
 
     priv->gjs_context = gjs_context_new ();
     priv->js_context = gjs_context_get_context (priv->gjs_context);
+
+    /* import Castet typelib */
+    gjs_context_eval (priv->gjs_context, import, 32, "castet", NULL, NULL);
 
     xml_event_prototype = JS_InitClass (priv->js_context,
                                         JS_GetGlobalObject (priv->js_context),
