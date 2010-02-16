@@ -22,7 +22,7 @@
 #include "castet-internals.h"
 #include "castet-private.h"
 #include "castet-enum-types.h"
-#include "castet-types.h"
+#include "castet-paramspec.h"
 #include "castet-dom-text.h"
 #include "castet-script-element.h"
 

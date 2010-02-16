@@ -20,7 +20,7 @@
 #include "castet-internals.h"
 #include "castet-private.h"
 #include "castet-enum-types.h"
-#include "castet-types.h"
+#include "castet-paramspec.h"
 #include "castet-svg-element.h"
 
 G_DEFINE_TYPE (CastetSvgElement, castet_svg_element, CASTET_TYPE_ELEMENT)

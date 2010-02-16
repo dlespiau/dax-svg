@@ -22,6 +22,7 @@
 #include "castet-internals.h"
 #include "castet-enum-types.h"
 #include "castet-private.h"
+#include "castet-paramspec.h"
 #include "castet-animate-element.h"
 
 G_DEFINE_TYPE (CastetAnimateElement,

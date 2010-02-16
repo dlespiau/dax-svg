@@ -42,6 +42,7 @@ source_c =				\
 	castet-gjs-context.c		\
 	castet-handler-element.c	\
 	castet-knot-sequence.c		\
+	castet-paramspec.c		\
 	castet-parser.c			\
 	castet-path-element.c		\
 	castet-polyline-element.c	\
@@ -81,6 +82,7 @@ source_h =				\
 	castet-gjs-context.h		\
 	castet-handler-element.h	\
 	castet-knot-sequence.h		\
+	castet-paramspec.h		\
 	castet-parser.h			\
 	castet-path-element.h		\
 	castet-polyline-element.h	\
