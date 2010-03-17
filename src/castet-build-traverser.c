@@ -62,6 +62,18 @@ xml_event_from_clutter_event (CastetXmlEvent       *xml_event,
         event->target = g_object_ref (target);
     }
         break;
+    case CLUTTER_NOTHING:
+    case CLUTTER_KEY_PRESS:
+    case CLUTTER_KEY_RELEASE:
+    case CLUTTER_MOTION:
+    case CLUTTER_ENTER:
+    case CLUTTER_LEAVE:
+    case CLUTTER_BUTTON_PRESS:
+    case CLUTTER_SCROLL:
+    case CLUTTER_STAGE_STATE:
+    case CLUTTER_DESTROY_NOTIFY:
+    case CLUTTER_CLIENT_MESSAGE:
+    case CLUTTER_DELETE:
     default:
         g_warning (G_STRLOC ": Unhandled event of type %d",
                    clutter_event->type);
@@ -467,6 +479,7 @@ castet_build_traverser_traverse_handler (CastetTraverser      *traverser,
         g_signal_connect (target_actor, "button-release-event",
                           G_CALLBACK (on_button_release_event), target);
         break;
+    case CASTET_XML_EVENT_TYPE_NONE:
     default:
         g_warning (G_STRLOC ": Unkown event %d", event_type);
     }

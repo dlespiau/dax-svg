@@ -329,7 +329,7 @@ castet_knot_sequence_new_from_string (const gchar *string)
     return seq;
 }
 
-const gfloat *
+gfloat *
 castet_knot_sequence_get_array (const CastetKnotSequence *seq)
 {
     CastetKnotSequencePrivate *priv = seq->priv;
@@ -337,7 +337,7 @@ castet_knot_sequence_get_array (const CastetKnotSequence *seq)
     return priv->data;
 }
 
-const guint
+guint
 castet_knot_sequence_get_size (const CastetKnotSequence *seq)
 {
     CastetKnotSequencePrivate *priv = seq->priv;

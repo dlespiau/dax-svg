@@ -73,8 +73,8 @@ CastetKnotSequence *castet_knot_sequence_new_from_static_array  (gfloat *data,
 CastetKnotSequence *castet_knot_sequence_new_from_string        (const gchar *string);
 gchar              *castet_knot_sequence_to_string              (const CastetKnotSequence *seq);
 
-const guint         castet_knot_sequence_get_size               (const CastetKnotSequence *seq);
-const gfloat       *castet_knot_sequence_get_array              (const CastetKnotSequence *seq);
+guint               castet_knot_sequence_get_size               (const CastetKnotSequence *seq);
+gfloat             *castet_knot_sequence_get_array              (const CastetKnotSequence *seq);
 
 G_END_DECLS
 

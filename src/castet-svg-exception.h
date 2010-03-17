@@ -33,7 +33,7 @@ typedef enum /*< skip >*/
     CASTET_SVG_EXCEPTION_ERROR_MATRIX_NOT_INVERTABLE,
 } CastetSvgExceptionError;
 
-GQuark castet_exception_error_quark(void);
+GQuark      castet_svg_exception_error_quark    (void);
 
 G_END_DECLS
 

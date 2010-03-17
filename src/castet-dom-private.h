@@ -31,11 +31,11 @@
 
 G_BEGIN_DECLS
 
-/* castet-dom-document.c */
-
 const gchar *xml_ns;
 const gchar *xmlns_ns;
 const gchar *xmlevents_ns;
+
+/* castet-dom-document.c */
 
 void            _castet_dom_document_add_namespace                  (CastetDomDocument *document,
                                                                      const gchar       *uri,

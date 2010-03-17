@@ -19,7 +19,8 @@
 
 #include "castet-svg-exception.h"
 
-GQuark castet_svg_exception_error_quark(void)
+GQuark
+castet_svg_exception_error_quark (void)
 {
-    return g_quark_from_static_string("castet-svg-exception-error-quark");
+    return g_quark_from_static_string ("castet-svg-exception-error-quark");
 }

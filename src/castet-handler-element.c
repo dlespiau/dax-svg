@@ -23,7 +23,6 @@
 
 #include "castet-internals.h"
 #include "castet-private.h"
-#include "castet-dom-private.h"
 #include "castet-enum-types.h"
 #include "castet-paramspec.h"
 #include "castet-js-context.h"
@@ -225,20 +224,16 @@ gchar *
 castet_handler_element_get_code (const CastetHandlerElement *handler)
 {
     CastetDomNode *text;
-    static gchar script_template[] = "function __castet_handler(event) {"
-                                        "let evt=event;"
-                                        "%s"
-                                     "}";
-#if 0
-    static gchar script_template[] = "let evt=event;" "%s";
-#endif
 
     g_return_val_if_fail (CASTET_IS_HANDLER_ELEMENT (handler), NULL);
 
     text = castet_dom_node_get_first_child (CASTET_DOM_NODE (handler));
     if (text && CASTET_IS_DOM_TEXT (text)) {
         CastetDomCharacterData *char_data = CASTET_DOM_CHARACTER_DATA (text);
-        return g_strdup_printf (script_template,
+        return g_strdup_printf ("function __castet_handler(event) {"
+                                    "let evt=event;"
+                                    "%s"
+                                 "}",
                                 castet_dom_character_data_get_data (char_data));
     }
 

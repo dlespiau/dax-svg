@@ -102,6 +102,8 @@ castet_duration_to_ms (CastetDuration *dur)
     case CASTET_DURATION_MS:
         dur->ms = dur->value;
         break;
+    default:
+        g_assert_not_reached ();
     }
 
     dur->ms_set = TRUE;

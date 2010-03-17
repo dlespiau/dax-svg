@@ -82,6 +82,9 @@ static void clutter_path_draw_cogl (const ClutterPathNode *node,
         break;
       case CLUTTER_PATH_CLOSE:
         cogl_path_close ();
+        break;
+      default:
+        g_assert_not_reached ();
     }
 }
 
