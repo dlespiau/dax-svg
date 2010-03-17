@@ -152,7 +152,8 @@ castet_js_context_init (CastetJsContext *self)
     self->priv = priv = JS_CONTEXT_PRIVATE (self);
 
     priv->gjs_context = gjs_context_new ();
-    priv->js_context = gjs_context_get_context (priv->gjs_context);
+    priv->js_context =
+        (JSContext *) gjs_context_get_native_context (priv->gjs_context);
 
     /* import Castet typelib */
     gjs_context_eval (priv->gjs_context, import, 32, "castet", NULL, NULL);
@@ -243,8 +244,8 @@ castet_js_context_new_object_from_xml_event (CastetJsContext *context,
 }
 
 /*
- * FIXME: best way to make such a function work with 2 backends?
- *        return value
+ * FIXME: * best way to make such a function work with 2 backends?
+ *        * return value
  */
 
 gboolean
