@@ -51,6 +51,7 @@ AC_CONFIG_SRCDIR([src/castet.h])
 AM_INIT_AUTOMAKE([1.10 -Wall -Wno-portability foreign no-define check-news])
 AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+AS_AM_REALLY_SILENT
 
 # libtool configuration
 LT_PREREQ([2.2.6])
