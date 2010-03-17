@@ -22,7 +22,7 @@
 
 const gchar *
 castet_enum_to_string (GType type,
-                       gint value)
+                       gint  value)
 {
     GEnumClass *enum_class;
     GEnumValue *enum_value;
@@ -44,6 +44,7 @@ castet_enum_to_string (GType type,
 /*** END file-production ***/
 
 /*** BEGIN value-header ***/
+#ifndef @ENUMNAME@_OVERRIDE_TRANSFORM
 static void
 transform_@enum_name@_string (const GValue *src,
                               GValue       *dest)
@@ -87,6 +88,7 @@ transform_string_@enum_name@ (const GValue *src,
     g_free (nick);
 #endif
 }
+#endif /* @ENUMNAME@_OVERRIDE_TRANSFORM */
 
 GType
 @enum_name@_get_type (void)
@@ -109,10 +111,12 @@ GType
 
       g_enum_type_id =
         g_@type@_register_static (g_intern_static_string ("@EnumName@"), values);
+#ifndef @ENUMNAME@_OVERRIDE_TRANSFORM
         g_value_register_transform_func (g_enum_type_id, G_TYPE_STRING,
                                          transform_@enum_name@_string);
         g_value_register_transform_func (G_TYPE_STRING, g_enum_type_id,
                                          transform_string_@enum_name@);
+#endif
 
       g_once_init_leave (&g_enum_type_id__volatile, g_enum_type_id);
     }

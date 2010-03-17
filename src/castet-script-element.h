@@ -55,12 +55,12 @@ typedef struct _CastetScriptElement CastetScriptElement;
 typedef struct _CastetScriptElementClass CastetScriptElementClass;
 typedef struct _CastetScriptElementPrivate CastetScriptElementPrivate;
 
-#define CASTET_SCRIPT_TYPE_DEFAULT      CASTET_SCRIPT_TYPE_ECMASCRIPT
+#define CASTET_SCRIPT_TYPE_OVERRIDE_TRANSFORM
 
 typedef enum /*< prefix=CASTET_SCRIPT_TYPE >*/
 {
-    CASTET_SCRIPT_TYPE_ECMASCRIPT,      /*< nick=application/ecmascript >*/
-    CASTET_SCRIPT_TYPE_JAVA_ARCHIVE     /*< nick=application/java-archive >*/
+    CASTET_SCRIPT_TYPE_ECMASCRIPT,
+    CASTET_SCRIPT_TYPE_JAVA_ARCHIVE
 } CastetScriptType;
 
 struct _CastetScriptElement

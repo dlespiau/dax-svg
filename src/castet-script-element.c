@@ -112,7 +112,7 @@ castet_script_element_class_init (CastetScriptElementClass *klass)
                                     "Type",
                                     "Identifies the programming language used",
                                     CASTET_TYPE_SCRIPT_TYPE,
-                                    CASTET_SCRIPT_TYPE_DEFAULT,
+                                    CASTET_SCRIPT_TYPE_ECMASCRIPT,
                                     CASTET_PARAM_READWRITE,
                                     CASTET_PARAM_NONE,
                                     svg_ns);

@@ -162,7 +162,7 @@ castet_svg_element_class_init (CastetSvgElementClass *klass)
                                     "The SVG language version to which this "
                                     "document fragment conforms",
                                     CASTET_TYPE_SVG_VERSION,
-                                    CASTET_SVG_VERSION_DEFAULT,
+                                    CASTET_SVG_VERSION_1_2,
                                     CASTET_PARAM_READWRITE,
                                     CASTET_PARAM_NONE,
                                     svg_ns);

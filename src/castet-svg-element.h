@@ -55,12 +55,12 @@ typedef struct _CastetSvgElement CastetSvgElement;
 typedef struct _CastetSvgElementClass CastetSvgElementClass;
 typedef struct _CastetSvgElementPrivate CastetSvgElementPrivate;
 
-#define CASTET_SVG_VERSION_DEFAULT      CASTET_SVG_VERSION_1_2
+#define CASTET_SVG_VERSION_OVERRIDE_TRANSFORM
 typedef enum
 {
-    CASTET_SVG_VERSION_1_0,     /*< nick=1.0 >*/
-    CASTET_SVG_VERSION_1_1,     /*< nick=1.1 >*/
-    CASTET_SVG_VERSION_1_2,     /*< nick=1.2 >*/
+    CASTET_SVG_VERSION_1_0,
+    CASTET_SVG_VERSION_1_1,
+    CASTET_SVG_VERSION_1_2,
 } CastetSvgVersion;
 
 #define CASTET_SVG_BASE_PROFILE_DEFAULT     CASTET_SVG_BASE_PROFILE_NONE
