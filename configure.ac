@@ -42,21 +42,19 @@ m4_define([castet_binary_age], [m4_eval(100 * castet_version_minor + castet_vers
 # Autoconf configuration
 AC_PREREQ(2.59)
 
-AC_INIT([castet],
-        [castet_version],
-        [http://bugzilla.moblin.org])
+AC_INIT([castet], [castet_version], [http://bugzilla.moblin.org])
 AC_CONFIG_MACRO_DIR([build/autotools])
-AC_CONFIG_AUX_DIR([.])
+AC_CONFIG_AUX_DIR([build/autotools])
 AC_CONFIG_SRCDIR([src/castet.h])
-AC_DISABLE_STATIC
 
 # Automake configuration
-AM_INIT_AUTOMAKE([-Wall foreign])
-AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE([1.10 -Wall -Wno-portability foreign no-define check-news])
+AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # libtool configuration
-LT_INIT
+LT_PREREQ([2.2.6])
+LT_INIT([win32-dll disable-static])
 
 # export a few variables
 CASTET_VERSION_MAJOR=castet_version_major
@@ -108,9 +106,16 @@ AS_IF([test "x$enable_maintainer_flags" = "xyes" && test "x$GCC" = "xyes"],
       [
         AS_COMPILER_FLAGS([MAINTAINER_CFLAGS],
                           ["-Wall -Wextra -Wno-unused-parameter
-                           -Wno-ignored-qualifiers -Wshadow -Wcast-align
-                           -Wno-missing-field-initializers -Wempty-body
-                           -Wformat-security -Winit-self"])
+                           -Wno-missing-field-initializers
+                           -Wdeclaration-after-statement -Wmissing-declarations
+                           -Wmissing-prototypes -Wredundant-decls
+                           -Wmissing-noreturn -Wshadow -Wpointer-arith
+                           -Wcast-align -Wwrite-strings -Winline
+                           -Wformat-nonliteral -Wformat-security -Wswitch-enum
+                           -Wswitch-default -Winit-self -Wmissing-include-dirs
+                           -Wundef -Waggregate-return -Wmissing-format-attribute
+                           -Wnested-externs -Wunsafe-loop-optimizations
+                           -Wpacked -Winvalid-pch -Wsync-nand"])
       ]
 )
 
@@ -124,7 +129,7 @@ m4_define([debug_default],
 AC_ARG_ENABLE(
     [debug],
     [AC_HELP_STRING([--enable-debug=@<:@no/minimum/yes@:>@],
-    [Control Dax debugging level @<:@default=debug_default@:>@])],
+                    [Control Castet debugging level @<:@default=debug_default@:>@])],
     [],
     [enable_debug=debug_default])
 
@@ -151,7 +156,7 @@ dnl === GObject-Introspection check ===========================================
 
 GOBJECT_INTROSPECTION_CHECK([0.6.4])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
     Makefile
     build/Makefile
     build/autotools/Makefile
@@ -159,6 +164,8 @@ AC_OUTPUT([
     tests/Makefile
     tools/Makefile
 ])
+
+AC_OUTPUT
 
 echo ""
 echo "                   Castet $VERSION"
