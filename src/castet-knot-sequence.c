@@ -17,9 +17,9 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <math.h>
 #include <string.h>
 
+#include "castet-utils.h"
 #include "castet-knot-sequence.h"
 
 static void _register_transform_funcs (GType type);
@@ -37,110 +37,12 @@ G_DEFINE_TYPE_WITH_CODE (CastetKnotSequence,
 #define CASTET_KNOT_SEQUENCE_FLAG_NONE              0x0
 #define CASTET_KNOT_SEQUENCE_FLAG_STATIC_ARRAY      0x1
 
-#if 0
-static void
-str_skip_space (char **str)
+struct _CastetKnotSequencePrivate
 {
-	while (g_ascii_isspace (**str))
-		(*str)++;
-}
-#endif
-
-static void
-str_skip_space_and_char (char  **str,
-                         gchar   skip_me)
-{
-	while (g_ascii_isspace (**str) || **str == skip_me)
-		(*str)++;
-}
-
-static gboolean
-str_parse_float (char **str, gfloat *x)
-{
-	char *end, *c;
-	gboolean integer_part = FALSE;
-	gboolean fractional_part = FALSE;
-	gboolean exponent_part = FALSE;
-	gfloat mantissa = 0.0;
-	gfloat exponent = 0.0;
-	gfloat divisor;
-	gboolean mantissa_sign = 1.0;
-	gboolean exponent_sign = 1.0;
-
-	c = *str;
-
-	if (*c == '-') {
-		mantissa_sign = -1.0;
-		c++;
-	} else if (*c == '+')
-		c++;
-
-	if (*c >= '0' && *c <= '9') {
-		integer_part = TRUE;
-		mantissa = *c - '0';
-		c++;
-
-		while (*c >= '0' && *c <= '9') {
-			mantissa = mantissa * 10.0 + *c - '0';
-			c++;
-		}
-	}
-
-
-	if (*c == '.')
-		c++;
-	else if (!integer_part)
-		return FALSE;
-
-	if (*c >= '0' && *c <= '9') {
-		fractional_part = TRUE;
-		mantissa += (*c - '0') * 0.1;
-		divisor = 0.01;
-		c++;
-
-		while (*c >= '0' && *c <= '9') {
-			mantissa += (*c - '0') * divisor;
-			divisor *= 0.1;
-			c++;
-		}
-	}
-
-	if (!fractional_part && !integer_part)
-		return FALSE;
-
-	end = c;
-
-	if (*c == 'E' || *c == 'e') {
-		c++;
-
-		if (*c == '-') {
-			exponent_sign = -1.0;
-			c++;
-		} else if (*c == '+')
-			c++;
-
-		if (*c >= '0' && *c <= '9') {
-			exponent_part = TRUE;
-			exponent = *c - '0';
-			c++;
-
-			while (*c >= '0' && *c <= '9') {
-				exponent = exponent * 10.0 + *c - '0';
-				c++;
-			}
-		}
-	}
-
-	if (exponent_part) {
-		end = c;
-		*x = mantissa_sign * mantissa * pow (10.0, exponent_sign * exponent);
-	} else
-		*x = mantissa_sign * mantissa;
-
-	*str = end;
-
-	return TRUE;
-}
+  gfloat *data;
+  guint   nb_knots;
+  guint   flags;
+};
 
 static gboolean
 str_parse_float_list (gchar  **str,
@@ -150,14 +52,14 @@ str_parse_float_list (gchar  **str,
 	char *ptr = *str;
 	unsigned int i;
 
-	str_skip_space_and_char (str, ',');
+	_castet_utils_skip_space_and_char (str, ',');
 
 	for (i = 0; i < n_values; i++) {
-		if (!str_parse_float (str, &values[i])) {
+		if (!_castet_utils_parse_float (str, &values[i])) {
 			*str = ptr;
 			return FALSE;
 		}
-        str_skip_space_and_char (str, ',');
+        _castet_utils_skip_space_and_char (str, ',');
 	}
 
 	return TRUE;
@@ -175,12 +77,6 @@ str_count_commas (const gchar *str)
 
     return nb_commas;
 }
-struct _CastetKnotSequencePrivate
-{
-  gfloat *data;
-  guint   nb_knots;
-  guint   flags;
-};
 
 static void
 castet_value_transform_knot_sequence_string (const GValue *src,
@@ -298,8 +194,7 @@ castet_knot_sequence_new_from_static_array (gfloat *data,
  * castet_knot_sequence_new_from_string:
  * @string: FIXME
  *
- * Return value: the newly allocated #CastetKnotSequence. Use
- *   castet_knot_sequence_unref() to free the resources
+ * Return value: a new #CastetKnotSequence creating from @string
  *
  * Since: 0.2
  */
@@ -321,7 +216,7 @@ castet_knot_sequence_new_from_string (const gchar *string)
     while (str_parse_float_list (&cur, 2, priv->data + nb_floats) &&
            nb_floats < nb_commas * 2)
     {
-        str_skip_space_and_char (&cur, ',');
+        _castet_utils_skip_space_and_char (&cur, ',');
         nb_floats += 2;
     }
     priv->nb_knots = nb_floats / 2;
@@ -329,7 +224,7 @@ castet_knot_sequence_new_from_string (const gchar *string)
     return seq;
 }
 
-gfloat *
+const gfloat *
 castet_knot_sequence_get_array (const CastetKnotSequence *seq)
 {
     CastetKnotSequencePrivate *priv = seq->priv;

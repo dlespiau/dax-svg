@@ -26,7 +26,13 @@
 
 G_BEGIN_DECLS
 
-gboolean _castet_utils_parse_simple_float (gchar **string, gfloat *number);
+void        _castet_utils_skip_space                (char **str);
+void        _castet_utils_skip_space_and_char       (char  **str,
+                                                     gchar   skip_me);
+gboolean    _castet_utils_parse_simple_float        (gchar **string,
+                                                     gfloat *number);
+gboolean    _castet_utils_parse_float               (char   **string,
+                                                     gfloat  *x);
 
 G_END_DECLS
 

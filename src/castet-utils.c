@@ -19,9 +19,25 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <math.h>
 #include <stdlib.h>
 
 #include "castet-utils.h"
+
+void
+_castet_utils_skip_space (char **str)
+{
+	while (g_ascii_isspace (**str))
+		(*str)++;
+}
+
+void
+_castet_utils_skip_space_and_char (char  **str,
+                         gchar   skip_me)
+{
+	while (g_ascii_isspace (**str) || **str == skip_me)
+		(*str)++;
+}
 
 gboolean
 _castet_utils_parse_simple_float (gchar  **string,
@@ -56,3 +72,91 @@ _castet_utils_parse_simple_float (gchar  **string,
     return TRUE;
 }
 
+gboolean
+_castet_utils_parse_float (char   **string,
+                           gfloat  *x)
+{
+	char *end, *c;
+	gboolean integer_part = FALSE;
+	gboolean fractional_part = FALSE;
+	gboolean exponent_part = FALSE;
+	gfloat mantissa = 0.0;
+	gfloat exponent = 0.0;
+	gfloat divisor;
+	gboolean mantissa_sign = 1.0;
+	gboolean exponent_sign = 1.0;
+
+	c = *string;
+
+	if (*c == '-') {
+		mantissa_sign = -1.0;
+		c++;
+	} else if (*c == '+')
+		c++;
+
+	if (*c >= '0' && *c <= '9') {
+		integer_part = TRUE;
+		mantissa = *c - '0';
+		c++;
+
+		while (*c >= '0' && *c <= '9') {
+			mantissa = mantissa * 10.0 + *c - '0';
+			c++;
+		}
+	}
+
+
+	if (*c == '.')
+		c++;
+	else if (!integer_part)
+		return FALSE;
+
+	if (*c >= '0' && *c <= '9') {
+		fractional_part = TRUE;
+		mantissa += (*c - '0') * 0.1;
+		divisor = 0.01;
+		c++;
+
+		while (*c >= '0' && *c <= '9') {
+			mantissa += (*c - '0') * divisor;
+			divisor *= 0.1;
+			c++;
+		}
+	}
+
+	if (!fractional_part && !integer_part)
+		return FALSE;
+
+	end = c;
+
+	if (*c == 'E' || *c == 'e') {
+		c++;
+
+		if (*c == '-') {
+			exponent_sign = -1.0;
+			c++;
+		} else if (*c == '+')
+			c++;
+
+		if (*c >= '0' && *c <= '9') {
+			exponent_part = TRUE;
+			exponent = *c - '0';
+			c++;
+
+			while (*c >= '0' && *c <= '9') {
+				exponent = exponent * 10.0 + *c - '0';
+				c++;
+			}
+		}
+	}
+
+	if (exponent_part) {
+		end = c;
+		*x = mantissa_sign * mantissa * pow (10.0, exponent_sign * exponent);
+	} else
+		*x = mantissa_sign * mantissa;
+
+	*string = end;
+
+	return TRUE;
+}
