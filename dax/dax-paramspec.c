@@ -27,71 +27,22 @@
  *
  * Dax needs custom GParamSpec to add a few features needed for SVG, namely:
  *   * differenciation between properties and attributes,
- *   * handling of inheritance.
- *   * specify if the parameter is animatable
+ *   * handling of inheritance,
+ *   * specify if the parameter is animatable.
  */
 
-/*
- * DaxParamSpecEnum is derived From glib's gobject/gparamspecs.c
- *
- * Copyright (C) 1997-1999, 2000-2001 Tim Janik and Red Hat, Inc.
- * LGPL v2.1 (it's my option to choose 2.1)
- */
 static void
-param_enum_init (GParamSpec *pspec)
+dax_param_enum_init (GParamSpec *pspec)
 {
+#if 0
     DaxParamSpecEnum *espec = DAX_PARAM_SPEC_ENUM (pspec);
-
-    espec->enum_class = NULL;
-    espec->default_value = 0;
+#endif
 }
 
 static void
-param_enum_finalize (GParamSpec *pspec)
+dax_param_enum_class_init (GParamSpecClass *klass)
 {
-    DaxParamSpecEnum *espec = DAX_PARAM_SPEC_ENUM (pspec);
-    GParamSpecClass *parent_class;
-
-    parent_class = g_type_class_peek (g_type_parent (DAX_TYPE_PARAM_ENUM));
-
-    if (espec->enum_class) {
-        g_type_class_unref (espec->enum_class);
-        espec->enum_class = NULL;
-    }
-
-    parent_class->finalize (pspec);
-}
-
-static void
-param_enum_set_default (GParamSpec *pspec,
-                        GValue     *value)
-{
-    value->data[0].v_long = DAX_PARAM_SPEC_ENUM (pspec)->default_value;
-}
-
-static gboolean
-param_enum_validate (GParamSpec *pspec,
-                     GValue     *value)
-{
-    DaxParamSpecEnum *espec = DAX_PARAM_SPEC_ENUM (pspec);
-    glong oval = value->data[0].v_long;
-
-    if (!espec->enum_class ||
-        !g_enum_get_value (espec->enum_class, value->data[0].v_long))
-        value->data[0].v_long = espec->default_value;
-
-    return value->data[0].v_long != oval;
-}
-
-static gint
-param_long_values_cmp (GParamSpec   *pspec,
-                       const GValue *value1,
-                       const GValue *value2)
-{
-    if (value1->data[0].v_long < value2->data[0].v_long)
-        return -1;
-    else
-        return value1->data[0].v_long > value2->data[0].v_long;
+    klass->value_type = G_TYPE_ENUM;
 }
 
 GType
@@ -101,18 +52,24 @@ dax_param_enum_get_type (void)
 
     if (g_once_init_enter (&dax_param_enum_type__volatile)) {
         GType type;
-        static const GParamSpecTypeInfo pspec_info = {
-            sizeof (DaxParamSpecEnum),   /* instance_size */
-            16,                             /* n_preallocs */
-            param_enum_init,                /* instance_init */
-            G_TYPE_ENUM,                    /* value_type */
-            param_enum_finalize,            /* finalize */
-            param_enum_set_default,         /* value_set_default */
-            param_enum_validate,            /* value_validate */
-            param_long_values_cmp,          /* values_cmp */
+
+        static const GTypeInfo info = {
+            sizeof (GParamSpecClass),
+            NULL,
+            NULL,
+            (GClassInitFunc) dax_param_enum_class_init,
+            NULL,
+            NULL,
+            sizeof (DaxParamSpecEnum),
+            0,
+            (GInstanceInitFunc) dax_param_enum_init
         };
-        type = g_param_type_register_static (ISS("DaxParamEnum"),
-                                             &pspec_info);
+
+        type = g_type_register_static (G_TYPE_PARAM_ENUM,
+                                       "DaxParamSpecEnum",
+                                       &info,
+                                       0);
+
         g_once_init_leave (&dax_param_enum_type__volatile, type);
     }
 
@@ -140,16 +97,17 @@ dax_param_enum_get_type (void)
  */
 
 GParamSpec*
-dax_param_spec_enum (const gchar      *name,
-                        const gchar      *nick,
-                        const gchar      *blurb,
-                        GType             enum_type,
-                        gint              default_value,
-                        GParamFlags       g_flags,
-                        DaxParamFlags  dax_flags,
-                        const char       *namespace_uri)
+dax_param_spec_enum (const gchar   *name,
+                     const gchar   *nick,
+                     const gchar   *blurb,
+                     GType          enum_type,
+                     gint           default_value,
+                     GParamFlags    g_flags,
+                     DaxParamFlags  dax_flags,
+                     const char    *namespace_uri)
 {
     DaxParamSpecEnum *dax_enum_spec;
+    GParamSpecEnum *g_enum_spec;
     GEnumClass *enum_class;
 
     g_return_val_if_fail (G_TYPE_IS_ENUM (enum_type), NULL);
@@ -160,16 +118,19 @@ dax_param_spec_enum (const gchar      *name,
                           NULL);
 
     dax_enum_spec = g_param_spec_internal (DAX_TYPE_PARAM_ENUM,
-                                              name,
-                                              nick,
-                                              blurb,
-                                              g_flags);
+                                           name,
+                                           nick,
+                                           blurb,
+                                           g_flags);
 
-    dax_enum_spec->enum_class = enum_class;
-    dax_enum_spec->default_value = default_value;
+    G_PARAM_SPEC (dax_enum_spec)->value_type = enum_type;
+
+    g_enum_spec = G_PARAM_SPEC_ENUM (dax_enum_spec);
+    g_enum_spec->enum_class = enum_class;
+    g_enum_spec->default_value = default_value;
+
     dax_enum_spec->flags = dax_flags;
     dax_enum_spec->namespace_uri = namespace_uri;
-    G_PARAM_SPEC (dax_enum_spec)->value_type = enum_type;
 
     return G_PARAM_SPEC (dax_enum_spec);
 }

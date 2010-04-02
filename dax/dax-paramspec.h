@@ -53,21 +53,16 @@ typedef struct _DaxParamSpecEnum DaxParamSpecEnum;
 
 /**
  * DaxParamSpecEnum:
- * @parent_instance: private #GParamSpec portion
- * @enum_class: the #GEnumClass for the enum
- * @default_value: default value for the property specified
  *
- * A #GParamSpec derived structure that contains the meta data for enum
+ * A #GParamSpecEnum derived structure that contains extra meta data for enum
  * properties.
  */
 struct _DaxParamSpecEnum
 {
-  GParamSpec        parent_instance;
+  GParamSpecEnum  parent_instance;
 
-  GEnumClass       *enum_class;
-  gint              default_value;
-  DaxParamFlags  flags;
-  const gchar      *namespace_uri;
+  DaxParamFlags   flags;
+  const gchar    *namespace_uri;
 };
 
 /**
@@ -94,20 +89,20 @@ struct _DaxParamSpecEnum
  *
  * Cast a #GParamSpec instance into a #DaxParamSpecEnum.
  */
-#define DAX_PARAM_SPEC_ENUM(pspec)                           \
-          (G_TYPE_CHECK_INSTANCE_CAST ((pspec),                 \
-                                       DAX_TYPE_PARAM_ENUM,  \
+#define DAX_PARAM_SPEC_ENUM(pspec)                          \
+          (G_TYPE_CHECK_INSTANCE_CAST ((pspec),             \
+                                       DAX_TYPE_PARAM_ENUM, \
                                        DaxParamSpecEnum))
 
-GType               dax_param_enum_get_type      (void) G_GNUC_CONST;
-GParamSpec*         dax_param_spec_enum          (const gchar      *name,
-                                                     const gchar      *nick,
-                                                     const gchar      *blurb,
-                                                     GType             enum_type,
-                                                     gint              default_value,
-                                                     GParamFlags       g_flags,
-                                                     DaxParamFlags  dax_flags,
-                                                     const gchar      *namespace_uri);
+GType       dax_param_enum_get_type     (void) G_GNUC_CONST;
+GParamSpec* dax_param_spec_enum         (const gchar   *name,
+                                         const gchar   *nick,
+                                         const gchar   *blurb,
+                                         GType          enum_type,
+                                         gint           default_value,
+                                         GParamFlags    g_flags,
+                                         DaxParamFlags  dax_flags,
+                                         const gchar   *namespace_uri);
 
 G_END_DECLS
 
