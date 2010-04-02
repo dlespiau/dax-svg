@@ -49,7 +49,7 @@ AC_CONFIG_SRCDIR([dax/dax.h])
 
 # Automake configuration
 AM_INIT_AUTOMAKE([1.10 -Wall -Wno-portability foreign no-define check-news])
-AM_CONFIG_HEADER([config.h])
+AM_CONFIG_HEADER([dax/config.h])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 AS_AM_REALLY_SILENT
 
