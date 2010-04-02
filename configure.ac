@@ -155,7 +155,7 @@ AC_SUBST(DAX_DEBUG_CFLAGS)
 
 dnl === GObject-Introspection check ===========================================
 
-GOBJECT_INTROSPECTION_CHECK([0.6.4])
+GOBJECT_INTROSPECTION_REQUIRE([0.6.4])
 
 AC_CONFIG_FILES([
     Makefile
@@ -173,8 +173,7 @@ echo "                     Dax $VERSION"
 echo "                ==================="
 echo ""
 echo "                 prefix:   ${prefix}"
-echo "         Compiler flags:   ${MAINTAINER_CFLAGS} ${CPPFLAGS}"
+echo "         Compiler flags: ${MAINTAINER_CFLAGS}"
 echo ""
-echo "            debug level:   ${enable_debug}"
-echo "  GObject introspection:   ${enable_introspection}"
+echo "                 debug :   ${enable_debug}"
 echo ""
