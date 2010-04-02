@@ -1,5 +1,5 @@
 /*
- * Castet - Load and draw SVG
+ * Dax - Load and draw SVG
  *
  * Copyright © 2009 Intel Corporation.
  *

@@ -4,170 +4,170 @@ NULL = #
 CLEANFILES = #
 
 AM_CFLAGS =				\
-	$(CASTET_CFLAGS)		\
-	$(CASTET_DEBUG_CFLAGS)		\
-	-DG_LOG_DOMAIN=\"Castet\"	\
+	$(DAX_CFLAGS)		\
+	$(DAX_DEBUG_CFLAGS)		\
+	-DG_LOG_DOMAIN=\"Dax\"	\
 	$(NULL)
 
 LDADD =						\
-	$(CASTET_LT_LDFLAGS)			\
+	$(DAX_LT_LDFLAGS)			\
 	-no-undefined				\
-	-export-symbol-regex "^castet.*"	\
+	-export-symbol-regex "^dax.*"	\
 	$(NULL)
 
-ENUMFILES = castet-enum-types.h castet-enum-types.c
-STAMPFILES = stamp-castet-marshal.h stamp-castet-enum-types.h
+ENUMFILES = dax-enum-types.h dax-enum-types.c
+STAMPFILES = stamp-dax-marshal.h stamp-dax-enum-types.h
 
 BUILT_SOURCES = $(ENUMFILES)
 
 source_c =				\
-	castet-actor.c			\
-	castet-animate-element.c	\
-	castet-build-traverser.c	\
-	castet-circle-element.c		\
-	castet-core.c			\
-	castet-debug.c			\
-	castet-dom-character-data.c	\
-	castet-dom-document.c		\
-	castet-dom-element.c		\
-	castet-dom-exception.c		\
-	castet-dom-node.c		\
-	castet-dom-text.c		\
-	castet-document.c		\
-	castet-desc-element.c		\
-	castet-element.c		\
-	castet-element-traversal.c	\
-	castet-enum-types.c		\
-	castet-g-element.c		\
-	castet-gjs-context.c		\
-	castet-handler-element.c	\
-	castet-knot-sequence.c		\
-	castet-paramspec.c		\
-	castet-parser.c			\
-	castet-path-element.c		\
-	castet-polyline-element.c	\
-	castet-rect-element.c		\
-	castet-script-element.c		\
-	castet-svg-element.c		\
-	castet-svg-exception.c		\
-	castet-title-element.c		\
-	castet-traverser.c		\
-	castet-types.c			\
-	castet-utils.c			\
-	castet-xml-event.c		\
-	castet-xml-event-target.c	\
-	castet-xml-event-listener.c	\
+	dax-actor.c			\
+	dax-animate-element.c	\
+	dax-build-traverser.c	\
+	dax-circle-element.c		\
+	dax-core.c			\
+	dax-debug.c			\
+	dax-dom-character-data.c	\
+	dax-dom-document.c		\
+	dax-dom-element.c		\
+	dax-dom-exception.c		\
+	dax-dom-node.c		\
+	dax-dom-text.c		\
+	dax-document.c		\
+	dax-desc-element.c		\
+	dax-element.c		\
+	dax-element-traversal.c	\
+	dax-enum-types.c		\
+	dax-g-element.c		\
+	dax-gjs-context.c		\
+	dax-handler-element.c	\
+	dax-knot-sequence.c		\
+	dax-paramspec.c		\
+	dax-parser.c			\
+	dax-path-element.c		\
+	dax-polyline-element.c	\
+	dax-rect-element.c		\
+	dax-script-element.c		\
+	dax-svg-element.c		\
+	dax-svg-exception.c		\
+	dax-title-element.c		\
+	dax-traverser.c		\
+	dax-types.c			\
+	dax-utils.c			\
+	dax-xml-event.c		\
+	dax-xml-event-target.c	\
+	dax-xml-event-listener.c	\
 	clutter-shape.c			\
 	$(NULL)
 
 source_h =				\
-	castet.h			\
-	castet-actor.h			\
-	castet-animate-element.h	\
-	castet-build-traverser.h	\
-	castet-circle-element.h		\
-	castet-core.h			\
-	castet-dom-forward.h		\
-	castet-dom-character-data.h	\
-	castet-dom-document.h		\
-	castet-dom-element.h		\
-	castet-dom-exception.h		\
-	castet-dom-node.h		\
-	castet-dom-text.h		\
-	castet-document.h		\
-	castet-desc-element.h		\
-	castet-element.h		\
-	castet-element-traversal.h	\
-	castet-g-element.h		\
-	castet-gjs-context.h		\
-	castet-handler-element.h	\
-	castet-knot-sequence.h		\
-	castet-paramspec.h		\
-	castet-parser.h			\
-	castet-path-element.h		\
-	castet-polyline-element.h	\
-	castet-rect-element.h		\
-	castet-script-element.h		\
-	castet-svg-element.h		\
-	castet-svg-exception.h		\
-	castet-title-element.h		\
-	castet-traverser.h		\
-	castet-types.h			\
-	castet-xml-event.h		\
-	castet-xml-event-target.h	\
-	castet-xml-event-listener.h	\
+	dax.h			\
+	dax-actor.h			\
+	dax-animate-element.h	\
+	dax-build-traverser.h	\
+	dax-circle-element.h		\
+	dax-core.h			\
+	dax-dom-forward.h		\
+	dax-dom-character-data.h	\
+	dax-dom-document.h		\
+	dax-dom-element.h		\
+	dax-dom-exception.h		\
+	dax-dom-node.h		\
+	dax-dom-text.h		\
+	dax-document.h		\
+	dax-desc-element.h		\
+	dax-element.h		\
+	dax-element-traversal.h	\
+	dax-g-element.h		\
+	dax-gjs-context.h		\
+	dax-handler-element.h	\
+	dax-knot-sequence.h		\
+	dax-paramspec.h		\
+	dax-parser.h			\
+	dax-path-element.h		\
+	dax-polyline-element.h	\
+	dax-rect-element.h		\
+	dax-script-element.h		\
+	dax-svg-element.h		\
+	dax-svg-exception.h		\
+	dax-title-element.h		\
+	dax-traverser.h		\
+	dax-types.h			\
+	dax-xml-event.h		\
+	dax-xml-event-target.h	\
+	dax-xml-event-listener.h	\
 	clutter-shape.h			\
 	$(NULL)
 
 source_h_private = 		\
-	castet-debug.h		\
-	castet-dom-private.h	\
-	castet-internals.h	\
-	castet-private.h	\
-	castet-utils.h		\
-	castet-xml-private.h	\
+	dax-debug.h		\
+	dax-dom-private.h	\
+	dax-internals.h	\
+	dax-private.h	\
+	dax-utils.h		\
+	dax-xml-private.h	\
 	$(NULL)
 
-lib_LTLIBRARIES = libcastet-@CASTET_API_VERSION@.la
+lib_LTLIBRARIES = libdax-@DAX_API_VERSION@.la
 
-castetdir = $(includedir)/castet-$(CASTET_API_VERSION)/castet
-castet_HEADERS =					\
+daxdir = $(includedir)/dax-$(DAX_API_VERSION)/dax
+dax_HEADERS =					\
 	$(source_h)					\
-	$(top_builddir)/src/castet-enum-types.h		\
+	$(top_builddir)/src/dax-enum-types.h		\
 	$(NULL)
 
-libcastet_@CASTET_API_VERSION@_la_SOURCES =	\
+libdax_@DAX_API_VERSION@_la_SOURCES =	\
 	$(source_c)				\
 	$(source_h)				\
 	$(source_h_private)			\
 	$(NULL)
 
-libcastet_@CASTET_API_VERSION@_la_CFLAGS =	\
+libdax_@DAX_API_VERSION@_la_CFLAGS =	\
 	$(AM_CFLAGS)				\
 	$(MAINTAINER_CFLAGS)			\
 	$(NULL)
 
-libcastet_@CASTET_API_VERSION@_la_LIBADD  = 	\
-	$(CASTET_LIBS)				\
+libdax_@DAX_API_VERSION@_la_LIBADD  = 	\
+	$(DAX_LIBS)				\
 	$(NULL)
 
-castet-enum-types.h: stamp-castet-enum-types.h
+dax-enum-types.h: stamp-dax-enum-types.h
 	@true
-stamp-castet-enum-types.h: $(source_h) castet-enum-types.h.in Makefile
+stamp-dax-enum-types.h: $(source_h) dax-enum-types.h.in Makefile
 	$(QUIET_GEN)( $(GLIB_MKENUMS) \
-		--template $(srcdir)/castet-enum-types.h.in \
+		--template $(srcdir)/dax-enum-types.h.in \
 	  $(source_h) ) >> xgen-ceth && \
-	(cmp -s xgen-ceth castet-enum-types.h || cp xgen-ceth castet-enum-types.h) && \
+	(cmp -s xgen-ceth dax-enum-types.h || cp xgen-ceth dax-enum-types.h) && \
 	rm -f xgen-ceth && \
 	echo timestamp > $(@F)
 
-# castet-enum-types.c should really depend on $(source_h) but it would make
+# dax-enum-types.c should really depend on $(source_h) but it would make
 # this rule trigger every single time a header is touched. We don't want that.
-castet-enum-types.c: castet-enum-types.h castet-enum-types.c.in
+dax-enum-types.c: dax-enum-types.h dax-enum-types.c.in
 	$(QUIET_GEN)( $(GLIB_MKENUMS) \
-		--template $(srcdir)/castet-enum-types.c.in \
+		--template $(srcdir)/dax-enum-types.c.in \
 	  $(source_h) ) >> xgen-cetc && \
-	cp xgen-cetc castet-enum-types.c && \
+	cp xgen-cetc dax-enum-types.c && \
 	rm -f xgen-cetc
 
 if HAVE_INTROSPECTION
 BUILT_GIRSOURCES =
 
-Castet-@CASTET_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libcastet-@CASTET_API_VERSION@.la
+Dax-@DAX_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libdax-@DAX_API_VERSION@.la
 	$(QUIET_GEN)$(INTROSPECTION_SCANNER) -v \
-		--namespace Castet --nsversion=@CASTET_API_VERSION@ \
+		--namespace Dax --nsversion=@DAX_API_VERSION@ \
 		$(AM_CFLAGS) \
-		--c-include='castet/castet.h' \
+		--c-include='dax/dax.h' \
 		--include=GObject-2.0 \
 		--include=Clutter-1.0 \
-		--library=libcastet-@CASTET_API_VERSION@.la \
+		--library=libdax-@DAX_API_VERSION@.la \
 		--libtool="$(top_builddir)/libtool" \
 	        --pkg gobject-2.0 \
 	        --output $@ \
-		$(castet_HEADERS) \
+		$(dax_HEADERS) \
 		$(source_c)
 
-BUILT_GIRSOURCES += Castet-@CASTET_API_VERSION@.gir
+BUILT_GIRSOURCES += Dax-@DAX_API_VERSION@.gir
 #
 # INTROSPECTION_GIRDIR/INTROSPECTION_TYPELIBDIR aren't the right place to
 # install anything - we need to install inside our prefix.
@@ -200,6 +200,6 @@ DISTCLEANFILES = 		\
 	$(NULL)
 
 EXTRA_DIS =			\
-	castet-enum-types.h.in	\
-	castet-enum-types.c.in	\
+	dax-enum-types.h.in	\
+	dax-enum-types.c.in	\
 	$(NULL)

@@ -1,5 +1,5 @@
 *.gir
 *.typelib
-castet-enum-types.c
-castet-enum-types.h
+dax-enum-types.c
+dax-enum-types.h
 stamp-*

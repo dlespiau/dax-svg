@@ -1,23 +1,23 @@
-# castet package version number, (as distinct from shared library version)
+# dax package version number, (as distinct from shared library version)
 # An odd micro number indicates in-progress development from Git
 # An even micro number indicates a released version
 #
 # Making a point release:
-# - increase castet_version_micro to the next even number
-# - increase castet_interface_age to the next even number
+# - increase dax_version_micro to the next even number
+# - increase dax_interface_age to the next even number
 #   UNLESS there was an API addition/deprecation, in which case
-#   - set castet_interface_age to 0
+#   - set dax_interface_age to 0
 # After the release:
-# - increase castet_version_micro to the next odd number
-# - increase castet_api_version to the next odd number
-m4_define([castet_version_major], [0])
-m4_define([castet_version_minor], [1])
-m4_define([castet_version_micro], [0])
+# - increase dax_version_micro to the next odd number
+# - increase dax_api_version to the next odd number
+m4_define([dax_version_major], [0])
+m4_define([dax_version_minor], [1])
+m4_define([dax_version_micro], [0])
 
-m4_define([castet_api_version], [0.1])
+m4_define([dax_api_version], [0.1])
 
-m4_define([castet_version],
-          [castet_version_major.castet_version_minor.castet_version_micro])
+m4_define([dax_version],
+          [dax_version_major.dax_version_minor.dax_version_micro])
 
 # increase the interface age by 2 for each release; if the API changes,
 # set to 0. interface_age and binary_age are used to create the soname
@@ -28,24 +28,24 @@ m4_define([castet_version],
 # this allows using the same soname for different micro-releases in case
 # no API was added or deprecated. for instance:
 #
-#   castet 1.2.0  -> 100 * 2 + 0  = 200, interface age = 0 -> 200
-#   castet 1.2.2  -> 100 * 2 + 2  = 202, interface age = 2 -> 200
-#   castet 1.2.4  -> 100 * 2 + 4  = 204, interface age = 4 -> 200
+#   dax 1.2.0  -> 100 * 2 + 0  = 200, interface age = 0 -> 200
+#   dax 1.2.2  -> 100 * 2 + 2  = 202, interface age = 2 -> 200
+#   dax 1.2.4  -> 100 * 2 + 4  = 204, interface age = 4 -> 200
 #   [ API addition, deprecation ]
-#   castet 1.2.6  -> 100 * 2 + 6  = 206, interface age = 0 -> 206
-#   castet 1.2.8  -> 100 * 2 + 8  = 208, interface age = 2 -> 206
-#   castet 1.2.10 -> 100 * 2 + 10 = 210, interface age = 4 -> 206
+#   dax 1.2.6  -> 100 * 2 + 6  = 206, interface age = 0 -> 206
+#   dax 1.2.8  -> 100 * 2 + 8  = 208, interface age = 2 -> 206
+#   dax 1.2.10 -> 100 * 2 + 10 = 210, interface age = 4 -> 206
 #   ...
-m4_define([castet_interface_age], [0])
-m4_define([castet_binary_age], [m4_eval(100 * castet_version_minor + castet_version_micro)])
+m4_define([dax_interface_age], [0])
+m4_define([dax_binary_age], [m4_eval(100 * dax_version_minor + dax_version_micro)])
 
 # Autoconf configuration
 AC_PREREQ(2.59)
 
-AC_INIT([castet], [castet_version], [http://bugzilla.moblin.org])
+AC_INIT([dax], [dax_version], [http://bugzilla.moblin.org])
 AC_CONFIG_MACRO_DIR([build/autotools])
 AC_CONFIG_AUX_DIR([build/autotools])
-AC_CONFIG_SRCDIR([src/castet.h])
+AC_CONFIG_SRCDIR([src/dax.h])
 
 # Automake configuration
 AM_INIT_AUTOMAKE([1.10 -Wall -Wno-portability foreign no-define check-news])
@@ -58,26 +58,26 @@ LT_PREREQ([2.2.6])
 LT_INIT([win32-dll disable-static])
 
 # export a few variables
-CASTET_VERSION_MAJOR=castet_version_major
-CASTET_VERSION_MINOR=castet_version_minor
-CASTET_VERSION_MICRO=castet_version_micro
-CASTET_API_VERSION=castet_api_version
-AC_SUBST(CASTET_VERSION_MAJOR)
-AC_SUBST(CASTET_VERSION_MINOR)
-AC_SUBST(CASTET_VERSION_MICRO)
-AC_SUBST(CASTET_API_VERSION)
+DAX_VERSION_MAJOR=dax_version_major
+DAX_VERSION_MINOR=dax_version_minor
+DAX_VERSION_MICRO=dax_version_micro
+DAX_API_VERSION=dax_api_version
+AC_SUBST(DAX_VERSION_MAJOR)
+AC_SUBST(DAX_VERSION_MINOR)
+AC_SUBST(DAX_VERSION_MICRO)
+AC_SUBST(DAX_API_VERSION)
 
-m4_define([lt_current],  [m4_eval(castet_binary_age - castet_interface_age)])
-m4_define([lt_revision], [castet_interface_age])
-m4_define([lt_age],      [m4_eval(castet_binary_age - castet_interface_age)])
-CASTET_LT_CURRENT=lt_current
-CASTET_LT_REV=lt_revision
-CASTET_LT_AGE=lt_age
-CASTET_LT_VERSION="$CASTET_LT_CURRENT:$CASTET_LT_REV:$CASTET_LT_AGE"
-CASTET_LT_LDFLAGS="-version-info $CASTET_LT_VERSION"
+m4_define([lt_current],  [m4_eval(dax_binary_age - dax_interface_age)])
+m4_define([lt_revision], [dax_interface_age])
+m4_define([lt_age],      [m4_eval(dax_binary_age - dax_interface_age)])
+DAX_LT_CURRENT=lt_current
+DAX_LT_REV=lt_revision
+DAX_LT_AGE=lt_age
+DAX_LT_VERSION="$DAX_LT_CURRENT:$DAX_LT_REV:$DAX_LT_AGE"
+DAX_LT_LDFLAGS="-version-info $DAX_LT_VERSION"
 
-AC_SUBST(CASTET_LT_VERSION)
-AC_SUBST(CASTET_LT_LDFLAGS)
+AC_SUBST(DAX_LT_VERSION)
+AC_SUBST(DAX_LT_LDFLAGS)
 
 # Check for programs
 AC_PROG_CC
@@ -90,9 +90,9 @@ AC_C_CONST
 # Check for header files
 AC_HEADER_STDC
 
-PKG_CHECK_MODULES([CASTET], [glib-2.0 >= 2.16 gobject-2.0 clutter-1.0 clutter-gst-1.0 gjs-gi-1.0  gjs-1.0])
-AC_SUBST(CASTET_CFLAGS)
-AC_SUBST(CASTET_LIBS)
+PKG_CHECK_MODULES([DAX], [glib-2.0 >= 2.16 gobject-2.0 clutter-1.0 clutter-gst-1.0 gjs-gi-1.0  gjs-1.0])
+AC_SUBST(DAX_CFLAGS)
+AC_SUBST(DAX_LIBS)
 
 dnl === Enable maintainer cflags ==============================================
 
@@ -125,12 +125,12 @@ AC_SUBST(MAINTAINER_CFLAGS)
 dnl === Enable debug level ====================================================
 
 m4_define([debug_default],
-          [m4_if(m4_eval(castet_version_minor % 2), [1], [yes], [minimum])])
+          [m4_if(m4_eval(dax_version_minor % 2), [1], [yes], [minimum])])
 
 AC_ARG_ENABLE(
     [debug],
     [AC_HELP_STRING([--enable-debug=@<:@no/minimum/yes@:>@],
-                    [Control Castet debugging level @<:@default=debug_default@:>@])],
+                    [Control Dax debugging level @<:@default=debug_default@:>@])],
     [],
     [enable_debug=debug_default])
 
@@ -139,19 +139,19 @@ AS_CASE([$enable_debug],
         [yes],
         [
           test "$cflags_set" = set || CFLAGS="$CFLAGS -g"
-          CASTET_DEBUG_CFLAGS="-DCASTET_ENABLE_DEBUG"
+          DAX_DEBUG_CFLAGS="-DDAX_ENABLE_DEBUG"
         ],
 
         [minimum],
-        [CASTET_DEBUG_CFLAGS="-DCASTET_ENABLE_DEBUG -DG_DISABLE_CAST_CHECKS"],
+        [DAX_DEBUG_CFLAGS="-DDAX_ENABLE_DEBUG -DG_DISABLE_CAST_CHECKS"],
 
         [no],
-        [CASTET_DEBUG_CFLAGS="-DG_DISABLE_ASSERT -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS"],
+        [DAX_DEBUG_CFLAGS="-DG_DISABLE_ASSERT -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS"],
 
         [AC_MSG_ERROR([Unknown argument for --enable-debug])]
 )
 
-AC_SUBST(CASTET_DEBUG_CFLAGS)
+AC_SUBST(DAX_DEBUG_CFLAGS)
 
 dnl === GObject-Introspection check ===========================================
 
@@ -169,7 +169,7 @@ AC_CONFIG_FILES([
 AC_OUTPUT
 
 echo ""
-echo "                   Castet $VERSION"
+echo "                   Dax $VERSION"
 echo "                ==================="
 echo ""
 echo "                 prefix:   ${prefix}"

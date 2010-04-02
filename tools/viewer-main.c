@@ -1,5 +1,5 @@
 /*
- * Castet - Load and draw SVG
+ * Dax - Load and draw SVG
  *
  * Copyright © 2009 Intel Corporation.
  *
@@ -22,7 +22,7 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <clutter/clutter.h>
-#include <castet.h>
+#include <dax.h>
 
 int
 main (int   argc,
@@ -30,15 +30,15 @@ main (int   argc,
 {
     ClutterActor *stage, *svg;
 
-    castet_init (&argc, &argv);
+    dax_init (&argc, &argv);
     clutter_init (&argc, &argv);
 
     if (argc < 2) {
-        g_printf ("Usage: castet-viewer filename\n");
+        g_printf ("Usage: dax-viewer filename\n");
         return EXIT_FAILURE;
     }
 
-    svg = castet_actor_new_from_file (argv[1], NULL);
+    svg = dax_actor_new_from_file (argv[1], NULL);
     if (svg == NULL) {
         g_printf ("Could not create the SVG actor: %s\n", argv[1]);
         return EXIT_FAILURE;
@@ -51,7 +51,7 @@ main (int   argc,
     clutter_actor_animate (svg, CLUTTER_LINEAR, 5000, "x", 1000.0f, NULL);
 #endif
 
-    castet_actor_play (CASTET_ACTOR (svg));
+    dax_actor_play (DAX_ACTOR (svg));
 
     clutter_main();
 
