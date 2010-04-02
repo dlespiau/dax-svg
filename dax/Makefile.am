@@ -113,7 +113,7 @@ lib_LTLIBRARIES = libdax-@DAX_API_VERSION@.la
 daxdir = $(includedir)/dax-$(DAX_API_VERSION)/dax
 dax_HEADERS =					\
 	$(source_h)					\
-	$(top_builddir)/src/dax-enum-types.h		\
+	$(top_builddir)/dax/dax-enum-types.h		\
 	$(NULL)
 
 libdax_@DAX_API_VERSION@_la_SOURCES =	\

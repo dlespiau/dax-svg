@@ -5,13 +5,13 @@ NULL =
 noinst_PROGRAMS = $(TEST_PROGS)
 
 progs_ldadd =							\
-	$(top_builddir)/src/libdax-$(DAX_API_VERSION).la	\
+	$(top_builddir)/dax/libdax-$(DAX_API_VERSION).la	\
 	$(DAX_LIBS)
 
 AM_CPPFLAGS = 			\
 	-I$(top_srcdir)		\
-	-I$(top_srcdir)/src	\
-	$(DAX_CFLAGS)	\
+	-I$(top_srcdir)/dax	\
+	$(DAX_CFLAGS)		\
 	$(NULL)
 
 AM_CFLAGS = -g

@@ -45,7 +45,7 @@ AC_PREREQ(2.59)
 AC_INIT([dax], [dax_version], [http://bugzilla.moblin.org])
 AC_CONFIG_MACRO_DIR([build/autotools])
 AC_CONFIG_AUX_DIR([build/autotools])
-AC_CONFIG_SRCDIR([src/dax.h])
+AC_CONFIG_SRCDIR([dax/dax.h])
 
 # Automake configuration
 AM_INIT_AUTOMAKE([1.10 -Wall -Wno-portability foreign no-define check-news])
@@ -161,7 +161,7 @@ AC_CONFIG_FILES([
     Makefile
     build/Makefile
     build/autotools/Makefile
-    src/Makefile
+    dax/Makefile
     tests/Makefile
     tools/Makefile
 ])
@@ -169,7 +169,7 @@ AC_CONFIG_FILES([
 AC_OUTPUT
 
 echo ""
-echo "                   Dax $VERSION"
+echo "                     Dax $VERSION"
 echo "                ==================="
 echo ""
 echo "                 prefix:   ${prefix}"

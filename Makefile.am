@@ -1,3 +1,3 @@
-SUBDIRS = build src tests tools
+SUBDIRS = build dax tests tools
 
 ACLOCAL_AMFLAGS = -I build/autotools
