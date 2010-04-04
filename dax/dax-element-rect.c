@@ -18,14 +18,14 @@
  */
 
 #include "dax-internals.h"
-#include "dax-rect-element.h"
+#include "dax-element-rect.h"
 
-G_DEFINE_TYPE (DaxRectElement, dax_rect_element, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementRect, dax_element_rect, DAX_TYPE_ELEMENT)
 
-#define RECT_ELEMENT_PRIVATE(o)                                 \
+#define ELEMENT_RECT_PRIVATE(o)                                 \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_RECT_ELEMENT, \
-                                      DaxRectElementPrivate))
+                                      DAX_TYPE_ELEMENT_RECT, \
+                                      DaxElementRectPrivate))
 
 enum {
     PROP_0,
@@ -38,7 +38,7 @@ enum {
     PROP_RY,
 };
 
-struct _DaxRectElementPrivate
+struct _DaxElementRectPrivate
 {
     ClutterUnits *x;
     ClutterUnits *y;
@@ -49,12 +49,12 @@ struct _DaxRectElementPrivate
 };
 
 void
-dax_rect_element_set_x (DaxRectElement  *self,
+dax_element_rect_set_x (DaxElementRect  *self,
                            const ClutterUnits *x)
 {
-    DaxRectElementPrivate *priv;
+    DaxElementRectPrivate *priv;
 
-    g_return_if_fail (DAX_IS_RECT_ELEMENT (self));
+    g_return_if_fail (DAX_IS_ELEMENT_RECT (self));
 
     priv = self->priv;
     if (priv->x)
@@ -64,12 +64,12 @@ dax_rect_element_set_x (DaxRectElement  *self,
 }
 
 void
-dax_rect_element_set_y (DaxRectElement  *self,
+dax_element_rect_set_y (DaxElementRect  *self,
                            const ClutterUnits *y)
 {
-    DaxRectElementPrivate *priv;
+    DaxElementRectPrivate *priv;
 
-    g_return_if_fail (DAX_IS_RECT_ELEMENT (self));
+    g_return_if_fail (DAX_IS_ELEMENT_RECT (self));
 
     priv = self->priv;
     if (priv->y)
@@ -79,12 +79,12 @@ dax_rect_element_set_y (DaxRectElement  *self,
 }
 
 void
-dax_rect_element_set_width (DaxRectElement  *self,
+dax_element_rect_set_width (DaxElementRect  *self,
                                const ClutterUnits *width)
 {
-    DaxRectElementPrivate *priv;
+    DaxElementRectPrivate *priv;
 
-    g_return_if_fail (DAX_IS_RECT_ELEMENT (self));
+    g_return_if_fail (DAX_IS_ELEMENT_RECT (self));
 
     priv = self->priv;
     if (priv->width)
@@ -94,12 +94,12 @@ dax_rect_element_set_width (DaxRectElement  *self,
 }
 
 void
-dax_rect_element_set_height (DaxRectElement  *self,
+dax_element_rect_set_height (DaxElementRect  *self,
                                 const ClutterUnits *height)
 {
-    DaxRectElementPrivate *priv;
+    DaxElementRectPrivate *priv;
 
-    g_return_if_fail (DAX_IS_RECT_ELEMENT (self));
+    g_return_if_fail (DAX_IS_ELEMENT_RECT (self));
 
     priv = self->priv;
     if (priv->height)
@@ -109,12 +109,12 @@ dax_rect_element_set_height (DaxRectElement  *self,
 }
 
 void
-dax_rect_element_set_rx (DaxRectElement  *self,
+dax_element_rect_set_rx (DaxElementRect  *self,
                             const ClutterUnits *rx)
 {
-    DaxRectElementPrivate *priv;
+    DaxElementRectPrivate *priv;
 
-    g_return_if_fail (DAX_IS_RECT_ELEMENT (self));
+    g_return_if_fail (DAX_IS_ELEMENT_RECT (self));
 
     priv = self->priv;
     if (priv->rx)
@@ -124,12 +124,12 @@ dax_rect_element_set_rx (DaxRectElement  *self,
 }
 
 void
-dax_rect_element_set_ry (DaxRectElement  *self,
+dax_element_rect_set_ry (DaxElementRect  *self,
                             const ClutterUnits *ry)
 {
-    DaxRectElementPrivate *priv;
+    DaxElementRectPrivate *priv;
 
-    g_return_if_fail (DAX_IS_RECT_ELEMENT (self));
+    g_return_if_fail (DAX_IS_ELEMENT_RECT (self));
 
     priv = self->priv;
     if (priv->ry)
@@ -143,13 +143,13 @@ dax_rect_element_set_ry (DaxRectElement  *self,
  */
 
 static void
-dax_rect_element_get_property (GObject    *object,
+dax_element_rect_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-    DaxRectElement *rect = DAX_RECT_ELEMENT (object);
-    DaxRectElementPrivate *priv = rect->priv;
+    DaxElementRect *rect = DAX_ELEMENT_RECT (object);
+    DaxElementRectPrivate *priv = rect->priv;
 
     switch (property_id)
     {
@@ -177,32 +177,32 @@ dax_rect_element_get_property (GObject    *object,
 }
 
 static void
-dax_rect_element_set_property (GObject      *object,
+dax_element_rect_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-    DaxRectElement *rect = DAX_RECT_ELEMENT (object);
+    DaxElementRect *rect = DAX_ELEMENT_RECT (object);
 
     switch (property_id)
     {
     case PROP_X:
-        dax_rect_element_set_x (rect, clutter_value_get_units (value));
+        dax_element_rect_set_x (rect, clutter_value_get_units (value));
         break;
     case PROP_Y:
-        dax_rect_element_set_y (rect, clutter_value_get_units (value));
+        dax_element_rect_set_y (rect, clutter_value_get_units (value));
         break;
     case PROP_WIDTH:
-        dax_rect_element_set_width (rect, clutter_value_get_units (value));
+        dax_element_rect_set_width (rect, clutter_value_get_units (value));
         break;
     case PROP_HEIGHT:
-        dax_rect_element_set_height (rect, clutter_value_get_units (value));
+        dax_element_rect_set_height (rect, clutter_value_get_units (value));
         break;
     case PROP_RX:
-        dax_rect_element_set_rx (rect, clutter_value_get_units (value));
+        dax_element_rect_set_rx (rect, clutter_value_get_units (value));
         break;
     case PROP_RY:
-        dax_rect_element_set_ry (rect, clutter_value_get_units (value));
+        dax_element_rect_set_ry (rect, clutter_value_get_units (value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -210,29 +210,29 @@ dax_rect_element_set_property (GObject      *object,
 }
 
 static void
-dax_rect_element_dispose (GObject *object)
+dax_element_rect_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_rect_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_rect_parent_class)->dispose (object);
 }
 
 static void
-dax_rect_element_finalize (GObject *object)
+dax_element_rect_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_rect_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_rect_parent_class)->finalize (object);
 }
 
 static void
-dax_rect_element_class_init (DaxRectElementClass *klass)
+dax_element_rect_class_init (DaxElementRectClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     GParamSpec *pspec;
 
-    g_type_class_add_private (klass, sizeof (DaxRectElementPrivate));
+    g_type_class_add_private (klass, sizeof (DaxElementRectPrivate));
 
-    object_class->get_property = dax_rect_element_get_property;
-    object_class->set_property = dax_rect_element_set_property;
-    object_class->dispose = dax_rect_element_dispose;
-    object_class->finalize = dax_rect_element_finalize;
+    object_class->get_property = dax_element_rect_get_property;
+    object_class->set_property = dax_element_rect_set_property;
+    object_class->dispose = dax_element_rect_dispose;
+    object_class->finalize = dax_element_rect_finalize;
 
     pspec = clutter_param_spec_units ("x",
                                       "x",
@@ -290,11 +290,11 @@ dax_rect_element_class_init (DaxRectElementClass *klass)
 }
 
 static void
-dax_rect_element_init (DaxRectElement *self)
+dax_element_rect_init (DaxElementRect *self)
 {
-    DaxRectElementPrivate *priv;
+    DaxElementRectPrivate *priv;
 
-    self->priv = priv = RECT_ELEMENT_PRIVATE (self);
+    self->priv = priv = ELEMENT_RECT_PRIVATE (self);
 
     priv->x = g_slice_new0 (ClutterUnits);
     priv->y = g_slice_new0 (ClutterUnits);
@@ -305,42 +305,42 @@ dax_rect_element_init (DaxRectElement *self)
 }
 
 DaxDomElement *
-dax_rect_element_new (void)
+dax_element_rect_new (void)
 {
-    return g_object_new (DAX_TYPE_RECT_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_RECT, NULL);
 }
 
 gfloat
-dax_rect_element_get_x_px (DaxRectElement  *self)
+dax_element_rect_get_x_px (DaxElementRect  *self)
 {
     return clutter_units_to_pixels (self->priv->x);
 }
 
 gfloat
-dax_rect_element_get_y_px (DaxRectElement  *self)
+dax_element_rect_get_y_px (DaxElementRect  *self)
 {
     return clutter_units_to_pixels (self->priv->y);
 }
 
 gfloat
-dax_rect_element_get_width_px (DaxRectElement  *self)
+dax_element_rect_get_width_px (DaxElementRect  *self)
 {
     return clutter_units_to_pixels (self->priv->width);
 }
 
 gfloat
-dax_rect_element_get_height_px (DaxRectElement *self)
+dax_element_rect_get_height_px (DaxElementRect *self)
 {
     return clutter_units_to_pixels (self->priv->height);
 }
 
 gfloat
-dax_rect_element_set_rx_px (DaxRectElement  *self)
+dax_element_rect_set_rx_px (DaxElementRect  *self)
 {
     return clutter_units_to_pixels (self->priv->rx);
 }
 
-gfloat dax_rect_element_set_ry_px (DaxRectElement  *self)
+gfloat dax_element_rect_set_ry_px (DaxElementRect  *self)
 {
     return clutter_units_to_pixels (self->priv->ry);
 }

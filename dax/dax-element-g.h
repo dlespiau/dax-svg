@@ -17,8 +17,8 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __DAX_G_ELEMENT_H__
-#define __DAX_G_ELEMENT_H__
+#ifndef __DAX_ELEMENT_G_H__
+#define __DAX_ELEMENT_G_H__
 
 #include <glib-object.h>
 
@@ -26,51 +26,51 @@
 
 G_BEGIN_DECLS
 
-#define DAX_TYPE_G_ELEMENT dax_g_element_get_type()
+#define DAX_TYPE_ELEMENT_G dax_element_g_get_type()
 
-#define DAX_G_ELEMENT(obj)                           \
+#define DAX_ELEMENT_G(obj)                           \
     (G_TYPE_CHECK_INSTANCE_CAST ((obj),                 \
-                                 DAX_TYPE_G_ELEMENT, \
-                                 DaxGElement))
+                                 DAX_TYPE_ELEMENT_G, \
+                                 DaxElementG))
 
-#define DAX_G_ELEMENT_CLASS(klass)                   \
+#define DAX_ELEMENT_G_CLASS(klass)                   \
     (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
-                              DAX_TYPE_G_ELEMENT,    \
-                              DaxGElementClass))
+                              DAX_TYPE_ELEMENT_G,    \
+                              DaxElementGClass))
 
-#define DAX_IS_G_ELEMENT(obj)        \
+#define DAX_IS_ELEMENT_G(obj)        \
     (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
-                                 DAX_TYPE_G_ELEMENT))
+                                 DAX_TYPE_ELEMENT_G))
 
-#define DAX_IS_G_ELEMENT_CLASS(klass)    \
+#define DAX_IS_ELEMENT_G_CLASS(klass)    \
     (G_TYPE_CHECK_CLASS_TYPE ((klass),      \
-                              DAX_TYPE_G_ELEMENT))
+                              DAX_TYPE_ELEMENT_G))
 
-#define DAX_G_ELEMENT_GET_CLASS(obj)                 \
+#define DAX_ELEMENT_G_GET_CLASS(obj)                 \
     (G_TYPE_INSTANCE_GET_CLASS ((obj),                  \
-                                DAX_TYPE_G_ELEMENT,  \
-                                DaxGElementClass))
+                                DAX_TYPE_ELEMENT_G,  \
+                                DaxElementGClass))
 
-typedef struct _DaxGElement DaxGElement;
-typedef struct _DaxGElementClass DaxGElementClass;
-typedef struct _DaxGElementPrivate DaxGElementPrivate;
+typedef struct _DaxElementG DaxElementG;
+typedef struct _DaxElementGClass DaxElementGClass;
+typedef struct _DaxElementGPrivate DaxElementGPrivate;
 
-struct _DaxGElement
+struct _DaxElementG
 {
     DaxElement parent;
 
-    DaxGElementPrivate *priv;
+    DaxElementGPrivate *priv;
 };
 
-struct _DaxGElementClass
+struct _DaxElementGClass
 {
     DaxElementClass parent_class;
 };
 
-GType dax_g_element_get_type (void) G_GNUC_CONST;
+GType dax_element_g_get_type (void) G_GNUC_CONST;
 
-DaxDomElement *dax_g_element_new (void);
+DaxDomElement *dax_element_g_new (void);
 
 G_END_DECLS
 
-#endif /* __DAX_G_ELEMENT_H__ */
+#endif /* __DAX_ELEMENT_G_H__ */

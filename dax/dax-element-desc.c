@@ -17,21 +17,21 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "dax-desc-element.h"
+#include "dax-element-desc.h"
 
-G_DEFINE_TYPE (DaxDescElement, dax_desc_element, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementDesc, dax_element_desc, DAX_TYPE_ELEMENT)
 
-#define DESC_ELEMENT_PRIVATE(o)                                 \
+#define ELEMENT_DESC_PRIVATE(o)                                 \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_DESC_ELEMENT, \
-                                      DaxDescElementPrivate))
+                                      DAX_TYPE_ELEMENT_DESC, \
+                                      DaxElementDescPrivate))
 
-struct _DaxDescElementPrivate
+struct _DaxElementDescPrivate
 {
 };
 
 static void
-dax_desc_element_get_property (GObject    *object,
+dax_element_desc_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
@@ -44,7 +44,7 @@ dax_desc_element_get_property (GObject    *object,
 }
 
 static void
-dax_desc_element_set_property (GObject      *object,
+dax_element_desc_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
@@ -57,38 +57,38 @@ dax_desc_element_set_property (GObject      *object,
 }
 
 static void
-dax_desc_element_dispose (GObject *object)
+dax_element_desc_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_desc_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_desc_parent_class)->dispose (object);
 }
 
 static void
-dax_desc_element_finalize (GObject *object)
+dax_element_desc_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_desc_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_desc_parent_class)->finalize (object);
 }
 
 static void
-dax_desc_element_class_init (DaxDescElementClass *klass)
+dax_element_desc_class_init (DaxElementDescClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    /* g_type_class_add_private (klass, sizeof (DaxDescElementPrivate)); */
+    /* g_type_class_add_private (klass, sizeof (DaxElementDescPrivate)); */
 
-    object_class->get_property = dax_desc_element_get_property;
-    object_class->set_property = dax_desc_element_set_property;
-    object_class->dispose = dax_desc_element_dispose;
-    object_class->finalize = dax_desc_element_finalize;
+    object_class->get_property = dax_element_desc_get_property;
+    object_class->set_property = dax_element_desc_set_property;
+    object_class->dispose = dax_element_desc_dispose;
+    object_class->finalize = dax_element_desc_finalize;
 }
 
 static void
-dax_desc_element_init (DaxDescElement *self)
+dax_element_desc_init (DaxElementDesc *self)
 {
-    /* self->priv = DESC_ELEMENT_PRIVATE (self); */
+    /* self->priv = ELEMENT_DESC_PRIVATE (self); */
 }
 
 DaxDomElement *
-dax_desc_element_new (void)
+dax_element_desc_new (void)
 {
-    return g_object_new (DAX_TYPE_DESC_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_DESC, NULL);
 }

@@ -21,14 +21,14 @@
 #include "dax-private.h"
 #include "dax-enum-types.h"
 #include "dax-paramspec.h"
-#include "dax-svg-element.h"
+#include "dax-element-svg.h"
 
-G_DEFINE_TYPE (DaxSvgElement, dax_svg_element, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementSvg, dax_element_svg, DAX_TYPE_ELEMENT)
 
-#define SVG_ELEMENT_PRIVATE(o)                              \
+#define ELEMENT_SVG_PRIVATE(o)                              \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
-                                      DAX_TYPE_SVG_ELEMENT, \
-                                      DaxSvgElementPrivate))
+                                      DAX_TYPE_ELEMENT_SVG, \
+                                      DaxElementSvgPrivate))
 
 enum
 {
@@ -41,7 +41,7 @@ enum
     PROP_VIEW_BOX,
 };
 
-struct _DaxSvgElementPrivate
+struct _DaxElementSvgPrivate
 {
     DaxSvgVersion version;
     DaxSvgBaseProfile base_profile;
@@ -51,10 +51,10 @@ struct _DaxSvgElementPrivate
 };
 
 static void
-dax_svg_element_set_width (DaxSvgElement      *self,
+dax_element_svg_set_width (DaxElementSvg      *self,
                            const ClutterUnits *width)
 {
-    DaxSvgElementPrivate *priv = self->priv;
+    DaxElementSvgPrivate *priv = self->priv;
 
     if (priv->width)
         clutter_units_free (priv->width);
@@ -63,10 +63,10 @@ dax_svg_element_set_width (DaxSvgElement      *self,
 }
 
 static void
-dax_svg_element_set_height (DaxSvgElement      *self,
+dax_element_svg_set_height (DaxElementSvg      *self,
                             const ClutterUnits *height)
 {
-    DaxSvgElementPrivate *priv = self->priv;
+    DaxElementSvgPrivate *priv = self->priv;
 
     if (priv->height)
         clutter_units_free (priv->height);
@@ -79,13 +79,13 @@ dax_svg_element_set_height (DaxSvgElement      *self,
  */
 
 static void
-dax_svg_element_get_property (GObject    *object,
+dax_element_svg_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-    DaxSvgElement *self = DAX_SVG_ELEMENT (object);
-    DaxSvgElementPrivate *priv = self->priv;
+    DaxElementSvg *self = DAX_ELEMENT_SVG (object);
+    DaxElementSvgPrivate *priv = self->priv;
 
     switch (property_id)
     {
@@ -110,13 +110,13 @@ dax_svg_element_get_property (GObject    *object,
 }
 
 static void
-dax_svg_element_set_property (GObject      *object,
+dax_element_svg_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-    DaxSvgElement *self = DAX_SVG_ELEMENT (object);
-    DaxSvgElementPrivate *priv = self->priv;
+    DaxElementSvg *self = DAX_ELEMENT_SVG (object);
+    DaxElementSvgPrivate *priv = self->priv;
 
     switch (property_id)
     {
@@ -127,10 +127,10 @@ dax_svg_element_set_property (GObject      *object,
         priv->base_profile = g_value_get_enum (value);
         break;
     case PROP_WIDTH:
-        dax_svg_element_set_width (self, clutter_value_get_units (value));
+        dax_element_svg_set_width (self, clutter_value_get_units (value));
         break;
     case PROP_HEIGHT:
-        dax_svg_element_set_height (self, clutter_value_get_units (value));
+        dax_element_svg_set_height (self, clutter_value_get_units (value));
         break;
     case PROP_VIEW_BOX:
         if (priv->view_box)
@@ -143,29 +143,29 @@ dax_svg_element_set_property (GObject      *object,
 }
 
 static void
-dax_svg_element_dispose (GObject *object)
+dax_element_svg_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_svg_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_svg_parent_class)->dispose (object);
 }
 
 static void
-dax_svg_element_finalize (GObject *object)
+dax_element_svg_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_svg_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_svg_parent_class)->finalize (object);
 }
 
 static void
-dax_svg_element_class_init (DaxSvgElementClass *klass)
+dax_element_svg_class_init (DaxElementSvgClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     GParamSpec *pspec;
 
-    g_type_class_add_private (klass, sizeof (DaxSvgElementPrivate));
+    g_type_class_add_private (klass, sizeof (DaxElementSvgPrivate));
 
-    object_class->get_property = dax_svg_element_get_property;
-    object_class->set_property = dax_svg_element_set_property;
-    object_class->dispose = dax_svg_element_dispose;
-    object_class->finalize = dax_svg_element_finalize;
+    object_class->get_property = dax_element_svg_get_property;
+    object_class->set_property = dax_element_svg_set_property;
+    object_class->dispose = dax_element_svg_dispose;
+    object_class->finalize = dax_element_svg_finalize;
 
     pspec = dax_param_spec_enum ("version",
                                     "Version",
@@ -218,13 +218,13 @@ dax_svg_element_class_init (DaxSvgElementClass *klass)
 }
 
 static void
-dax_svg_element_init (DaxSvgElement *self)
+dax_element_svg_init (DaxElementSvg *self)
 {
-    self->priv = SVG_ELEMENT_PRIVATE (self);
+    self->priv = ELEMENT_SVG_PRIVATE (self);
 }
 
 DaxDomElement *
-dax_svg_element_new (void)
+dax_element_svg_new (void)
 {
-    return g_object_new (DAX_TYPE_SVG_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_SVG, NULL);
 }

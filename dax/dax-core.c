@@ -26,8 +26,8 @@
 #include "dax-debug.h"
 #include "dax-utils.h"
 #include "dax-enum-types.h"
-#include "dax-svg-element.h"
-#include "dax-script-element.h"
+#include "dax-element-svg.h"
+#include "dax-element-script.h"
 #include "dax-core.h"
 
 #define XML_NS_URI          "http://www.w3.org/XML/1998/namespace"

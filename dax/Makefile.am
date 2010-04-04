@@ -22,8 +22,6 @@ BUILT_SOURCES = $(ENUMFILES)
 
 source_c =				\
 	dax-actor.c			\
-	dax-animate-element.c		\
-	dax-circle-element.c		\
 	dax-clutter-traverser.c		\
 	dax-core.c			\
 	dax-debug.c			\
@@ -34,24 +32,26 @@ source_c =				\
 	dax-dom-node.c			\
 	dax-dom-text.c			\
 	dax-document.c			\
-	dax-desc-element.c		\
 	dax-element.c			\
+	dax-element-animate.c		\
+	dax-element-circle.c		\
+	dax-element-desc.c		\
+	dax-element-g.c			\
+	dax-element-handler.c		\
+	dax-element-line.c			\
+	dax-element-path.c		\
+	dax-element-polyline.c		\
+	dax-element-rect.c		\
+	dax-element-script.c		\
+	dax-element-svg.c		\
+	dax-element-title.c		\
 	dax-element-traversal.c		\
 	dax-enum-types.c		\
-	dax-g-element.c			\
 	dax-gjs-context.c		\
-	dax-handler-element.c		\
 	dax-knot-sequence.c		\
-	dax-line.c			\
 	dax-paramspec.c			\
 	dax-parser.c			\
-	dax-path-element.c		\
-	dax-polyline-element.c		\
-	dax-rect-element.c		\
-	dax-script-element.c		\
-	dax-svg-element.c		\
 	dax-svg-exception.c		\
-	dax-title-element.c		\
 	dax-traverser.c			\
 	dax-types.c			\
 	dax-utils.c			\
@@ -64,8 +64,6 @@ source_c =				\
 source_h =				\
 	dax.h				\
 	dax-actor.h			\
-	dax-animate-element.h		\
-	dax-circle-element.h		\
 	dax-clutter-traverser.h		\
 	dax-core.h			\
 	dax-dom-forward.h		\
@@ -76,23 +74,25 @@ source_h =				\
 	dax-dom-node.h			\
 	dax-dom-text.h			\
 	dax-document.h			\
-	dax-desc-element.h		\
 	dax-element.h			\
+	dax-element-animate.h		\
+	dax-element-circle.h		\
+	dax-element-desc.h		\
+	dax-element-g.h			\
+	dax-element-handler.h		\
+	dax-element-line.h			\
+	dax-element-path.h		\
+	dax-element-polyline.h		\
+	dax-element-rect.h		\
+	dax-element-script.h		\
+	dax-element-svg.h		\
+	dax-element-title.h		\
 	dax-element-traversal.h		\
-	dax-g-element.h			\
 	dax-gjs-context.h		\
-	dax-handler-element.h		\
 	dax-knot-sequence.h		\
-	dax-line.h			\
 	dax-paramspec.h			\
 	dax-parser.h			\
-	dax-path-element.h		\
-	dax-polyline-element.h		\
-	dax-rect-element.h		\
-	dax-script-element.h		\
-	dax-svg-element.h		\
 	dax-svg-exception.h		\
-	dax-title-element.h		\
 	dax-traverser.h			\
 	dax-types.h			\
 	dax-xml-event.h			\

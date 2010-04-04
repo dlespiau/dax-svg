@@ -17,8 +17,8 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __DAX_SVG_ELEMENT_H__
-#define __DAX_SVG_ELEMENT_H__
+#ifndef __DAX_ELEMENT_SVG_H__
+#define __DAX_ELEMENT_SVG_H__
 
 #include <glib-object.h>
 
@@ -26,34 +26,34 @@
 
 G_BEGIN_DECLS
 
-#define DAX_TYPE_SVG_ELEMENT dax_svg_element_get_type()
+#define DAX_TYPE_ELEMENT_SVG dax_element_svg_get_type()
 
-#define DAX_SVG_ELEMENT(obj)                             \
+#define DAX_ELEMENT_SVG(obj)                             \
     (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
-                                 DAX_TYPE_SVG_ELEMENT,   \
-                                 DaxSvgElement))
+                                 DAX_TYPE_ELEMENT_SVG,   \
+                                 DaxElementSvg))
 
-#define DAX_SVG_ELEMENT_CLASS(klass)                 \
+#define DAX_ELEMENT_SVG_CLASS(klass)                 \
     (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
-                              DAX_TYPE_SVG_ELEMENT,  \
-                              DaxSvgElementClass))
+                              DAX_TYPE_ELEMENT_SVG,  \
+                              DaxElementSvgClass))
 
-#define DAX_IS_SVG_ELEMENT(obj)      \
+#define DAX_IS_ELEMENT_SVG(obj)      \
     (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
-                                 DAX_TYPE_SVG_ELEMENT))
+                                 DAX_TYPE_ELEMENT_SVG))
 
-#define DAX_IS_SVG_ELEMENT_CLASS(klass)  \
+#define DAX_IS_ELEMENT_SVG_CLASS(klass)  \
     (G_TYPE_CHECK_CLASS_TYPE ((klass),      \
-                              DAX_TYPE_SVG_ELEMENT))
+                              DAX_TYPE_ELEMENT_SVG))
 
-#define DAX_SVG_ELEMENT_GET_CLASS(obj)                   \
+#define DAX_ELEMENT_SVG_GET_CLASS(obj)                   \
     (G_TYPE_INSTANCE_GET_CLASS ((obj),                      \
-                                DAX_TYPE_SVG_ELEMENT,    \
-                                DaxSvgElementClass))
+                                DAX_TYPE_ELEMENT_SVG,    \
+                                DaxElementSvgClass))
 
-typedef struct _DaxSvgElement DaxSvgElement;
-typedef struct _DaxSvgElementClass DaxSvgElementClass;
-typedef struct _DaxSvgElementPrivate DaxSvgElementPrivate;
+typedef struct _DaxElementSvg DaxElementSvg;
+typedef struct _DaxElementSvgClass DaxElementSvgClass;
+typedef struct _DaxElementSvgPrivate DaxElementSvgPrivate;
 
 #define DAX_SVG_VERSION_OVERRIDE_TRANSFORM
 typedef enum
@@ -72,22 +72,22 @@ typedef enum
     DAX_SVG_BASE_PROFILE_TINY
 } DaxSvgBaseProfile;
 
-struct _DaxSvgElement
+struct _DaxElementSvg
 {
     DaxElement parent;
 
-    DaxSvgElementPrivate *priv;
+    DaxElementSvgPrivate *priv;
 };
 
-struct _DaxSvgElementClass
+struct _DaxElementSvgClass
 {
     DaxElementClass parent_class;
 };
 
-GType dax_svg_element_get_type (void) G_GNUC_CONST;
+GType dax_element_svg_get_type (void) G_GNUC_CONST;
 
-DaxDomElement *dax_svg_element_new (void);
+DaxDomElement *dax_element_svg_new (void);
 
 G_END_DECLS
 
-#endif /* __DAX_SVG_ELEMENT_H__ */
+#endif /* __DAX_ELEMENT_SVG_H__ */

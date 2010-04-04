@@ -23,7 +23,7 @@
 #include "dax-debug.h"
 #include "dax-private.h"
 #include "dax-paramspec.h"
-#include "dax-svg-element.h"
+#include "dax-element-svg.h"
 #include "dax-element.h"
 
 G_DEFINE_ABSTRACT_TYPE (DaxElement, dax_element, DAX_TYPE_DOM_ELEMENT)
@@ -261,7 +261,7 @@ dax_element_get_fill_color (DaxElement *element)
 
     /* casting here as g_return_val_if_fail has already checked for the type */
     parent = ((DaxDomNode  *)element)->parent_node;
-    if (DAX_IS_SVG_ELEMENT (parent))
+    if (DAX_IS_ELEMENT_SVG (parent))
         return NULL;
 
     return dax_element_get_fill_color (DAX_ELEMENT (parent));
@@ -281,7 +281,7 @@ dax_element_get_stroke_color (DaxElement *element)
 
     /* casting here as g_return_val_if_fail has already checked for the type */
     parent = ((DaxDomNode  *)element)->parent_node;
-    if (DAX_IS_SVG_ELEMENT (parent))
+    if (DAX_IS_ELEMENT_SVG (parent))
         return NULL;
 
     return dax_element_get_stroke_color (DAX_ELEMENT (parent));

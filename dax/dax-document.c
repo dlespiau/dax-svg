@@ -19,18 +19,18 @@
 
 #include <string.h>
 
-#include "dax-animate-element.h"
-#include "dax-circle-element.h"
-#include "dax-desc-element.h"
-#include "dax-g-element.h"
-#include "dax-handler-element.h"
-#include "dax-line.h"
-#include "dax-path-element.h"
-#include "dax-polyline-element.h"
-#include "dax-rect-element.h"
-#include "dax-script-element.h"
-#include "dax-svg-element.h"
-#include "dax-title-element.h"
+#include "dax-element-animate.h"
+#include "dax-element-circle.h"
+#include "dax-element-desc.h"
+#include "dax-element-g.h"
+#include "dax-element-handler.h"
+#include "dax-element-line.h"
+#include "dax-element-path.h"
+#include "dax-element-polyline.h"
+#include "dax-element-rect.h"
+#include "dax-element-script.h"
+#include "dax-element-svg.h"
+#include "dax-element-title.h"
 #include "dax-document.h"
 
 G_DEFINE_TYPE (DaxDocument, dax_document, DAX_TYPE_DOM_DOCUMENT)
@@ -54,29 +54,29 @@ dax_document_create_element(DaxDomDocument  *self,
                                GError            **err)
 {
     if (strcmp (tag_name, "svg") == 0)
-        return dax_svg_element_new ();
+        return dax_element_svg_new ();
     if (strcmp (tag_name, "g") == 0)
-        return dax_g_element_new ();
+        return dax_element_g_new ();
     if (strcmp (tag_name, "path") == 0)
-        return dax_path_element_new ();
+        return dax_element_path_new ();
     if (strcmp (tag_name, "rect") == 0)
-        return dax_rect_element_new ();
+        return dax_element_rect_new ();
     if (strcmp (tag_name, "animate") == 0)
-        return dax_animate_element_new ();
+        return dax_element_animate_new ();
     if (strcmp (tag_name, "polyline") == 0)
-        return dax_polyline_element_new ();
+        return dax_element_polyline_new ();
     if (strcmp (tag_name, "circle") == 0)
-        return dax_circle_element_new ();
+        return dax_element_circle_new ();
     if (strcmp (tag_name, "handler") == 0)
-        return dax_handler_element_new ();
+        return dax_element_handler_new ();
     if (strcmp (tag_name, "script") == 0)
-        return dax_script_element_new ();
+        return dax_element_script_new ();
     if (strcmp (tag_name, "desc") == 0)
-        return dax_desc_element_new ();
+        return dax_element_desc_new ();
     if (strcmp (tag_name, "title") == 0)
-        return dax_title_element_new ();
+        return dax_element_title_new ();
     if (strcmp (tag_name, "line") == 0)
-        return dax_line_new ();
+        return dax_element_line_new ();
 
     return NULL;
 }

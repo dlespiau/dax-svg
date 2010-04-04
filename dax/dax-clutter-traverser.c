@@ -82,7 +82,7 @@ xml_event_from_clutter_event (DaxXmlEvent       *xml_event,
 
 static void
 dax_clutter_traverser_traverse_path (DaxTraverser   *traverser,
-                                     DaxPathElement *node)
+                                     DaxElementPath *node)
 {
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
     DaxClutterTraverserPrivate *priv = build->priv;
@@ -107,31 +107,31 @@ dax_clutter_traverser_traverse_path (DaxTraverser   *traverser,
 }
 
 static void
-on_rect_x_changed (DaxRectElement *element,
+on_rect_x_changed (DaxElementRect *element,
                    GParamSpec     *pspec,
                    gpointer        user_data)
 {
     ClutterActor *rectangle = CLUTTER_ACTOR (user_data);
     gfloat x;
 
-    x = dax_rect_element_get_x_px (element);
+    x = dax_element_rect_get_x_px (element);
     clutter_actor_set_x (rectangle, x);
 }
 
 static void
-on_rect_y_changed (DaxRectElement *element,
+on_rect_y_changed (DaxElementRect *element,
                    GParamSpec     *pspec,
                    gpointer        user_data)
 {
     ClutterActor *rectangle = CLUTTER_ACTOR (user_data);
     gfloat y;
 
-    y = dax_rect_element_get_y_px (element);
+    y = dax_element_rect_get_y_px (element);
     clutter_actor_set_y (rectangle, y);
 }
 
 static void
-on_rect_fill_opacity_changed (DaxRectElement *element,
+on_rect_fill_opacity_changed (DaxElementRect *element,
                               GParamSpec     *pspec,
                               gpointer        user_data)
 {
@@ -147,7 +147,7 @@ on_rect_fill_opacity_changed (DaxRectElement *element,
 
 static void
 dax_clutter_traverser_traverse_rect (DaxTraverser   *traverser,
-                                     DaxRectElement *node)
+                                     DaxElementRect *node)
 {
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
     DaxClutterTraverserPrivate *priv = build->priv;
@@ -167,12 +167,12 @@ dax_clutter_traverser_traverse_rect (DaxTraverser   *traverser,
         clutter_rectangle_set_border_color (CLUTTER_RECTANGLE (rectangle),
                                             stroke_color);
 
-    /* FIXME dax_rect_element_get_geometry() sounds like it could be
+    /* FIXME dax_element_rect_get_geometry() sounds like it could be
      * useful here */
-    geom.x = dax_rect_element_get_x_px (node);
-    geom.y = dax_rect_element_get_y_px (node);
-    geom.width = dax_rect_element_get_width_px (node);
-    geom.height = dax_rect_element_get_height_px (node);
+    geom.x = dax_element_rect_get_x_px (node);
+    geom.y = dax_element_rect_get_y_px (node);
+    geom.width = dax_element_rect_get_width_px (node);
+    geom.height = dax_element_rect_get_height_px (node);
     clutter_actor_set_geometry (rectangle, &geom);
 
     g_signal_connect (node, "notify::fill-opacity",
@@ -208,7 +208,7 @@ clutter_path_new_from_knot_sequence (const DaxKnotSequence *seq)
 
 static void
 dax_clutter_traverser_traverse_polyline (DaxTraverser       *traverser,
-                                         DaxPolylineElement *node)
+                                         DaxElementPolyline *node)
 {
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
     DaxClutterTraverserPrivate *priv = build->priv;
@@ -236,7 +236,7 @@ dax_clutter_traverser_traverse_polyline (DaxTraverser       *traverser,
 }
 
 static ClutterPath *
-build_circle_path (DaxCircleElement *circle)
+build_circle_path (DaxElementCircle *circle)
 {
     ClutterPath *path;
     ClutterUnits *cx_u, *cy_u, *r_u;
@@ -244,9 +244,9 @@ build_circle_path (DaxCircleElement *circle)
     static gfloat k = 4 * (G_SQRT2 - 1) / 3;
 
     /* Build the ClutterPath */
-    cx_u = dax_circle_element_get_cx (circle);
-    cy_u = dax_circle_element_get_cy (circle);
-    r_u  = dax_circle_element_get_r (circle);
+    cx_u = dax_element_circle_get_cx (circle);
+    cy_u = dax_element_circle_get_cy (circle);
+    r_u  = dax_element_circle_get_r (circle);
     cx = clutter_units_to_pixels (cx_u);
     cy = clutter_units_to_pixels (cy_u);
     r = clutter_units_to_pixels (r_u);
@@ -276,7 +276,7 @@ build_circle_path (DaxCircleElement *circle)
 }
 
 static void
-on_circle_changed (DaxCircleElement *circle,
+on_circle_changed (DaxElementCircle *circle,
                    GParamSpec       *pspec,
                    ClutterActor     *target)
 {
@@ -288,7 +288,7 @@ on_circle_changed (DaxCircleElement *circle,
 
 static void
 dax_clutter_traverser_traverse_circle (DaxTraverser     *traverser,
-                                       DaxCircleElement *node)
+                                       DaxElementCircle *node)
 {
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
     DaxClutterTraverserPrivate *priv = build->priv;
@@ -372,7 +372,7 @@ _animation_setup_property (ClutterAnimation *animation,
 
 static void
 dax_clutter_traverser_traverse_animate (DaxTraverser      *traverser,
-                                        DaxAnimateElement *node)
+                                        DaxElementAnimate *node)
 {
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
     DaxClutterTraverserPrivate *priv = build->priv;
@@ -384,9 +384,9 @@ dax_clutter_traverser_traverse_animate (DaxTraverser      *traverser,
     const gchar *attribute_name, *from, *to;
 
     /* create a new animation */
-    duration = dax_animate_element_get_duration (node);
-    target_element = dax_animate_element_get_target (node);
-    count = dax_animate_element_get_repeat_count (node);
+    duration = dax_element_animate_get_duration (node);
+    target_element = dax_element_animate_get_target (node);
+    count = dax_element_animate_get_repeat_count (node);
 
     animation = clutter_animation_new ();
     clutter_animation_set_duration (animation,
@@ -397,9 +397,9 @@ dax_clutter_traverser_traverse_animate (DaxTraverser      *traverser,
         clutter_animation_set_loop (animation, TRUE);
 
     /* setup the interval */
-    attribute_name = dax_animate_element_get_attribute_name (node);
-    from = dax_animate_element_get_from (node);
-    to = dax_animate_element_get_to (node);
+    attribute_name = dax_element_animate_get_attribute_name (node);
+    from = dax_element_animate_get_from (node);
+    to = dax_element_animate_get_to (node);
     _animation_setup_property (animation,
                                target_element,
                                attribute_name,
@@ -411,7 +411,7 @@ dax_clutter_traverser_traverse_animate (DaxTraverser      *traverser,
 }
 static void
 dax_clutter_traverser_traverse_script (DaxTraverser     *traverser,
-                                       DaxScriptElement *node)
+                                       DaxElementScript *node)
 {
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
     DaxClutterTraverserPrivate *priv = build->priv;
@@ -419,7 +419,7 @@ dax_clutter_traverser_traverse_script (DaxTraverser     *traverser,
     const gchar *script;
     int retval;
 
-    script = dax_script_element_get_code (node);
+    script = dax_element_script_get_code (node);
 
     if (!dax_js_context_eval (priv->js_context,
                                  script,
@@ -450,7 +450,7 @@ on_button_release_event (ClutterActor *actor,
 
 static void
 dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
-                                        DaxHandlerElement *node)
+                                        DaxElementHandler *node)
 {
 #if 0
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
@@ -463,7 +463,7 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
     DaxXmlEventType event_type;
     const gchar *event_name;
 
-    target = dax_handler_element_get_target (node);
+    target = dax_element_handler_get_target (node);
 
     g_object_get (node, "event", &event_type, NULL);
     event_name = dax_enum_to_string (DAX_TYPE_XML_EVENT_TYPE, event_type);
@@ -494,16 +494,16 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
 }
 
 static ClutterPath *
-clutter_path_new_from_line (DaxLine *line)
+clutter_path_new_from_line (DaxElementLine *line)
 {
     ClutterUnits *x1_u, *y1_u, *x2_u, *y2_u;
     gfloat x1, y1, x2, y2;
     ClutterPath *path;
 
-    x1_u = dax_line_get_x1 (line);
-    y1_u = dax_line_get_y1 (line);
-    x2_u = dax_line_get_x2 (line);
-    y2_u = dax_line_get_y2 (line);
+    x1_u = dax_element_line_get_x1 (line);
+    y1_u = dax_element_line_get_y1 (line);
+    x2_u = dax_element_line_get_x2 (line);
+    y2_u = dax_element_line_get_y2 (line);
 
     x1 = clutter_units_to_pixels (x1_u);
     y1 = clutter_units_to_pixels (y1_u);
@@ -519,7 +519,7 @@ clutter_path_new_from_line (DaxLine *line)
 
 static void
 dax_clutter_traverser_traverse_line (DaxTraverser *traverser,
-                                     DaxLine      *node)
+                                     DaxElementLine      *node)
 {
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
     DaxClutterTraverserPrivate *priv = build->priv;

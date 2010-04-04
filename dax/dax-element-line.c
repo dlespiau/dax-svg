@@ -20,12 +20,14 @@
 #include "dax-internals.h"
 #include "dax-private.h"
 #include "dax-paramspec.h"
-#include "dax-line.h"
+#include "dax-element-line.h"
 
-G_DEFINE_TYPE (DaxLine, dax_line, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementLine, dax_element_line, DAX_TYPE_ELEMENT)
 
-#define LINE_PRIVATE(o) \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAX_TYPE_LINE, DaxLinePrivate))
+#define LINE_PRIVATE(o)                                         \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
+                                      DAX_TYPE_ELEMENT_LINE,    \
+                                      DaxElementLinePrivate))
 
 enum {
     PROP_0,
@@ -36,17 +38,17 @@ enum {
     PROP_Y2
 };
 
-struct _DaxLinePrivate
+struct _DaxElementLinePrivate
 {
     ClutterUnits *x1, *y1;
     ClutterUnits *x2, *y2;
 };
 
 static void
-dax_line_set_x1 (DaxLine            *self,
-                 const ClutterUnits *x1)
+dax_element_line_set_x1 (DaxElementLine     *self,
+                         const ClutterUnits *x1)
 {
-    DaxLinePrivate *priv = self->priv;
+    DaxElementLinePrivate *priv = self->priv;
 
     if (priv->x1)
         clutter_units_free (priv->x1);
@@ -55,10 +57,10 @@ dax_line_set_x1 (DaxLine            *self,
 }
 
 static void
-dax_line_set_y1 (DaxLine            *self,
-                 const ClutterUnits *y1)
+dax_element_line_set_y1 (DaxElementLine     *self,
+                         const ClutterUnits *y1)
 {
-    DaxLinePrivate *priv = self->priv;
+    DaxElementLinePrivate *priv = self->priv;
 
     if (priv->y1)
         clutter_units_free (priv->y1);
@@ -67,10 +69,10 @@ dax_line_set_y1 (DaxLine            *self,
 }
 
 static void
-dax_line_set_x2 (DaxLine            *self,
-                 const ClutterUnits *x2)
+dax_element_line_set_x2 (DaxElementLine     *self,
+                         const ClutterUnits *x2)
 {
-    DaxLinePrivate *priv = self->priv;
+    DaxElementLinePrivate *priv = self->priv;
 
     if (priv->x2)
         clutter_units_free (priv->x2);
@@ -79,10 +81,10 @@ dax_line_set_x2 (DaxLine            *self,
 }
 
 static void
-dax_line_set_y2 (DaxLine            *self,
-                 const ClutterUnits *y2)
+dax_element_line_set_y2 (DaxElementLine     *self,
+                         const ClutterUnits *y2)
 {
-    DaxLinePrivate *priv = self->priv;
+    DaxElementLinePrivate *priv = self->priv;
 
     if (priv->y2)
         clutter_units_free (priv->y2);
@@ -95,13 +97,13 @@ dax_line_set_y2 (DaxLine            *self,
  */
 
 static void
-dax_line_get_property (GObject    *object,
-                       guint       property_id,
-                       GValue     *value,
-                       GParamSpec *pspec)
+dax_element_line_get_property (GObject    *object,
+                               guint       property_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
 {
-    DaxLine *self = DAX_LINE (object);
-    DaxLinePrivate *priv = self->priv;
+    DaxElementLine *self = DAX_ELEMENT_LINE (object);
+    DaxElementLinePrivate *priv = self->priv;
 
     switch (property_id)
     {
@@ -123,26 +125,26 @@ dax_line_get_property (GObject    *object,
 }
 
 static void
-dax_line_set_property (GObject      *object,
-                       guint         property_id,
-                       const GValue *value,
-                       GParamSpec   *pspec)
+dax_element_line_set_property (GObject      *object,
+                               guint         property_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
 {
-    DaxLine *self = DAX_LINE (object);
+    DaxElementLine *self = DAX_ELEMENT_LINE (object);
 
     switch (property_id)
     {
     case PROP_X1:
-        dax_line_set_x1 (self, clutter_value_get_units (value));
+        dax_element_line_set_x1 (self, clutter_value_get_units (value));
         break;
     case PROP_Y1:
-        dax_line_set_y1 (self, clutter_value_get_units (value));
+        dax_element_line_set_y1 (self, clutter_value_get_units (value));
         break;
     case PROP_X2:
-        dax_line_set_x2 (self, clutter_value_get_units (value));
+        dax_element_line_set_x2 (self, clutter_value_get_units (value));
         break;
     case PROP_Y2:
-        dax_line_set_y2 (self, clutter_value_get_units (value));
+        dax_element_line_set_y2 (self, clutter_value_get_units (value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -150,29 +152,29 @@ dax_line_set_property (GObject      *object,
 }
 
 static void
-dax_line_dispose (GObject *object)
+dax_element_line_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_line_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_line_parent_class)->dispose (object);
 }
 
 static void
-dax_line_finalize (GObject *object)
+dax_element_line_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_line_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_line_parent_class)->finalize (object);
 }
 
 static void
-dax_line_class_init (DaxLineClass *klass)
+dax_element_line_class_init (DaxElementLineClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     GParamSpec *pspec;
 
-    g_type_class_add_private (klass, sizeof (DaxLinePrivate));
+    g_type_class_add_private (klass, sizeof (DaxElementLinePrivate));
 
-    object_class->get_property = dax_line_get_property;
-    object_class->set_property = dax_line_set_property;
-    object_class->dispose = dax_line_dispose;
-    object_class->finalize = dax_line_finalize;
+    object_class->get_property = dax_element_line_get_property;
+    object_class->set_property = dax_element_line_set_property;
+    object_class->dispose = dax_element_line_dispose;
+    object_class->finalize = dax_element_line_finalize;
 
     pspec = dax_param_spec_boxed ("x1",
                                   "x1",
@@ -216,45 +218,45 @@ dax_line_class_init (DaxLineClass *klass)
 }
 
 static void
-dax_line_init (DaxLine *self)
+dax_element_line_init (DaxElementLine *self)
 {
     self->priv = LINE_PRIVATE (self);
 }
 
 DaxDomElement *
-dax_line_new (void)
+dax_element_line_new (void)
 {
-    return g_object_new (DAX_TYPE_LINE, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_LINE, NULL);
 }
 
 ClutterUnits *
-dax_line_get_x1 (const DaxLine *line)
+dax_element_line_get_x1 (const DaxElementLine *line)
 {
-    g_return_val_if_fail (DAX_IS_LINE (line), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_LINE (line), NULL);
 
     return line->priv->x1;
 }
 
 ClutterUnits *
-dax_line_get_y1 (const DaxLine *line)
+dax_element_line_get_y1 (const DaxElementLine *line)
 {
-    g_return_val_if_fail (DAX_IS_LINE (line), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_LINE (line), NULL);
 
     return line->priv->y1;
 }
 
 ClutterUnits *
-dax_line_get_x2 (const DaxLine *line)
+dax_element_line_get_x2 (const DaxElementLine *line)
 {
-    g_return_val_if_fail (DAX_IS_LINE (line), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_LINE (line), NULL);
 
     return line->priv->x2;
 }
 
 ClutterUnits *
-dax_line_get_y2 (const DaxLine *line)
+dax_element_line_get_y2 (const DaxElementLine *line)
 {
-    g_return_val_if_fail (DAX_IS_LINE (line), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_LINE (line), NULL);
 
     return line->priv->y2;
 }

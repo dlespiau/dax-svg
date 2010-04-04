@@ -18,7 +18,7 @@ test_simple_document_from_file (void)
 
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
     temp = dax_dom_node_get_parent_node (svg);
     g_assert (temp == DAX_DOM_NODE (document));
     temp = dax_dom_node_get_previous_sibling (svg);
@@ -43,14 +43,14 @@ test_simple_document_from_file (void)
     /* <desc> */
     desc = dax_dom_node_get_first_child (svg);
     g_assert (desc);
-    g_assert (DAX_IS_DESC_ELEMENT (desc));
+    g_assert (DAX_IS_ELEMENT_DESC (desc));
     temp = dax_dom_node_get_parent_node (desc);
     g_assert (temp == svg);
 
     /* <rect> */
     rect = dax_dom_node_get_last_child (svg);
     g_assert (rect);
-    g_assert (DAX_IS_RECT_ELEMENT (rect));
+    g_assert (DAX_IS_ELEMENT_RECT (rect));
     temp = dax_dom_node_get_parent_node (rect);
     g_assert (temp == svg);
     temp = dax_dom_node_get_previous_sibling (rect);
@@ -82,7 +82,7 @@ test_polyline (void)
     document = dax_dom_document_new_from_file ("09_06.svg", NULL);
     g_assert (DAX_IS_DOM_DOCUMENT (document));
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
     /* let's test <svg> width and height attribute here as 09_06.svg had them
      * with height != width */
     g_object_get (G_OBJECT (svg), "width", &units, NULL);
@@ -95,7 +95,7 @@ test_polyline (void)
 
     polyline = dax_dom_node_get_last_child (svg);
     g_assert (polyline);
-    g_assert (DAX_IS_POLYLINE_ELEMENT (polyline));
+    g_assert (DAX_IS_ELEMENT_POLYLINE (polyline));
 
     g_object_get (G_OBJECT (polyline), "points", &seq, NULL);
     g_assert (dax_knot_sequence_get_size (seq) == 22);
@@ -119,11 +119,11 @@ test_path (void)
     document = dax_dom_document_new_from_file ("08_01.svg", NULL);
     g_assert (DAX_IS_DOM_DOCUMENT (document));
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
 
     path = dax_dom_node_get_last_child (svg);
-    g_assert (DAX_IS_PATH_ELEMENT (path));
-    clutter_path = dax_path_element_get_path (DAX_PATH_ELEMENT (path));
+    g_assert (DAX_IS_ELEMENT_PATH (path));
+    clutter_path = dax_element_path_get_path (DAX_ELEMENT_PATH (path));
     g_assert (clutter_path_get_n_nodes (clutter_path) == 4);
     clutter_path_get_node (clutter_path, 0, &node);
     g_assert (node.type == CLUTTER_PATH_MOVE_TO);
@@ -154,13 +154,13 @@ test_animate (void)
     document = dax_dom_document_new_from_file ("19_011.svg", NULL);
     g_assert (DAX_IS_DOM_DOCUMENT (document));
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
 
     rect = dax_dom_node_get_last_child (svg);
-    g_assert (DAX_IS_RECT_ELEMENT (rect));
+    g_assert (DAX_IS_ELEMENT_RECT (rect));
 
     animate = dax_dom_node_get_last_child (rect);
-    g_assert (DAX_IS_ANIMATE_ELEMENT (animate));
+    g_assert (DAX_IS_ELEMENT_ANIMATE (animate));
     g_object_get (animate, "attributeType", &attribute_type, NULL);
     g_assert_cmpint (attribute_type, ==, DAX_ANIMATION_ATTRIBUTE_TYPE_CSS);
     g_object_get (animate, "attributeName", &string, NULL);
@@ -186,11 +186,11 @@ test_title_desc (void)
 
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
 
     /* <title> */
     title = dax_dom_node_get_first_child (svg);
-    g_assert (DAX_IS_TITLE_ELEMENT (title));
+    g_assert (DAX_IS_ELEMENT_TITLE (title));
 
     /* text node of <title> */
     text = dax_dom_node_get_first_child (title);
@@ -202,7 +202,7 @@ test_title_desc (void)
 
     /* <desc> */
     desc = dax_dom_node_get_next_sibling (title);
-    g_assert (DAX_IS_DESC_ELEMENT (desc));
+    g_assert (DAX_IS_ELEMENT_DESC (desc));
 
     /* text node of <desc> */
     text = dax_dom_node_get_first_child (desc);
@@ -236,15 +236,15 @@ test_script (void)
 
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
 
     /* <desc> */
     desc = dax_dom_node_get_first_child (svg);
-    g_assert (DAX_IS_DESC_ELEMENT (desc));
+    g_assert (DAX_IS_ELEMENT_DESC (desc));
 
     /* <script> */
     script = dax_dom_node_get_next_sibling (desc);
-    g_assert (DAX_IS_SCRIPT_ELEMENT (script));
+    g_assert (DAX_IS_ELEMENT_SCRIPT (script));
     g_object_get (script, "type", &type, NULL);
     g_assert_cmpint (type, ==, DAX_SCRIPT_TYPE_ECMASCRIPT);
 
@@ -270,11 +270,11 @@ test_circle (void)
 
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
 
     /* <circle> */
     circle = dax_dom_node_get_last_child (svg);
-    g_assert (DAX_IS_CIRCLE_ELEMENT (circle));
+    g_assert (DAX_IS_ELEMENT_CIRCLE (circle));
     g_object_get (circle, "cx", &units, NULL);
     g_assert_cmpfloat (clutter_units_get_unit_value (units), ==, 400.0f);
     g_object_get (circle, "cy", &units, NULL);
@@ -300,7 +300,7 @@ test_handler (void)
 
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
 
     /* <text> */
     text = dax_dom_node_get_last_child (svg);
@@ -311,11 +311,11 @@ test_handler (void)
 
     /* <circle> */
     circle = dax_dom_node_get_previous_sibling (text);
-    g_assert (DAX_IS_CIRCLE_ELEMENT (circle));
+    g_assert (DAX_IS_ELEMENT_CIRCLE (circle));
 
     /* <handler> */
     handler = dax_dom_node_get_first_child (circle);
-    g_assert (DAX_IS_HANDLER_ELEMENT (handler));
+    g_assert (DAX_IS_ELEMENT_HANDLER (handler));
     g_object_get (handler, "type", &type, NULL);
     g_assert_cmpint (type, ==, DAX_SCRIPT_TYPE_ECMASCRIPT);
     g_object_get (handler, "event", &event_type, NULL);
@@ -342,23 +342,23 @@ test_line (void)
 
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
 
     /* <g> */
     g = dax_dom_node_get_last_child (svg);
-    g_assert (DAX_IS_G_ELEMENT (g));
+    g_assert (DAX_IS_ELEMENT_G (g));
 
     /* <line> */
     line = dax_dom_node_get_first_child (g);
-    g_assert (DAX_IS_LINE (line));
+    g_assert (DAX_IS_ELEMENT_LINE (line));
 
-    units = dax_line_get_x1 (DAX_LINE (line));
+    units = dax_element_line_get_x1 (DAX_ELEMENT_LINE (line));
     g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 100.0f);
-    units = dax_line_get_y1 (DAX_LINE (line));
+    units = dax_element_line_get_y1 (DAX_ELEMENT_LINE (line));
     g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 300.0f);
-    units = dax_line_get_x2 (DAX_LINE (line));
+    units = dax_element_line_get_x2 (DAX_ELEMENT_LINE (line));
     g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 300.0f);
-    units = dax_line_get_y2 (DAX_LINE (line));
+    units = dax_element_line_get_y2 (DAX_ELEMENT_LINE (line));
     g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 100.0f);
 }
 

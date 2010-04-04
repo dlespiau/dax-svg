@@ -18,23 +18,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
-/* dax-title-element.c */
+/* dax-element-title.c */
 
-#include "dax-title-element.h"
+#include "dax-element-title.h"
 
-G_DEFINE_TYPE (DaxTitleElement, dax_title_element, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementTitle, dax_element_title, DAX_TYPE_ELEMENT)
 
-#define TITLE_ELEMENT_PRIVATE(o)                                    \
+#define ELEMENT_TITLE_PRIVATE(o)                                    \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                          \
-                                      DAX_TYPE_TITLE_ELEMENT,    \
-                                      DaxTitleElementPrivate))
+                                      DAX_TYPE_ELEMENT_TITLE,    \
+                                      DaxElementTitlePrivate))
 
-struct _DaxTitleElementPrivate
+struct _DaxElementTitlePrivate
 {
 };
 
 static void
-dax_title_element_get_property (GObject    *object,
+dax_element_title_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
@@ -47,7 +47,7 @@ dax_title_element_get_property (GObject    *object,
 }
 
 static void
-dax_title_element_set_property (GObject      *object,
+dax_element_title_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
@@ -60,38 +60,38 @@ dax_title_element_set_property (GObject      *object,
 }
 
 static void
-dax_title_element_dispose (GObject *object)
+dax_element_title_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_title_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_title_parent_class)->dispose (object);
 }
 
 static void
-dax_title_element_finalize (GObject *object)
+dax_element_title_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_title_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_title_parent_class)->finalize (object);
 }
 
 static void
-dax_title_element_class_init (DaxTitleElementClass *klass)
+dax_element_title_class_init (DaxElementTitleClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    /* g_type_class_add_private (klass, sizeof (DaxTitleElementPrivate)); */
+    /* g_type_class_add_private (klass, sizeof (DaxElementTitlePrivate)); */
 
-    object_class->get_property = dax_title_element_get_property;
-    object_class->set_property = dax_title_element_set_property;
-    object_class->dispose = dax_title_element_dispose;
-    object_class->finalize = dax_title_element_finalize;
+    object_class->get_property = dax_element_title_get_property;
+    object_class->set_property = dax_element_title_set_property;
+    object_class->dispose = dax_element_title_dispose;
+    object_class->finalize = dax_element_title_finalize;
 }
 
 static void
-dax_title_element_init (DaxTitleElement *self)
+dax_element_title_init (DaxElementTitle *self)
 {
-    /* self->priv = TITLE_ELEMENT_PRIVATE (self); */
+    /* self->priv = ELEMENT_TITLE_PRIVATE (self); */
 }
 
 DaxDomElement *
-dax_title_element_new (void)
+dax_element_title_new (void)
 {
-    return g_object_new (DAX_TYPE_TITLE_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_TITLE, NULL);
 }

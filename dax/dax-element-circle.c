@@ -22,14 +22,14 @@
 #include "dax-internals.h"
 #include "dax-private.h"
 #include "dax-paramspec.h"
-#include "dax-circle-element.h"
+#include "dax-element-circle.h"
 
-G_DEFINE_TYPE (DaxCircleElement, dax_circle_element, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementCircle, dax_element_circle, DAX_TYPE_ELEMENT)
 
-#define CIRCLE_ELEMENT_PRIVATE(o)                               \
+#define ELEMENT_CIRCLE_PRIVATE(o)                               \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_CIRCLE_ELEMENT,  \
-                                      DaxCircleElementPrivate))
+                                      DAX_TYPE_ELEMENT_CIRCLE,  \
+                                      DaxElementCirclePrivate))
 
 enum
 {
@@ -40,7 +40,7 @@ enum
     PROP_RADIUS
 };
 
-struct _DaxCircleElementPrivate
+struct _DaxElementCirclePrivate
 {
     ClutterUnits *cx;
     ClutterUnits *cy;
@@ -48,10 +48,10 @@ struct _DaxCircleElementPrivate
 };
 
 static void
-dax_circle_element_set_cx (DaxCircleElement   *self,
+dax_element_circle_set_cx (DaxElementCircle   *self,
                            const ClutterUnits *cx)
 {
-    DaxCircleElementPrivate *priv;
+    DaxElementCirclePrivate *priv;
 
     priv = self->priv;
     if (priv->cx)
@@ -61,10 +61,10 @@ dax_circle_element_set_cx (DaxCircleElement   *self,
 }
 
 static void
-dax_circle_element_set_cy (DaxCircleElement   *self,
+dax_element_circle_set_cy (DaxElementCircle   *self,
                            const ClutterUnits *cy)
 {
-    DaxCircleElementPrivate *priv;
+    DaxElementCirclePrivate *priv;
 
     priv = self->priv;
     if (priv->cy)
@@ -74,10 +74,10 @@ dax_circle_element_set_cy (DaxCircleElement   *self,
 }
 
 static void
-dax_circle_element_set_radius (DaxCircleElement   *self,
+dax_element_circle_set_radius (DaxElementCircle   *self,
                                const ClutterUnits *radius)
 {
-    DaxCircleElementPrivate *priv;
+    DaxElementCirclePrivate *priv;
 
     priv = self->priv;
     if (priv->radius)
@@ -91,13 +91,13 @@ dax_circle_element_set_radius (DaxCircleElement   *self,
  */
 
 static void
-dax_circle_element_get_property (GObject    *object,
+dax_element_circle_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-    DaxCircleElement *self = DAX_CIRCLE_ELEMENT (object);
-    DaxCircleElementPrivate *priv = self->priv;
+    DaxElementCircle *self = DAX_ELEMENT_CIRCLE (object);
+    DaxElementCirclePrivate *priv = self->priv;
 
     switch (property_id)
     {
@@ -116,23 +116,23 @@ dax_circle_element_get_property (GObject    *object,
 }
 
 static void
-dax_circle_element_set_property (GObject      *object,
+dax_element_circle_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-    DaxCircleElement *self = DAX_CIRCLE_ELEMENT (object);
+    DaxElementCircle *self = DAX_ELEMENT_CIRCLE (object);
 
     switch (property_id)
     {
     case PROP_CX:
-        dax_circle_element_set_cx (self, clutter_value_get_units (value));
+        dax_element_circle_set_cx (self, clutter_value_get_units (value));
         break;
     case PROP_CY:
-        dax_circle_element_set_cy (self, clutter_value_get_units (value));
+        dax_element_circle_set_cy (self, clutter_value_get_units (value));
         break;
     case PROP_RADIUS:
-        dax_circle_element_set_radius (self,
+        dax_element_circle_set_radius (self,
                                           clutter_value_get_units (value));
         break;
     default:
@@ -141,29 +141,29 @@ dax_circle_element_set_property (GObject      *object,
 }
 
 static void
-dax_circle_element_dispose (GObject *object)
+dax_element_circle_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_circle_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_circle_parent_class)->dispose (object);
 }
 
 static void
-dax_circle_element_finalize (GObject *object)
+dax_element_circle_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_circle_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_circle_parent_class)->finalize (object);
 }
 
 static void
-dax_circle_element_class_init (DaxCircleElementClass *klass)
+dax_element_circle_class_init (DaxElementCircleClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     GParamSpec *pspec;
 
-    g_type_class_add_private (klass, sizeof (DaxCircleElementPrivate));
+    g_type_class_add_private (klass, sizeof (DaxElementCirclePrivate));
 
-    object_class->get_property = dax_circle_element_get_property;
-    object_class->set_property = dax_circle_element_set_property;
-    object_class->dispose = dax_circle_element_dispose;
-    object_class->finalize = dax_circle_element_finalize;
+    object_class->get_property = dax_element_circle_get_property;
+    object_class->set_property = dax_element_circle_set_property;
+    object_class->dispose = dax_element_circle_dispose;
+    object_class->finalize = dax_element_circle_finalize;
 
     pspec = dax_param_spec_boxed ("cx",
                                   "cx",
@@ -196,12 +196,12 @@ dax_circle_element_class_init (DaxCircleElementClass *klass)
 }
 
 static void
-dax_circle_element_init (DaxCircleElement *self)
+dax_element_circle_init (DaxElementCircle *self)
 {
-    DaxCircleElementPrivate *priv;
+    DaxElementCirclePrivate *priv;
     ClutterUnits zero;
 
-    self->priv = priv = CIRCLE_ELEMENT_PRIVATE (self);
+    self->priv = priv = ELEMENT_CIRCLE_PRIVATE (self);
 
     clutter_units_from_pixels (&zero, 0.0f);
     priv->cx = clutter_units_copy (&zero);
@@ -210,31 +210,31 @@ dax_circle_element_init (DaxCircleElement *self)
 }
 
 DaxDomElement *
-dax_circle_element_new (void)
+dax_element_circle_new (void)
 {
-    return g_object_new (DAX_TYPE_CIRCLE_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_CIRCLE, NULL);
 }
 
 ClutterUnits *
-dax_circle_element_get_cx (const DaxCircleElement *circle)
+dax_element_circle_get_cx (const DaxElementCircle *circle)
 {
-    g_return_val_if_fail (DAX_IS_CIRCLE_ELEMENT (circle), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_CIRCLE (circle), NULL);
 
     return circle->priv->cx;
 }
 
 ClutterUnits *
-dax_circle_element_get_cy (const DaxCircleElement *circle)
+dax_element_circle_get_cy (const DaxElementCircle *circle)
 {
-    g_return_val_if_fail (DAX_IS_CIRCLE_ELEMENT (circle), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_CIRCLE (circle), NULL);
 
     return circle->priv->cy;
 }
 
 ClutterUnits *
-dax_circle_element_get_r (const DaxCircleElement *circle)
+dax_element_circle_get_r (const DaxElementCircle *circle)
 {
-    g_return_val_if_fail (DAX_IS_CIRCLE_ELEMENT (circle), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_CIRCLE (circle), NULL);
 
     return circle->priv->radius;
 }

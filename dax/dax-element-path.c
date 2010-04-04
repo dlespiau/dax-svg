@@ -20,14 +20,14 @@
  */
 
 #include "dax-internals.h"
-#include "dax-path-element.h"
+#include "dax-element-path.h"
 
-G_DEFINE_TYPE (DaxPathElement, dax_path_element, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementPath, dax_element_path, DAX_TYPE_ELEMENT)
 
-#define PATH_ELEMENT_PRIVATE(o)                                 \
+#define ELEMENT_PATH_PRIVATE(o)                                 \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_PATH_ELEMENT, \
-                                      DaxPathElementPrivate))
+                                      DAX_TYPE_ELEMENT_PATH, \
+                                      DaxElementPathPrivate))
 
 enum
 {
@@ -36,19 +36,19 @@ enum
     PROP_PATH
 };
 
-struct _DaxPathElementPrivate
+struct _DaxElementPathPrivate
 {
     ClutterPath *path;
 };
 
 static void
-dax_path_element_get_property (GObject    *object,
+dax_element_path_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-    DaxPathElement *self = DAX_PATH_ELEMENT (object);
-    DaxPathElementPrivate *priv = self->priv;
+    DaxElementPath *self = DAX_ELEMENT_PATH (object);
+    DaxElementPathPrivate *priv = self->priv;
 
     switch (property_id)
     {
@@ -61,13 +61,13 @@ dax_path_element_get_property (GObject    *object,
 }
 
 static void
-dax_path_element_set_property (GObject      *object,
+dax_element_path_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-    DaxPathElement *self = DAX_PATH_ELEMENT (object);
-    DaxPathElementPrivate *priv = self->priv;
+    DaxElementPath *self = DAX_ELEMENT_PATH (object);
+    DaxElementPathPrivate *priv = self->priv;
 
     switch (property_id)
     {
@@ -82,29 +82,29 @@ dax_path_element_set_property (GObject      *object,
 }
 
 static void
-dax_path_element_dispose (GObject *object)
+dax_element_path_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_path_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_path_parent_class)->dispose (object);
 }
 
 static void
-dax_path_element_finalize (GObject *object)
+dax_element_path_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_path_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_path_parent_class)->finalize (object);
 }
 
 static void
-dax_path_element_class_init (DaxPathElementClass *klass)
+dax_element_path_class_init (DaxElementPathClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     GParamSpec *pspec;
 
-    g_type_class_add_private (klass, sizeof (DaxPathElementPrivate));
+    g_type_class_add_private (klass, sizeof (DaxElementPathPrivate));
 
-    object_class->get_property = dax_path_element_get_property;
-    object_class->set_property = dax_path_element_set_property;
-    object_class->dispose = dax_path_element_dispose;
-    object_class->finalize = dax_path_element_finalize;
+    object_class->get_property = dax_element_path_get_property;
+    object_class->set_property = dax_element_path_set_property;
+    object_class->dispose = dax_element_path_dispose;
+    object_class->finalize = dax_element_path_finalize;
 
     pspec = g_param_spec_object ("d",
                                 "Path data",
@@ -115,21 +115,21 @@ dax_path_element_class_init (DaxPathElementClass *klass)
 }
 
 static void
-dax_path_element_init (DaxPathElement *self)
+dax_element_path_init (DaxElementPath *self)
 {
-    self->priv = PATH_ELEMENT_PRIVATE (self);
+    self->priv = ELEMENT_PATH_PRIVATE (self);
 }
 
 DaxDomElement *
-dax_path_element_new (void)
+dax_element_path_new (void)
 {
-    return g_object_new (DAX_TYPE_PATH_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_PATH, NULL);
 }
 
 ClutterPath *
-dax_path_element_get_path (DaxPathElement *self)
+dax_element_path_get_path (DaxElementPath *self)
 {
-    g_return_val_if_fail (DAX_IS_PATH_ELEMENT (self), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_PATH (self), NULL);
 
     return g_object_ref (self->priv->path);
 }

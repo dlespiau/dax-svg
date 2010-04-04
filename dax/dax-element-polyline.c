@@ -19,16 +19,16 @@
 
 #include "dax-internals.h"
 #include "dax-knot-sequence.h"
-#include "dax-polyline-element.h"
+#include "dax-element-polyline.h"
 
-G_DEFINE_TYPE (DaxPolylineElement,
-               dax_polyline_element,
+G_DEFINE_TYPE (DaxElementPolyline,
+               dax_element_polyline,
                DAX_TYPE_ELEMENT)
 
-#define POLYLINE_ELEMENT_PRIVATE(o)                             \
+#define ELEMENT_POLYLINE_PRIVATE(o)                             \
     (G_TYPE_INSTANCE_GET_PRIVATE ((o),                          \
-                                  DAX_TYPE_POLYLINE_ELEMENT, \
-                                  DaxPolylineElementPrivate))
+                                  DAX_TYPE_ELEMENT_POLYLINE, \
+                                  DaxElementPolylinePrivate))
 
 enum {
     PROP_0,
@@ -36,19 +36,19 @@ enum {
     PROP_POINTS
 };
 
-struct _DaxPolylineElementPrivate
+struct _DaxElementPolylinePrivate
 {
     DaxKnotSequence *knots;
 };
 
 static void
-dax_polyline_element_get_property (GObject    *object,
+dax_element_polyline_get_property (GObject    *object,
                                       guint       property_id,
                                       GValue     *value,
                                       GParamSpec *pspec)
 {
-    DaxPolylineElement *polyline = DAX_POLYLINE_ELEMENT (object);
-    DaxPolylineElementPrivate *priv = polyline->priv;
+    DaxElementPolyline *polyline = DAX_ELEMENT_POLYLINE (object);
+    DaxElementPolylinePrivate *priv = polyline->priv;
 
     switch (property_id)
     {
@@ -61,13 +61,13 @@ dax_polyline_element_get_property (GObject    *object,
 }
 
 static void
-dax_polyline_element_set_property (GObject      *object,
+dax_element_polyline_set_property (GObject      *object,
                                       guint         property_id,
                                       const GValue *value,
                                       GParamSpec   *pspec)
 {
-    DaxPolylineElement *polyline = DAX_POLYLINE_ELEMENT (object);
-    DaxPolylineElementPrivate *priv = polyline->priv;
+    DaxElementPolyline *polyline = DAX_ELEMENT_POLYLINE (object);
+    DaxElementPolylinePrivate *priv = polyline->priv;
 
     switch (property_id)
     {
@@ -82,30 +82,30 @@ dax_polyline_element_set_property (GObject      *object,
 }
 
 static void
-dax_polyline_element_dispose (GObject *object)
+dax_element_polyline_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_polyline_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_polyline_parent_class)->dispose (object);
 }
 
 static void
-dax_polyline_element_finalize (GObject *object)
+dax_element_polyline_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_polyline_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_polyline_parent_class)->finalize (object);
 }
 
 static void
-dax_polyline_element_class_init (DaxPolylineElementClass *klass)
+dax_element_polyline_class_init (DaxElementPolylineClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     GParamSpec *pspec;
 
     g_type_class_add_private (klass,
-                              sizeof (DaxPolylineElementPrivate));
+                              sizeof (DaxElementPolylinePrivate));
 
-    object_class->get_property = dax_polyline_element_get_property;
-    object_class->set_property = dax_polyline_element_set_property;
-    object_class->dispose = dax_polyline_element_dispose;
-    object_class->finalize = dax_polyline_element_finalize;
+    object_class->get_property = dax_element_polyline_get_property;
+    object_class->set_property = dax_element_polyline_set_property;
+    object_class->dispose = dax_element_polyline_dispose;
+    object_class->finalize = dax_element_polyline_finalize;
 
     pspec = g_param_spec_object ("points",
                                  "Points",
@@ -116,17 +116,17 @@ dax_polyline_element_class_init (DaxPolylineElementClass *klass)
 }
 
 static void
-dax_polyline_element_init (DaxPolylineElement *self)
+dax_element_polyline_init (DaxElementPolyline *self)
 {
-    DaxPolylineElementPrivate *priv;
+    DaxElementPolylinePrivate *priv;
 
-    self->priv = priv = POLYLINE_ELEMENT_PRIVATE (self);
+    self->priv = priv = ELEMENT_POLYLINE_PRIVATE (self);
 
     priv->knots = dax_knot_sequence_new ();
 }
 
 DaxDomElement *
-dax_polyline_element_new (void)
+dax_element_polyline_new (void)
 {
-    return g_object_new (DAX_TYPE_POLYLINE_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_POLYLINE, NULL);
 }

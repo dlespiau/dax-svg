@@ -17,21 +17,21 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "dax-g-element.h"
+#include "dax-element-g.h"
 
-G_DEFINE_TYPE (DaxGElement, dax_g_element, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementG, dax_element_g, DAX_TYPE_ELEMENT)
 
-#define G_ELEMENT_PRIVATE(o)                                    \
+#define ELEMENT_G_PRIVATE(o)                                    \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_G_ELEMENT,    \
-                                      DaxGElementPrivate))
+                                      DAX_TYPE_ELEMENT_G,    \
+                                      DaxElementGPrivate))
 
-struct _DaxGElementPrivate
+struct _DaxElementGPrivate
 {
 };
 
 static void
-dax_g_element_get_property (GObject    *object,
+dax_element_g_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
@@ -44,7 +44,7 @@ dax_g_element_get_property (GObject    *object,
 }
 
 static void
-dax_g_element_set_property (GObject      *object,
+dax_element_g_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
@@ -57,38 +57,38 @@ dax_g_element_set_property (GObject      *object,
 }
 
 static void
-dax_g_element_dispose (GObject *object)
+dax_element_g_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_g_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_g_parent_class)->dispose (object);
 }
 
 static void
-dax_g_element_finalize (GObject *object)
+dax_element_g_finalize (GObject *object)
 {
-    G_OBJECT_CLASS (dax_g_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_g_parent_class)->finalize (object);
 }
 
 static void
-dax_g_element_class_init (DaxGElementClass *klass)
+dax_element_g_class_init (DaxElementGClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-    /* g_type_class_add_private (klass, sizeof (DaxGElementPrivate)); */
+    /* g_type_class_add_private (klass, sizeof (DaxElementGPrivate)); */
 
-    object_class->get_property = dax_g_element_get_property;
-    object_class->set_property = dax_g_element_set_property;
-    object_class->dispose = dax_g_element_dispose;
-    object_class->finalize = dax_g_element_finalize;
+    object_class->get_property = dax_element_g_get_property;
+    object_class->set_property = dax_element_g_set_property;
+    object_class->dispose = dax_element_g_dispose;
+    object_class->finalize = dax_element_g_finalize;
 }
 
 static void
-dax_g_element_init (DaxGElement *self)
+dax_element_g_init (DaxElementG *self)
 {
-    /* self->priv = G_ELEMENT_PRIVATE (self); */
+    /* self->priv = ELEMENT_G_PRIVATE (self); */
 }
 
 DaxDomElement *
-dax_g_element_new (void)
+dax_element_g_new (void)
 {
-    return g_object_new (DAX_TYPE_G_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_G, NULL);
 }

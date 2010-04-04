@@ -17,7 +17,7 @@ test_dom_node (void)
 
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
     ns_uri = dax_dom_node_get_namespace_uri (svg);
     g_assert_cmpstr (ns_uri, ==, svg_ns);
     temp = dax_dom_node_get_parent_node (svg);
@@ -34,13 +34,13 @@ test_dom_node (void)
 
     /* <desc> */
     desc = dax_dom_node_get_first_child (svg);
-    g_assert (DAX_IS_DESC_ELEMENT (desc));
+    g_assert (DAX_IS_ELEMENT_DESC (desc));
     temp = dax_dom_node_get_parent_node (desc);
     g_assert (temp == svg);
 
     /* <rect> */
     rect = dax_dom_node_get_last_child (svg);
-    g_assert (DAX_IS_RECT_ELEMENT (rect));
+    g_assert (DAX_IS_ELEMENT_RECT (rect));
     temp = dax_dom_node_get_parent_node (rect);
     g_assert (temp == svg);
     temp = dax_dom_node_get_previous_sibling (rect);
@@ -61,11 +61,11 @@ test_dom_text (void)
 
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
-    g_assert (DAX_IS_SVG_ELEMENT (svg));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
 
     /* <desc> */
     desc = dax_dom_node_get_first_child (svg);
-    g_assert (DAX_IS_DESC_ELEMENT (desc));
+    g_assert (DAX_IS_ELEMENT_DESC (desc));
 
     /* text node of <desc> */
     text = dax_dom_node_get_first_child (desc);

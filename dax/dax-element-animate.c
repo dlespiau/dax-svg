@@ -23,16 +23,16 @@
 #include "dax-enum-types.h"
 #include "dax-private.h"
 #include "dax-paramspec.h"
-#include "dax-animate-element.h"
+#include "dax-element-animate.h"
 
-G_DEFINE_TYPE (DaxAnimateElement,
-               dax_animate_element,
+G_DEFINE_TYPE (DaxElementAnimate,
+               dax_element_animate,
                DAX_TYPE_ELEMENT)
 
-#define ANIMATE_ELEMENT_PRIVATE(o)                              \
+#define ELEMENT_ANIMATE_PRIVATE(o)                              \
     (G_TYPE_INSTANCE_GET_PRIVATE ((o),                          \
-                                  DAX_TYPE_ANIMATE_ELEMENT,  \
-                                  DaxAnimateElementPrivate))
+                                  DAX_TYPE_ELEMENT_ANIMATE,  \
+                                  DaxElementAnimatePrivate))
 
 enum
 {
@@ -46,7 +46,7 @@ enum
     PROP_REPEAT_COUNT
 };
 
-struct _DaxAnimateElementPrivate
+struct _DaxElementAnimatePrivate
 {
     DaxAnimationAttributeType attribute_type;
     gchar *attribute_name;
@@ -57,10 +57,10 @@ struct _DaxAnimateElementPrivate
 };
 
 static void
-dax_animate_element_set_duration (DaxAnimateElement *self,
+dax_element_animate_set_duration (DaxElementAnimate *self,
                                      DaxDuration       *duration)
 {
-    DaxAnimateElementPrivate *priv = self->priv;
+    DaxElementAnimatePrivate *priv = self->priv;
 
     if (priv->duration)
         dax_duration_free (priv->duration);
@@ -68,10 +68,10 @@ dax_animate_element_set_duration (DaxAnimateElement *self,
 }
 
 static void
-dax_animate_element_set_repeat_count (DaxAnimateElement *self,
+dax_element_animate_set_repeat_count (DaxElementAnimate *self,
                                          DaxRepeatCount    *count)
 {
-    DaxAnimateElementPrivate *priv = self->priv;
+    DaxElementAnimatePrivate *priv = self->priv;
 
     if (priv->repeat_count)
         dax_repeat_count_free (priv->repeat_count);
@@ -83,13 +83,13 @@ dax_animate_element_set_repeat_count (DaxAnimateElement *self,
  */
 
 static void
-dax_animate_element_get_property (GObject    *object,
+dax_element_animate_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-    DaxAnimateElement *self = DAX_ANIMATE_ELEMENT (object);
-    DaxAnimateElementPrivate *priv = self->priv;
+    DaxElementAnimate *self = DAX_ELEMENT_ANIMATE (object);
+    DaxElementAnimatePrivate *priv = self->priv;
 
     switch (property_id) {
     case PROP_ATTRIBUTE_TYPE:
@@ -116,13 +116,13 @@ dax_animate_element_get_property (GObject    *object,
 }
 
 static void
-dax_animate_element_set_property (GObject      *object,
+dax_element_animate_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-    DaxAnimateElement *self = DAX_ANIMATE_ELEMENT (object);
-    DaxAnimateElementPrivate *priv = self->priv;
+    DaxElementAnimate *self = DAX_ELEMENT_ANIMATE (object);
+    DaxElementAnimatePrivate *priv = self->priv;
 
     switch (property_id)
     {
@@ -139,10 +139,10 @@ dax_animate_element_set_property (GObject      *object,
         priv->to = g_strdup (g_value_get_string (value));
         break;
     case PROP_DURATION:
-        dax_animate_element_set_duration (self, g_value_get_boxed (value));
+        dax_element_animate_set_duration (self, g_value_get_boxed (value));
         break;
     case PROP_REPEAT_COUNT:
-        dax_animate_element_set_repeat_count (self,
+        dax_element_animate_set_repeat_count (self,
                                                  g_value_get_boxed (value));
         break;
     default:
@@ -151,37 +151,37 @@ dax_animate_element_set_property (GObject      *object,
 }
 
 static void
-dax_animate_element_dispose (GObject *object)
+dax_element_animate_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_animate_element_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_animate_parent_class)->dispose (object);
 }
 
 static void
-dax_animate_element_finalize (GObject *object)
+dax_element_animate_finalize (GObject *object)
 {
-    DaxAnimateElement *self = DAX_ANIMATE_ELEMENT (object);
-    DaxAnimateElementPrivate *priv = self->priv;
+    DaxElementAnimate *self = DAX_ELEMENT_ANIMATE (object);
+    DaxElementAnimatePrivate *priv = self->priv;
 
     g_free (priv->attribute_name);
     g_free (priv->from);
     g_free (priv->to);
     dax_duration_free (priv->duration);
 
-    G_OBJECT_CLASS (dax_animate_element_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_animate_parent_class)->finalize (object);
 }
 
 static void
-dax_animate_element_class_init (DaxAnimateElementClass *klass)
+dax_element_animate_class_init (DaxElementAnimateClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     GParamSpec *pspec;
 
-    g_type_class_add_private (klass, sizeof (DaxAnimateElementPrivate));
+    g_type_class_add_private (klass, sizeof (DaxElementAnimatePrivate));
 
-    object_class->get_property = dax_animate_element_get_property;
-    object_class->set_property = dax_animate_element_set_property;
-    object_class->dispose = dax_animate_element_dispose;
-    object_class->finalize = dax_animate_element_finalize;
+    object_class->get_property = dax_element_animate_get_property;
+    object_class->set_property = dax_element_animate_set_property;
+    object_class->dispose = dax_element_animate_dispose;
+    object_class->finalize = dax_element_animate_finalize;
 
     pspec = dax_param_spec_enum ("attributeType",
                                     "Attribute type",
@@ -232,63 +232,63 @@ dax_animate_element_class_init (DaxAnimateElementClass *klass)
 }
 
 static void
-dax_animate_element_init (DaxAnimateElement *self)
+dax_element_animate_init (DaxElementAnimate *self)
 {
-    self->priv = ANIMATE_ELEMENT_PRIVATE (self);
+    self->priv = ELEMENT_ANIMATE_PRIVATE (self);
 }
 
 DaxDomElement *
-dax_animate_element_new (void)
+dax_element_animate_new (void)
 {
-    return g_object_new (DAX_TYPE_ANIMATE_ELEMENT, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_ANIMATE, NULL);
 }
 
 DaxDuration *
-dax_animate_element_get_duration (const DaxAnimateElement *self)
+dax_element_animate_get_duration (const DaxElementAnimate *self)
 {
-    g_return_val_if_fail (DAX_IS_ANIMATE_ELEMENT (self), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
     return self->priv->duration;
 }
 
 const gchar *
-dax_animate_element_get_attribute_name (const DaxAnimateElement *self)
+dax_element_animate_get_attribute_name (const DaxElementAnimate *self)
 {
-    g_return_val_if_fail (DAX_IS_ANIMATE_ELEMENT (self), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
     return self->priv->attribute_name;
 }
 
 const gchar *
-dax_animate_element_get_from (const DaxAnimateElement *self)
+dax_element_animate_get_from (const DaxElementAnimate *self)
 {
-    g_return_val_if_fail (DAX_IS_ANIMATE_ELEMENT (self), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
     return self->priv->from;
 }
 
 const gchar *
-dax_animate_element_get_to (const DaxAnimateElement *self)
+dax_element_animate_get_to (const DaxElementAnimate *self)
 {
-    g_return_val_if_fail (DAX_IS_ANIMATE_ELEMENT (self), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
     return self->priv->to;
 }
 
 const DaxRepeatCount *
-dax_animate_element_get_repeat_count (const DaxAnimateElement *self)
+dax_element_animate_get_repeat_count (const DaxElementAnimate *self)
 {
-    g_return_val_if_fail (DAX_IS_ANIMATE_ELEMENT (self), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
     return self->priv->repeat_count;
 }
 
 DaxDomElement *
-dax_animate_element_get_target (const DaxAnimateElement *self)
+dax_element_animate_get_target (const DaxElementAnimate *self)
 {
     DaxDomNode *node;
 
-    g_return_val_if_fail (DAX_IS_ANIMATE_ELEMENT (self), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
     node = DAX_DOM_NODE (self);
 
