@@ -60,14 +60,14 @@ struct _DaxActorClass
     ClutterGroupClass parent_class;
 };
 
-GType           dax_actor_get_type           (void) G_GNUC_CONST;
+GType           dax_actor_get_type          (void) G_GNUC_CONST;
 
-ClutterActor   *dax_actor_new                (void);
-ClutterActor   *dax_actor_new_from_file      (const gchar  *filename,
-                                                 GError      **error);
-void            dax_actor_set_document       (DaxActor       *actor,
-                                                 DaxDomDocument *document);
-void            dax_actor_play               (DaxActor *self);
+ClutterActor *  dax_actor_new               (void);
+ClutterActor *  dax_actor_new_from_file     (const gchar  *filename,
+                                             GError      **error);
+void            dax_actor_set_document      (DaxActor       *actor,
+                                             DaxDomDocument *document);
+void            dax_actor_play              (DaxActor *self);
 
 G_END_DECLS
 

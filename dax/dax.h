@@ -22,8 +22,8 @@
 
 #include "dax-actor.h"
 #include "dax-animate-element.h"
-#include "dax-build-traverser.h"
 #include "dax-circle-element.h"
+#include "dax-clutter-traverser.h"
 #include "dax-core.h"
 #include "dax-dom-forward.h"
 #include "dax-dom-character-data.h"

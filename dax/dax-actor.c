@@ -17,15 +17,15 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "dax-build-traverser.h"
+#include "dax-clutter-traverser.h"
 #include "dax-parser.h"
 #include "dax-actor.h"
 
 G_DEFINE_TYPE (DaxActor, dax_actor, CLUTTER_TYPE_GROUP)
 
-#define ACTOR_PRIVATE(o)                                    \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
-                                      DAX_TYPE_ACTOR,    \
+#define ACTOR_PRIVATE(o)                                \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),              \
+                                      DAX_TYPE_ACTOR,   \
                                       DaxActorPrivate))
 
 struct _DaxActorPrivate
@@ -48,17 +48,17 @@ dax_actor_rebuild_scene_graph (DaxActor *self)
 {
     DaxActorPrivate *priv = self->priv;
     DaxTraverser *traverser;
-    DaxBuildTraverser *build_traverser;
+    DaxClutterTraverser *clutter_traverser;
 
     /* start by removing everyone */
     clutter_container_foreach (CLUTTER_CONTAINER (self), remove_actor, self);
 
-    traverser = dax_build_traverser_new (DAX_DOM_NODE (priv->document),
+    traverser = dax_clutter_traverser_new (DAX_DOM_NODE (priv->document),
                                             CLUTTER_CONTAINER (self));
     dax_traverser_apply (traverser);
 
-    build_traverser = DAX_BUILD_TRAVERSER (traverser);
-    priv->score = g_object_ref (dax_build_traverser_get_score (build_traverser));
+    clutter_traverser = DAX_CLUTTER_TRAVERSER (traverser);
+    priv->score = g_object_ref (dax_clutter_traverser_get_score (clutter_traverser));
 
     g_object_unref (traverser);
 }
@@ -69,9 +69,9 @@ dax_actor_rebuild_scene_graph (DaxActor *self)
 
 static void
 dax_actor_get_property (GObject    *object,
-                           guint       property_id,
-                           GValue     *value,
-                           GParamSpec *pspec)
+                        guint       property_id,
+                        GValue     *value,
+                        GParamSpec *pspec)
 {
     switch (property_id)
     {
@@ -82,9 +82,9 @@ dax_actor_get_property (GObject    *object,
 
 static void
 dax_actor_set_property (GObject      *object,
-                           guint         property_id,
-                           const GValue *value,
-                           GParamSpec   *pspec)
+                        guint         property_id,
+                        const GValue *value,
+                        GParamSpec   *pspec)
 {
     switch (property_id)
     {
@@ -132,7 +132,7 @@ dax_actor_new (void)
 
 ClutterActor *
 dax_actor_new_from_file (const gchar  *filename,
-                            GError      **error)
+                         GError      **error)
 {
     ClutterActor *actor;
     DaxDomDocument *document;
@@ -149,7 +149,7 @@ dax_actor_new_from_file (const gchar  *filename,
 
 void
 dax_actor_set_document (DaxActor       *actor,
-                           DaxDomDocument *document)
+                        DaxDomDocument *document)
 {
     DaxActorPrivate *priv;
 

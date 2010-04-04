@@ -26,20 +26,20 @@
 #include "dax-dom-private.h"
 #include "dax-knot-sequence.h"
 #include "clutter-shape.h"
-#include "dax-build-traverser.h"
+#include "dax-clutter-traverser.h"
 
-G_DEFINE_TYPE (DaxBuildTraverser,
-               dax_build_traverser,
+G_DEFINE_TYPE (DaxClutterTraverser,
+               dax_clutter_traverser,
                DAX_TYPE_TRAVERSER)
 
-#define BUILD_TRAVERSER_PRIVATE(o)                                  \
+#define CLUTTER_TRAVERSER_PRIVATE(o)                                \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                          \
-                                      DAX_TYPE_BUILD_TRAVERSER,  \
-                                      DaxBuildTraverserPrivate))
+                                      DAX_TYPE_CLUTTER_TRAVERSER,   \
+                                      DaxClutterTraverserPrivate))
 
 static GQuark quark_object_actor;
 
-struct _DaxBuildTraverserPrivate
+struct _DaxClutterTraverserPrivate
 {
     ClutterContainer *container;
     ClutterColor *fill_color;
@@ -50,7 +50,7 @@ struct _DaxBuildTraverserPrivate
 
 static void
 xml_event_from_clutter_event (DaxXmlEvent       *xml_event,
-                              ClutterEvent         *clutter_event,
+                              ClutterEvent      *clutter_event,
                               DaxXmlEventTarget *target)
 {
     switch (clutter_event->type) {
@@ -81,11 +81,11 @@ xml_event_from_clutter_event (DaxXmlEvent       *xml_event,
 }
 
 static void
-dax_build_traverser_traverse_path (DaxTraverser   *traverser,
-                                      DaxPathElement *node)
+dax_clutter_traverser_traverse_path (DaxTraverser   *traverser,
+                                     DaxPathElement *node)
 {
-    DaxBuildTraverser *build = DAX_BUILD_TRAVERSER (traverser);
-    DaxBuildTraverserPrivate *priv = build->priv;
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
     DaxElement *element = DAX_ELEMENT (node);
     const ClutterColor *fill_color, *stroke_color;
     ClutterActor *shape;
@@ -108,8 +108,8 @@ dax_build_traverser_traverse_path (DaxTraverser   *traverser,
 
 static void
 on_rect_x_changed (DaxRectElement *element,
-                   GParamSpec        *pspec,
-                   gpointer           user_data)
+                   GParamSpec     *pspec,
+                   gpointer        user_data)
 {
     ClutterActor *rectangle = CLUTTER_ACTOR (user_data);
     gfloat x;
@@ -120,8 +120,8 @@ on_rect_x_changed (DaxRectElement *element,
 
 static void
 on_rect_y_changed (DaxRectElement *element,
-                   GParamSpec        *pspec,
-                   gpointer           user_data)
+                   GParamSpec     *pspec,
+                   gpointer        user_data)
 {
     ClutterActor *rectangle = CLUTTER_ACTOR (user_data);
     gfloat y;
@@ -132,8 +132,8 @@ on_rect_y_changed (DaxRectElement *element,
 
 static void
 on_rect_fill_opacity_changed (DaxRectElement *element,
-                              GParamSpec        *pspec,
-                              gpointer           user_data)
+                              GParamSpec     *pspec,
+                              gpointer        user_data)
 {
     ClutterRectangle *rectangle = CLUTTER_RECTANGLE (user_data);
     ClutterColor fill_color;
@@ -146,11 +146,11 @@ on_rect_fill_opacity_changed (DaxRectElement *element,
 }
 
 static void
-dax_build_traverser_traverse_rect (DaxTraverser   *traverser,
-                                      DaxRectElement *node)
+dax_clutter_traverser_traverse_rect (DaxTraverser   *traverser,
+                                     DaxRectElement *node)
 {
-    DaxBuildTraverser *build = DAX_BUILD_TRAVERSER (traverser);
-    DaxBuildTraverserPrivate *priv = build->priv;
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
     DaxElement *element = DAX_ELEMENT (node);
     const ClutterColor *fill_color, *stroke_color;
     ClutterActor *rectangle;
@@ -207,11 +207,11 @@ clutter_path_new_from_knot_sequence (const DaxKnotSequence *seq)
 }
 
 static void
-dax_build_traverser_traverse_polyline (DaxTraverser       *traverser,
-                                          DaxPolylineElement *node)
+dax_clutter_traverser_traverse_polyline (DaxTraverser       *traverser,
+                                         DaxPolylineElement *node)
 {
-    DaxBuildTraverser *build = DAX_BUILD_TRAVERSER (traverser);
-    DaxBuildTraverserPrivate *priv = build->priv;
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
     DaxElement *element = DAX_ELEMENT (node);
     const ClutterColor *fill_color, *stroke_color;
     ClutterActor *polyline;
@@ -277,8 +277,8 @@ build_circle_path (DaxCircleElement *circle)
 
 static void
 on_circle_changed (DaxCircleElement *circle,
-                   GParamSpec          *pspec,
-                   ClutterActor        *target)
+                   GParamSpec       *pspec,
+                   ClutterActor     *target)
 {
     ClutterPath *path;
 
@@ -287,11 +287,11 @@ on_circle_changed (DaxCircleElement *circle,
 }
 
 static void
-dax_build_traverser_traverse_circle (DaxTraverser     *traverser,
-                                        DaxCircleElement *node)
+dax_clutter_traverser_traverse_circle (DaxTraverser     *traverser,
+                                       DaxCircleElement *node)
 {
-    DaxBuildTraverser *build = DAX_BUILD_TRAVERSER (traverser);
-    DaxBuildTraverserPrivate *priv = build->priv;
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
     DaxElement *element = DAX_ELEMENT (node);
     const ClutterColor *fill_color, *stroke_color;
     ClutterActor *circle;
@@ -336,7 +336,7 @@ _string_to_value (const gchar *string,
 
 static void
 _animation_setup_property (ClutterAnimation *animation,
-                           DaxDomElement *element,
+                           DaxDomElement    *element,
                            const gchar      *property,
                            const gchar      *from,
                            const gchar      *to)
@@ -371,11 +371,11 @@ _animation_setup_property (ClutterAnimation *animation,
 }
 
 static void
-dax_build_traverser_traverse_animate (DaxTraverser      *traverser,
-                                         DaxAnimateElement *node)
+dax_clutter_traverser_traverse_animate (DaxTraverser      *traverser,
+                                        DaxAnimateElement *node)
 {
-    DaxBuildTraverser *build = DAX_BUILD_TRAVERSER (traverser);
-    DaxBuildTraverserPrivate *priv = build->priv;
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
     ClutterAnimation *animation;
     ClutterTimeline *tl;
     DaxDuration *duration;
@@ -410,11 +410,11 @@ dax_build_traverser_traverse_animate (DaxTraverser      *traverser,
     clutter_score_append (priv->score, NULL, tl);
 }
 static void
-dax_build_traverser_traverse_script (DaxTraverser     *traverser,
-                                        DaxScriptElement *node)
+dax_clutter_traverser_traverse_script (DaxTraverser     *traverser,
+                                       DaxScriptElement *node)
 {
-    DaxBuildTraverser *build = DAX_BUILD_TRAVERSER (traverser);
-    DaxBuildTraverserPrivate *priv = build->priv;
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
     GError *error = NULL;
     const gchar *script;
     int retval;
@@ -449,12 +449,12 @@ on_button_release_event (ClutterActor *actor,
 }
 
 static void
-dax_build_traverser_traverse_handler (DaxTraverser      *traverser,
-                                         DaxHandlerElement *node)
+dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
+                                        DaxHandlerElement *node)
 {
 #if 0
-    DaxBuildTraverser *build = DAX_BUILD_TRAVERSER (traverser);
-    DaxBuildTraverserPrivate *priv = build->priv;
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
 #endif
     DaxDomElement *target;
     ClutterActor *target_actor;
@@ -498,10 +498,10 @@ dax_build_traverser_traverse_handler (DaxTraverser      *traverser,
  */
 
 static void
-dax_build_traverser_get_property (GObject    *object,
-                                     guint       property_id,
-                                     GValue     *value,
-                                     GParamSpec *pspec)
+dax_clutter_traverser_get_property (GObject    *object,
+                                    guint       property_id,
+                                    GValue     *value,
+                                    GParamSpec *pspec)
 {
     switch (property_id)
     {
@@ -511,10 +511,10 @@ dax_build_traverser_get_property (GObject    *object,
 }
 
 static void
-dax_build_traverser_set_property (GObject      *object,
-                                     guint         property_id,
-                                     const GValue *value,
-                                     GParamSpec   *pspec)
+dax_clutter_traverser_set_property (GObject      *object,
+                                    guint         property_id,
+                                    const GValue *value,
+                                    GParamSpec   *pspec)
 {
     switch (property_id)
     {
@@ -524,80 +524,80 @@ dax_build_traverser_set_property (GObject      *object,
 }
 
 static void
-dax_build_traverser_dispose (GObject *object)
+dax_clutter_traverser_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_build_traverser_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_clutter_traverser_parent_class)->dispose (object);
 }
 
 static void
-dax_build_traverser_finalize (GObject *object)
+dax_clutter_traverser_finalize (GObject *object)
 {
-    DaxBuildTraverser *self = DAX_BUILD_TRAVERSER (object);
-    DaxBuildTraverserPrivate *priv = self->priv;
+    DaxClutterTraverser *self = DAX_CLUTTER_TRAVERSER (object);
+    DaxClutterTraverserPrivate *priv = self->priv;
 
     g_object_unref (priv->score);
     g_object_unref (priv->container);
 
-    G_OBJECT_CLASS (dax_build_traverser_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_clutter_traverser_parent_class)->finalize (object);
 }
 
 static void
-dax_build_traverser_class_init (DaxBuildTraverserClass *klass)
+dax_clutter_traverser_class_init (DaxClutterTraverserClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     DaxTraverserClass *traverser_class = DAX_TRAVERSER_CLASS (klass);
 
     quark_object_actor = g_quark_from_static_string ("clutter-actor");
 
-    g_type_class_add_private (klass, sizeof (DaxBuildTraverserPrivate));
+    g_type_class_add_private (klass, sizeof (DaxClutterTraverserPrivate));
 
-    object_class->get_property = dax_build_traverser_get_property;
-    object_class->set_property = dax_build_traverser_set_property;
-    object_class->dispose = dax_build_traverser_dispose;
-    object_class->finalize = dax_build_traverser_finalize;
+    object_class->get_property = dax_clutter_traverser_get_property;
+    object_class->set_property = dax_clutter_traverser_set_property;
+    object_class->dispose = dax_clutter_traverser_dispose;
+    object_class->finalize = dax_clutter_traverser_finalize;
 
-    traverser_class->traverse_path = dax_build_traverser_traverse_path;
-    traverser_class->traverse_rect = dax_build_traverser_traverse_rect;
+    traverser_class->traverse_path = dax_clutter_traverser_traverse_path;
+    traverser_class->traverse_rect = dax_clutter_traverser_traverse_rect;
     traverser_class->traverse_polyline =
-        dax_build_traverser_traverse_polyline;
-    traverser_class->traverse_animate = dax_build_traverser_traverse_animate;
-    traverser_class->traverse_circle = dax_build_traverser_traverse_circle;
-    traverser_class->traverse_script = dax_build_traverser_traverse_script;
-    traverser_class->traverse_handler = dax_build_traverser_traverse_handler;
+        dax_clutter_traverser_traverse_polyline;
+    traverser_class->traverse_animate = dax_clutter_traverser_traverse_animate;
+    traverser_class->traverse_circle = dax_clutter_traverser_traverse_circle;
+    traverser_class->traverse_script = dax_clutter_traverser_traverse_script;
+    traverser_class->traverse_handler = dax_clutter_traverser_traverse_handler;
 }
 
 static void
-dax_build_traverser_init (DaxBuildTraverser *self)
+dax_clutter_traverser_init (DaxClutterTraverser *self)
 {
-    DaxBuildTraverserPrivate *priv;
+    DaxClutterTraverserPrivate *priv;
 
-    self->priv = priv = BUILD_TRAVERSER_PRIVATE (self);
+    self->priv = priv = CLUTTER_TRAVERSER_PRIVATE (self);
 
     priv->score = clutter_score_new ();
     priv->js_context = dax_js_context_get_default ();
 }
 
 DaxTraverser *
-dax_build_traverser_new (DaxDomNode    *node,
-                            ClutterContainer *container)
+dax_clutter_traverser_new (DaxDomNode       *node,
+                           ClutterContainer *container)
 {
     DaxTraverser *traverser;
 
-    traverser = g_object_new (DAX_TYPE_BUILD_TRAVERSER, NULL);
+    traverser = g_object_new (DAX_TYPE_CLUTTER_TRAVERSER, NULL);
     dax_traverser_set_root (traverser, node);
-    dax_build_traverser_set_container (DAX_BUILD_TRAVERSER (traverser),
+    dax_clutter_traverser_set_container (DAX_CLUTTER_TRAVERSER (traverser),
                                           container);
 
     return traverser;
 }
 
 void
-dax_build_traverser_set_container (DaxBuildTraverser *self,
-                                      ClutterContainer     *container)
+dax_clutter_traverser_set_container (DaxClutterTraverser *self,
+                                     ClutterContainer    *container)
 {
-    DaxBuildTraverserPrivate *priv;
+    DaxClutterTraverserPrivate *priv;
 
-    g_return_if_fail (DAX_IS_BUILD_TRAVERSER (self));
+    g_return_if_fail (DAX_IS_CLUTTER_TRAVERSER (self));
     priv = self->priv;
 
     if (priv->container)
@@ -606,9 +606,9 @@ dax_build_traverser_set_container (DaxBuildTraverser *self,
 }
 
 ClutterScore *
-dax_build_traverser_get_score (DaxBuildTraverser *self)
+dax_clutter_traverser_get_score (DaxClutterTraverser *self)
 {
-    g_return_val_if_fail (DAX_IS_BUILD_TRAVERSER (self), NULL);
+    g_return_val_if_fail (DAX_IS_CLUTTER_TRAVERSER (self), NULL);
 
     return self->priv->score;
 }
