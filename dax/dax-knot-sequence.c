@@ -17,8 +17,6 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string.h>
-
 #include "dax-utils.h"
 #include "dax-knot-sequence.h"
 
@@ -29,9 +27,9 @@ G_DEFINE_TYPE_WITH_CODE (DaxKnotSequence,
                          G_TYPE_OBJECT,
                          _register_transform_funcs (g_define_type_id))
 
-#define KNOT_SEQUENCE_PRIVATE(o)                                    \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                          \
-                                      DAX_TYPE_KNOT_SEQUENCE,    \
+#define KNOT_SEQUENCE_PRIVATE(o)                                \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
+                                      DAX_TYPE_KNOT_SEQUENCE,   \
                                       DaxKnotSequencePrivate))
 
 #define DAX_KNOT_SEQUENCE_FLAG_NONE              0x0
@@ -65,22 +63,9 @@ str_parse_float_list (gchar  **str,
 	return TRUE;
 }
 
-static guint
-str_count_commas (const gchar *str)
-{
-    guint nb_commas = 0;
-
-    while (strchr (str, ',')) {
-        nb_commas++;
-        str++;
-    }
-
-    return nb_commas;
-}
-
 static void
 dax_value_transform_knot_sequence_string (const GValue *src,
-                                             GValue       *dest)
+                                          GValue       *dest)
 {
     gchar *string = dax_knot_sequence_to_string (src->data[0].v_pointer);
 
@@ -89,7 +74,7 @@ dax_value_transform_knot_sequence_string (const GValue *src,
 
 static void
 dax_value_transform_string_knot_sequence (const GValue *src,
-                                             GValue       *dest)
+                                          GValue       *dest)
 {
     DaxKnotSequence *seq;
 
@@ -114,9 +99,9 @@ _register_transform_funcs (GType type)
 
 static void
 dax_knot_sequence_get_property (GObject    *object,
-                                   guint       property_id,
-                                   GValue     *value,
-                                   GParamSpec *pspec)
+                                guint       property_id,
+                                GValue     *value,
+                                GParamSpec *pspec)
 {
     switch (property_id)
     {
@@ -127,9 +112,9 @@ dax_knot_sequence_get_property (GObject    *object,
 
 static void
 dax_knot_sequence_set_property (GObject      *object,
-                                   guint         property_id,
-                                   const GValue *value,
-                                   GParamSpec   *pspec)
+                                guint         property_id,
+                                const GValue *value,
+                                GParamSpec   *pspec)
 {
     switch (property_id)
     {
@@ -176,7 +161,7 @@ dax_knot_sequence_new (void)
 
 DaxKnotSequence *
 dax_knot_sequence_new_from_static_array (gfloat *data,
-                                            guint   nb_knots)
+                                         guint   nb_knots)
 {
     DaxKnotSequence *seq;
     DaxKnotSequencePrivate *priv;
@@ -206,7 +191,7 @@ dax_knot_sequence_new_from_string (const gchar *string)
     gchar *cur = (gchar *)string;
     guint nb_commas, nb_floats = 0;
 
-    nb_commas = str_count_commas (string);
+    nb_commas = _dax_utils_count_commas (string);
 
     seq = dax_knot_sequence_new ();
     priv = seq->priv;

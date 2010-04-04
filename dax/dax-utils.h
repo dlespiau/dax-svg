@@ -26,13 +26,15 @@
 
 G_BEGIN_DECLS
 
-void        _dax_utils_skip_space                (char **str);
-void        _dax_utils_skip_space_and_char       (char  **str,
-                                                     gchar   skip_me);
-gboolean    _dax_utils_parse_simple_float        (gchar **string,
-                                                     gfloat *number);
-gboolean    _dax_utils_parse_float               (char   **string,
-                                                     gfloat  *x);
+void        _dax_utils_skip_space               (char **str);
+void        _dax_utils_skip_space_and_char      (char  **str,
+                                                 gchar   skip_me);
+guint       _dax_utils_count_commas             (const gchar *str);
+guint       _dax_utils_count_words              (const gchar *str);
+gboolean    _dax_utils_parse_simple_float       (gchar **string,
+                                                 gfloat *number);
+gboolean    _dax_utils_parse_float              (char   **string,
+                                                 gfloat  *x);
 
 G_END_DECLS
 

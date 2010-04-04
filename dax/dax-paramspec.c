@@ -20,15 +20,20 @@
  */
 
 #include "dax-internals.h"
+#include "dax-utils.h"
 #include "dax-paramspec.h"
 
 /*
- * Custom GParamSpec
+ * Custom GParamSpecs
  *
  * Dax needs custom GParamSpec to add a few features needed for SVG, namely:
  *   * differenciation between properties and attributes,
  *   * handling of inheritance,
  *   * specify if the parameter is animatable.
+ */
+
+/*
+ * DaxParamSpecEnum
  */
 
 static void
@@ -43,6 +48,9 @@ static void
 dax_param_enum_class_init (GParamSpecClass *klass)
 {
     klass->value_type = G_TYPE_ENUM;
+
+    ((DaxParamSpecClass *)klass)->from_string = NULL;
+    ((DaxParamSpecClass *)klass)->to_string = NULL;
 }
 
 GType
@@ -54,7 +62,7 @@ dax_param_enum_get_type (void)
         GType type;
 
         static const GTypeInfo info = {
-            sizeof (GParamSpecClass),
+            sizeof (DaxParamSpecClass),
             NULL,
             NULL,
             (GClassInitFunc) dax_param_enum_class_init,
@@ -88,7 +96,7 @@ dax_param_enum_get_type (void)
  * @namespace_uri: the namespace URI for the parameter. The string given has to
  *                 be an interned string.
  *
- * Creates a new #GParamSpecEnum instance specifying a %G_TYPE_ENUM
+ * Creates a new #DaxParamSpecEnum instance specifying a %G_TYPE_ENUM
  * property.
  *
  * See g_param_spec_internal() for details on property names.
@@ -133,4 +141,275 @@ dax_param_spec_enum (const gchar   *name,
     dax_enum_spec->namespace_uri = namespace_uri;
 
     return G_PARAM_SPEC (dax_enum_spec);
+}
+
+/*
+ * DaxParamSpecBoxed
+ */
+
+static void
+dax_param_boxed_class_init (GParamSpecClass *klass)
+{
+    klass->value_type = G_TYPE_BOXED;
+
+    ((DaxParamSpecClass *)klass)->from_string = NULL;
+    ((DaxParamSpecClass *)klass)->to_string = NULL;
+}
+
+GType
+dax_param_boxed_get_type (void)
+{
+    static volatile gsize dax_param_enum_type__volatile = 0;
+
+    if (g_once_init_enter (&dax_param_enum_type__volatile)) {
+        GType type;
+
+        static const GTypeInfo info = {
+            sizeof (DaxParamSpecClass),
+            NULL,
+            NULL,
+            (GClassInitFunc) dax_param_boxed_class_init,
+            NULL,
+            NULL,
+            sizeof (DaxParamSpecBoxed),
+            0,
+            NULL,
+        };
+
+        type = g_type_register_static (G_TYPE_PARAM_BOXED,
+                                       "DaxParamSpecBoxed",
+                                       &info,
+                                       0);
+
+        g_once_init_leave (&dax_param_enum_type__volatile, type);
+    }
+
+    return dax_param_enum_type__volatile;
+}
+
+/**
+ * dax_param_spec_boxed:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @boxed_type: a #GType derived from %G_TYPE_ENUM
+ * @g_flags: flags for the underlying GParamSpec property
+ * @dax_flags: flags specific to Dax
+ * @namespace_uri: the namespace URI for the parameter. The string given has to
+ *                 be an interned string.
+ *
+ * Creates a new #DaxParamSpecBoxed instance specifying a %G_TYPE_BOXED
+ * property.
+ *
+ * See g_param_spec_internal() for details on property names.
+ *
+ * Returns: a newly created parameter specification
+ */
+
+GParamSpec*
+dax_param_spec_boxed (const gchar   *name,
+                      const gchar   *nick,
+                      const gchar   *blurb,
+                      GType          boxed_type,
+                      GParamFlags    g_flags,
+                      DaxParamFlags  dax_flags,
+                      const char    *namespace_uri)
+{
+    DaxParamSpecBoxed *dax_boxed_spec;
+
+    g_return_val_if_fail (G_TYPE_IS_BOXED (boxed_type), NULL);
+    g_return_val_if_fail (G_TYPE_IS_VALUE_TYPE (boxed_type), NULL);
+
+    dax_boxed_spec = g_param_spec_internal (DAX_TYPE_PARAM_BOXED,
+                                           name,
+                                           nick,
+                                           blurb,
+                                           g_flags);
+
+    G_PARAM_SPEC (dax_boxed_spec)->value_type = boxed_type;
+
+    dax_boxed_spec->flags = dax_flags;
+    dax_boxed_spec->namespace_uri = namespace_uri;
+
+    return G_PARAM_SPEC (dax_boxed_spec);
+}
+
+/*
+ * DaxParamSpecArray
+ */
+
+static gint
+dax_param_float_array_from_string (GParamSpec *pspec,
+                                   const char *str,
+                                   GArray     *array)
+{
+    gchar *cur = (gchar *)str;
+    gint parsed_elements = 0;
+    gboolean success;
+    gfloat value;
+
+    while (*cur) {
+        _dax_utils_skip_space (&cur);
+        success = _dax_utils_parse_float (&cur, &value);
+        if (!success) {
+            parsed_elements = -1;
+            break;
+        }
+        parsed_elements++;
+        g_array_append_val (array, value);
+        _dax_utils_skip_space_and_char (&cur, ',');
+    }
+
+    return parsed_elements;
+}
+
+static gboolean
+dax_param_array_from_string (GParamSpec *pspec,
+                             const char *string,
+                             GValue     *new_value)
+{
+    DaxParamSpecArray *array_pspec = DAX_PARAM_SPEC_ARRAY (pspec);
+    gint expected_elements, parsed_elements = 0;
+    guint element_size;
+    gboolean success;
+    GArray *array;
+
+    switch (array_pspec->element_type) {
+    case G_TYPE_FLOAT:
+        element_size = sizeof (float);
+        break;
+    default:
+        g_assert_not_reached ();
+    }
+
+    if (array_pspec->size != DAX_PARAM_SPEC_ARRAY_NOT_SIZED) {
+        array = g_array_sized_new (FALSE, FALSE,
+                                   element_size,
+                                   array_pspec->size);
+        expected_elements = array_pspec->size;
+    } else {
+
+        /* a <list-of-T> can be separated by ',' (+ surrounding white space)
+         * or by white space only */
+        expected_elements = _dax_utils_count_commas (string);
+        if (expected_elements == 0)
+            expected_elements = _dax_utils_count_words (string);
+        else
+            expected_elements++; /* n commas -> n + 1 elements */
+
+        array = g_array_sized_new (FALSE, FALSE,
+                                   element_size,
+                                   expected_elements);
+    }
+
+    switch (array_pspec->element_type) {
+    case G_TYPE_FLOAT:
+        parsed_elements = dax_param_float_array_from_string (pspec,
+                                                             string,
+                                                             array);
+        break;
+    default:
+        g_assert_not_reached ();
+    }
+
+    if (expected_elements != parsed_elements)
+        g_warning ("parsed %d elements but was expecting %d",
+                   parsed_elements, expected_elements);
+
+    success = parsed_elements == expected_elements;
+
+    if (success)
+        g_value_take_boxed (new_value, array);
+    else
+        g_array_free (array, TRUE);
+
+    return success;
+}
+
+static void
+dax_param_array_class_init (GParamSpecClass *klass)
+{
+    klass->value_type = G_TYPE_ARRAY;
+
+    ((DaxParamSpecClass *)klass)->from_string = dax_param_array_from_string;
+    ((DaxParamSpecClass *)klass)->to_string = NULL;
+}
+
+GType
+dax_param_array_get_type (void)
+{
+    static volatile gsize dax_param_enum_type__volatile = 0;
+
+    if (g_once_init_enter (&dax_param_enum_type__volatile)) {
+        GType type;
+
+        static const GTypeInfo info = {
+            sizeof (DaxParamSpecClass),
+            NULL,
+            NULL,
+            (GClassInitFunc) dax_param_array_class_init,
+            NULL,
+            NULL,
+            sizeof (DaxParamSpecArray),
+            0,
+            NULL,
+        };
+
+        type = g_type_register_static (G_TYPE_PARAM_BOXED,
+                                       "DaxParamSpecArray",
+                                       &info,
+                                       0);
+
+        g_once_init_leave (&dax_param_enum_type__volatile, type);
+    }
+
+    return dax_param_enum_type__volatile;
+}
+
+/**
+ * dax_param_spec_array:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @element_type: a #GType derived from %G_TYPE_ENUM of the array elements
+ * @size: number of elements of the array or %DAX_PARAM_SPEC_ARRAY_NOT_SIZED
+ * @g_flags: flags for the underlying GParamSpec property
+ * @dax_flags: flags specific to Dax
+ * @namespace_uri: the namespace URI for the parameter. The string given has to
+ *                 be an interned string.
+ *
+ * Creates a new #DaxParamSpecArray instance. The type of the elements the
+ * array holds is given by @element_type.
+ *
+ * See g_param_spec_internal() for details on property names.
+ *
+ * Returns: a newly created parameter specification
+ */
+
+GParamSpec*
+dax_param_spec_array (const gchar   *name,
+                      const gchar   *nick,
+                      const gchar   *blurb,
+                      GType          element_type,
+                      gint           size,
+                      GParamFlags    g_flags,
+                      DaxParamFlags  dax_flags,
+                      const char    *namespace_uri)
+{
+    DaxParamSpecArray *dax_array_spec;
+
+    dax_array_spec = g_param_spec_internal (DAX_TYPE_PARAM_ARRAY,
+                                           name,
+                                           nick,
+                                           blurb,
+                                           g_flags);
+
+    G_PARAM_SPEC (dax_array_spec)->value_type = G_TYPE_ARRAY;
+
+    dax_array_spec->element_type = element_type;
+    dax_array_spec->size = size;
+    dax_array_spec->flags = dax_flags;
+    dax_array_spec->namespace_uri = namespace_uri;
+
+    return G_PARAM_SPEC (dax_array_spec);
 }

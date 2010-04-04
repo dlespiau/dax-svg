@@ -21,27 +21,60 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "dax-utils.h"
 
 void
-_dax_utils_skip_space (char **str)
+_dax_utils_skip_space (gchar **str)
 {
 	while (g_ascii_isspace (**str))
 		(*str)++;
 }
 
 void
-_dax_utils_skip_space_and_char (char  **str,
-                         gchar   skip_me)
+_dax_utils_skip_space_and_char (gchar **str,
+                                gchar   skip_me)
 {
 	while (g_ascii_isspace (**str) || **str == skip_me)
 		(*str)++;
 }
 
+guint
+_dax_utils_count_commas (const gchar *str)
+{
+    guint nb_commas = 0;
+
+    while (strchr (str, ',')) {
+        nb_commas++;
+        str++;
+    }
+
+    return nb_commas;
+}
+
+guint
+_dax_utils_count_words (const gchar *str)
+{
+    gboolean seen_space = TRUE;
+    guint nb_words = 0;
+
+    while (*str) {
+        if (g_ascii_isspace (*str))
+            seen_space = TRUE;
+        else if (seen_space) {
+            nb_words++;
+            seen_space = FALSE;
+        }
+        str++;
+    }
+
+    return nb_words;
+}
+
 gboolean
 _dax_utils_parse_simple_float (gchar  **string,
-                                  gfloat  *number)
+                               gfloat  *number)
 {
     gchar *str = *string;
     gfloat value;
@@ -74,7 +107,7 @@ _dax_utils_parse_simple_float (gchar  **string,
 
 gboolean
 _dax_utils_parse_float (char   **string,
-                           gfloat  *x)
+                        gfloat  *x)
 {
 	char *end, *c;
 	gboolean integer_part = FALSE;

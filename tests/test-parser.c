@@ -11,6 +11,7 @@ test_simple_document_from_file (void)
     ClutterUnits *units;
     DaxSvgVersion version;
     DaxSvgBaseProfile profile;
+    GArray *view_box;
 
     document = dax_dom_document_new_from_file ("01_01.svg", NULL);
     g_assert (DAX_IS_DOM_DOCUMENT (document));
@@ -28,6 +29,11 @@ test_simple_document_from_file (void)
     g_assert_cmpint (version, ==, DAX_SVG_VERSION_1_2);
     g_object_get (svg, "baseProfile", &profile, NULL);
     g_assert_cmpint (profile, ==, DAX_SVG_BASE_PROFILE_TINY);
+    g_object_get (svg, "viewBox", &view_box, NULL);
+    g_assert_cmpfloat (g_array_index (view_box, float, 0), ==, 0.0f);
+    g_assert_cmpfloat (g_array_index (view_box, float, 1), ==, 0.0f);
+    g_assert_cmpfloat (g_array_index (view_box, float, 2), ==, 30.0f);
+    g_assert_cmpfloat (g_array_index (view_box, float, 3), ==, 30.0f);
 
 #if 0
     temp_doc = dax_dom_node_get_owner_document (svg);

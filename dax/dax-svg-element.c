@@ -25,9 +25,9 @@
 
 G_DEFINE_TYPE (DaxSvgElement, dax_svg_element, DAX_TYPE_ELEMENT)
 
-#define SVG_ELEMENT_PRIVATE(o)                                  \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_SVG_ELEMENT,  \
+#define SVG_ELEMENT_PRIVATE(o)                              \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
+                                      DAX_TYPE_SVG_ELEMENT, \
                                       DaxSvgElementPrivate))
 
 enum
@@ -38,6 +38,7 @@ enum
     PROP_BASE_PROFILE,
     PROP_WIDTH,
     PROP_HEIGHT,
+    PROP_VIEW_BOX,
 };
 
 struct _DaxSvgElementPrivate
@@ -46,11 +47,12 @@ struct _DaxSvgElementPrivate
     DaxSvgBaseProfile base_profile;
     ClutterUnits *width;
     ClutterUnits *height;
+    GArray *view_box;
 };
 
 static void
-dax_svg_element_set_width (DaxSvgElement   *self,
-                              const ClutterUnits *width)
+dax_svg_element_set_width (DaxSvgElement      *self,
+                           const ClutterUnits *width)
 {
     DaxSvgElementPrivate *priv = self->priv;
 
@@ -61,8 +63,8 @@ dax_svg_element_set_width (DaxSvgElement   *self,
 }
 
 static void
-dax_svg_element_set_height (DaxSvgElement   *self,
-                               const ClutterUnits *height)
+dax_svg_element_set_height (DaxSvgElement      *self,
+                            const ClutterUnits *height)
 {
     DaxSvgElementPrivate *priv = self->priv;
 
@@ -78,9 +80,9 @@ dax_svg_element_set_height (DaxSvgElement   *self,
 
 static void
 dax_svg_element_get_property (GObject    *object,
-                                 guint       property_id,
-                                 GValue     *value,
-                                 GParamSpec *pspec)
+                              guint       property_id,
+                              GValue     *value,
+                              GParamSpec *pspec)
 {
     DaxSvgElement *self = DAX_SVG_ELEMENT (object);
     DaxSvgElementPrivate *priv = self->priv;
@@ -99,6 +101,9 @@ dax_svg_element_get_property (GObject    *object,
     case PROP_HEIGHT:
         clutter_value_set_units (value, priv->height);
         break;
+    case PROP_VIEW_BOX:
+        g_value_set_boxed (value, priv->view_box);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -106,9 +111,9 @@ dax_svg_element_get_property (GObject    *object,
 
 static void
 dax_svg_element_set_property (GObject      *object,
-                                 guint         property_id,
-                                 const GValue *value,
-                                 GParamSpec   *pspec)
+                              guint         property_id,
+                              const GValue *value,
+                              GParamSpec   *pspec)
 {
     DaxSvgElement *self = DAX_SVG_ELEMENT (object);
     DaxSvgElementPrivate *priv = self->priv;
@@ -126,6 +131,11 @@ dax_svg_element_set_property (GObject      *object,
         break;
     case PROP_HEIGHT:
         dax_svg_element_set_height (self, clutter_value_get_units (value));
+        break;
+    case PROP_VIEW_BOX:
+        if (priv->view_box)
+            g_array_free (priv->view_box, TRUE);
+        priv->view_box = g_value_get_boxed (value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -194,6 +204,17 @@ dax_svg_element_class_init (DaxSvgElementClass *klass)
                                 CLUTTER_TYPE_UNITS,
                                 DAX_PARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_HEIGHT, pspec);
+
+    pspec = dax_param_spec_array ("viewBox",
+                                  "viewBox",
+                                  "Rectangular region into which content must "
+                                  "be fit",
+                                  G_TYPE_FLOAT,
+                                  4,
+                                  DAX_PARAM_READWRITE,
+                                  DAX_PARAM_NONE,
+                                  svg_ns);
+    g_object_class_install_property (object_class, PROP_VIEW_BOX, pspec);
 }
 
 static void

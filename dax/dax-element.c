@@ -22,6 +22,7 @@
 #include "dax-internals.h"
 #include "dax-debug.h"
 #include "dax-private.h"
+#include "dax-paramspec.h"
 #include "dax-svg-element.h"
 #include "dax-element.h"
 
@@ -29,7 +30,7 @@ G_DEFINE_ABSTRACT_TYPE (DaxElement, dax_element, DAX_TYPE_DOM_ELEMENT)
 
 #define ELEMENT_PRIVATE(o)                                  \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
-                                      DAX_TYPE_ELEMENT,  \
+                                      DAX_TYPE_ELEMENT,     \
                                       DaxElementPrivate))
 
 enum
@@ -54,7 +55,7 @@ struct _DaxElementPrivate
 
 static const gchar *
 dax_element_get_attribute (DaxDomElement *self,
-                             const gchar      *name)
+                           const gchar   *name)
 {
 #if 0
     GObjectClass *object_class= G_OBJECT_GET_CLASS (self);
@@ -65,14 +66,15 @@ dax_element_get_attribute (DaxDomElement *self,
 
 static void
 dax_element_set_attribute (DaxDomElement  *self,
-                              const gchar       *name,
-                              const gchar       *value,
-                              GError           **err)
+                           const gchar    *name,
+                           const gchar    *value,
+                           GError        **err)
 {
     GObjectClass *object_class= G_OBJECT_GET_CLASS (self);
     GParamSpec *pspec;
     GValue string_value = { 0, };
     GValue new_value = { 0, };
+    gboolean success;
 
     pspec = g_object_class_find_property (object_class, name);
     if (pspec == NULL) {
@@ -90,7 +92,17 @@ dax_element_set_attribute (DaxDomElement  *self,
     /* this GValue holds the new value of the property we want to set */
     g_value_init (&new_value, pspec->value_type);
 
-    if (g_value_transform (&string_value, &new_value) == FALSE) {
+    success = g_value_transform (&string_value, &new_value);
+
+    /* fallback to using the from_string() vfunc of DaxParamSpecClass */
+    if (success == FALSE && DAX_IS_PARAM_SPEC_ARRAY (pspec)) {
+        DaxParamSpecClass *pspec_klass;
+
+        pspec_klass = DAX_PARAM_SPEC_GET_CLASS (pspec);
+        success = pspec_klass->from_string (pspec, value, &new_value);
+    }
+
+    if (success == FALSE) {
         /* FIXME exception ? */
         g_warning ("Could not transform a string into a %s",
                    g_type_name (pspec->value_type));
@@ -98,9 +110,10 @@ dax_element_set_attribute (DaxDomElement  *self,
     }
 
     DAX_NOTE (PARSING, "set %s to %s on %s",
-                 name,
-                 value,
-                 G_OBJECT_TYPE_NAME (self));
+              name,
+              value,
+              G_OBJECT_TYPE_NAME (self));
+
     g_object_set_property (G_OBJECT (self), name, &new_value);
 }
 
@@ -110,9 +123,9 @@ dax_element_set_attribute (DaxDomElement  *self,
 
 static void
 dax_element_get_property (GObject    *object,
-                             guint       property_id,
-                             GValue     *value,
-                             GParamSpec *pspec)
+                          guint       property_id,
+                          GValue     *value,
+                          GParamSpec *pspec)
 {
     DaxElement *element = DAX_ELEMENT (object);
     DaxElementPrivate *priv = element->priv;
@@ -135,9 +148,9 @@ dax_element_get_property (GObject    *object,
 
 static void
 dax_element_set_property (GObject      *object,
-                             guint         property_id,
-                             const GValue *value,
-                             GParamSpec   *pspec)
+                          guint         property_id,
+                          const GValue *value,
+                          GParamSpec   *pspec)
 {
     DaxElement *element = DAX_ELEMENT (object);
     DaxElementPrivate *priv = element->priv;
@@ -287,7 +300,7 @@ dax_element_get_fill_opacity (DaxElement *element)
  */
 gfloat
 dax_element_getFloatTrait (DaxElement *element,
-                              const char    *name)
+                           const char *name)
 {
     GObjectClass *object_class;
     GParamSpec *pspec;
@@ -320,8 +333,8 @@ dax_element_getFloatTrait (DaxElement *element,
 
 void
 dax_element_setFloatTrait (DaxElement *element,
-                              const char    *name,
-                              gfloat         value)
+                           const char *name,
+                           gfloat      value)
 {
     GObjectClass *object_class;
     GParamSpec *pspec;
