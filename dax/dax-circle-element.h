@@ -67,7 +67,7 @@ struct _DaxCircleElementClass
 
 GType               dax_circle_element_get_type  (void) G_GNUC_CONST;
 
-DaxDomElement *  dax_circle_element_new       (void);
+DaxDomElement *     dax_circle_element_new       (void);
 ClutterUnits *      dax_circle_element_get_cx    (const DaxCircleElement *circle);
 ClutterUnits *      dax_circle_element_get_cy    (const DaxCircleElement *circle);
 ClutterUnits *      dax_circle_element_get_r     (const DaxCircleElement *circle);

@@ -20,13 +20,15 @@
 #include <clutter/clutter.h>
 
 #include "dax-internals.h"
+#include "dax-private.h"
+#include "dax-paramspec.h"
 #include "dax-circle-element.h"
 
 G_DEFINE_TYPE (DaxCircleElement, dax_circle_element, DAX_TYPE_ELEMENT)
 
-#define CIRCLE_ELEMENT_PRIVATE(o)                                   \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                          \
-                                      DAX_TYPE_CIRCLE_ELEMENT,   \
+#define CIRCLE_ELEMENT_PRIVATE(o)                               \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
+                                      DAX_TYPE_CIRCLE_ELEMENT,  \
                                       DaxCircleElementPrivate))
 
 enum
@@ -46,8 +48,8 @@ struct _DaxCircleElementPrivate
 };
 
 static void
-dax_circle_element_set_cx (DaxCircleElement  *self,
-                              const ClutterUnits   *cx)
+dax_circle_element_set_cx (DaxCircleElement   *self,
+                           const ClutterUnits *cx)
 {
     DaxCircleElementPrivate *priv;
 
@@ -59,8 +61,8 @@ dax_circle_element_set_cx (DaxCircleElement  *self,
 }
 
 static void
-dax_circle_element_set_cy (DaxCircleElement  *self,
-                              const ClutterUnits   *cy)
+dax_circle_element_set_cy (DaxCircleElement   *self,
+                           const ClutterUnits *cy)
 {
     DaxCircleElementPrivate *priv;
 
@@ -72,8 +74,8 @@ dax_circle_element_set_cy (DaxCircleElement  *self,
 }
 
 static void
-dax_circle_element_set_radius (DaxCircleElement  *self,
-                                  const ClutterUnits   *radius)
+dax_circle_element_set_radius (DaxCircleElement   *self,
+                               const ClutterUnits *radius)
 {
     DaxCircleElementPrivate *priv;
 
@@ -90,9 +92,9 @@ dax_circle_element_set_radius (DaxCircleElement  *self,
 
 static void
 dax_circle_element_get_property (GObject    *object,
-                                    guint       property_id,
-                                    GValue     *value,
-                                    GParamSpec *pspec)
+                                 guint       property_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec)
 {
     DaxCircleElement *self = DAX_CIRCLE_ELEMENT (object);
     DaxCircleElementPrivate *priv = self->priv;
@@ -115,9 +117,9 @@ dax_circle_element_get_property (GObject    *object,
 
 static void
 dax_circle_element_set_property (GObject      *object,
-                                    guint         property_id,
-                                    const GValue *value,
-                                    GParamSpec   *pspec)
+                                 guint         property_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec)
 {
     DaxCircleElement *self = DAX_CIRCLE_ELEMENT (object);
 
@@ -163,27 +165,33 @@ dax_circle_element_class_init (DaxCircleElementClass *klass)
     object_class->dispose = dax_circle_element_dispose;
     object_class->finalize = dax_circle_element_finalize;
 
-    pspec = g_param_spec_boxed ("cx",
-                                "Center x",
-                                "The x coordinate of the center "
-                                "of the circle",
-                                CLUTTER_TYPE_UNITS,
-                                DAX_PARAM_READWRITE);
+    pspec = dax_param_spec_boxed ("cx",
+                                  "cx",
+                                  "The x coordinate of the center "
+                                  "of the circle",
+                                  CLUTTER_TYPE_UNITS,
+                                  DAX_PARAM_READWRITE,
+                                  DAX_PARAM_NONE,
+                                  svg_ns);
     g_object_class_install_property (object_class, PROP_CX, pspec);
 
-    pspec = g_param_spec_boxed ("cy",
-                                "Center y",
-                                "The y coordinate of the center "
-                                "of the circle",
-                                CLUTTER_TYPE_UNITS,
-                                DAX_PARAM_READWRITE);
+    pspec = dax_param_spec_boxed ("cy",
+                                  "cy",
+                                  "The y coordinate of the center "
+                                  "of the circle",
+                                  CLUTTER_TYPE_UNITS,
+                                  DAX_PARAM_READWRITE,
+                                  DAX_PARAM_NONE,
+                                  svg_ns);
     g_object_class_install_property (object_class, PROP_CY, pspec);
 
-    pspec = g_param_spec_boxed ("r",
-                                "Radius",
-                                "The radius of the circle",
-                                CLUTTER_TYPE_UNITS,
-                                DAX_PARAM_READWRITE);
+    pspec = dax_param_spec_boxed ("r",
+                                  "Radius",
+                                  "The radius of the circle",
+                                  CLUTTER_TYPE_UNITS,
+                                  DAX_PARAM_READWRITE,
+                                  DAX_PARAM_NONE,
+                                  svg_ns);
     g_object_class_install_property (object_class, PROP_RADIUS, pspec);
 }
 

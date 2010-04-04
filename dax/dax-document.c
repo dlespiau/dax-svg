@@ -24,6 +24,7 @@
 #include "dax-desc-element.h"
 #include "dax-g-element.h"
 #include "dax-handler-element.h"
+#include "dax-line.h"
 #include "dax-path-element.h"
 #include "dax-polyline-element.h"
 #include "dax-rect-element.h"
@@ -74,6 +75,8 @@ dax_document_create_element(DaxDomDocument  *self,
         return dax_desc_element_new ();
     if (strcmp (tag_name, "title") == 0)
         return dax_title_element_new ();
+    if (strcmp (tag_name, "line") == 0)
+        return dax_line_new ();
 
     return NULL;
 }

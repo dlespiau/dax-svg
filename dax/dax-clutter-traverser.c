@@ -493,6 +493,52 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
 
 }
 
+static ClutterPath *
+clutter_path_new_from_line (DaxLine *line)
+{
+    ClutterUnits *x1_u, *y1_u, *x2_u, *y2_u;
+    gfloat x1, y1, x2, y2;
+    ClutterPath *path;
+
+    x1_u = dax_line_get_x1 (line);
+    y1_u = dax_line_get_y1 (line);
+    x2_u = dax_line_get_x2 (line);
+    y2_u = dax_line_get_y2 (line);
+
+    x1 = clutter_units_to_pixels (x1_u);
+    y1 = clutter_units_to_pixels (y1_u);
+    x2 = clutter_units_to_pixels (x2_u);
+    y2 = clutter_units_to_pixels (y2_u);
+
+    path = clutter_path_new ();
+    clutter_path_add_move_to (path, x1, y1);
+    clutter_path_add_line_to (path, x2, y2);
+
+    return path;
+}
+
+static void
+dax_clutter_traverser_traverse_line (DaxTraverser *traverser,
+                                     DaxLine      *node)
+{
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
+    DaxElement *element = DAX_ELEMENT (node);
+    const ClutterColor *stroke_color;
+    ClutterActor *line;
+    ClutterPath *path;
+
+    line = clutter_shape_new ();
+    path = clutter_path_new_from_line (node);
+    g_object_set (G_OBJECT (line), "path", path, NULL);
+
+    stroke_color = dax_element_get_stroke_color (element);
+    if (stroke_color)
+        g_object_set (line, "border-color", stroke_color, NULL);
+
+    clutter_container_add_actor (priv->container, line);
+}
+
 /*
  * GObject overloading
  */
@@ -564,6 +610,7 @@ dax_clutter_traverser_class_init (DaxClutterTraverserClass *klass)
     traverser_class->traverse_circle = dax_clutter_traverser_traverse_circle;
     traverser_class->traverse_script = dax_clutter_traverser_traverse_script;
     traverser_class->traverse_handler = dax_clutter_traverser_traverse_handler;
+    traverser_class->traverse_line = dax_clutter_traverser_traverse_line;
 }
 
 static void

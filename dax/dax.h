@@ -39,6 +39,7 @@
 #include "dax-g-element.h"
 #include "dax-handler-element.h"
 #include "dax-knot-sequence.h"
+#include "dax-line.h"
 #include "dax-parser.h"
 #include "dax-path-element.h"
 #include "dax-polyline-element.h"

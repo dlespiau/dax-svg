@@ -42,6 +42,7 @@ source_c =				\
 	dax-gjs-context.c		\
 	dax-handler-element.c		\
 	dax-knot-sequence.c		\
+	dax-line.c			\
 	dax-paramspec.c			\
 	dax-parser.c			\
 	dax-path-element.c		\
@@ -82,6 +83,7 @@ source_h =				\
 	dax-gjs-context.h		\
 	dax-handler-element.h		\
 	dax-knot-sequence.h		\
+	dax-line.h			\
 	dax-paramspec.h			\
 	dax-parser.h			\
 	dax-path-element.h		\

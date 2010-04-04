@@ -330,6 +330,38 @@ test_handler (void)
         _18_01_handler);
 }
 
+static void
+test_line (void)
+{
+    DaxDomDocument *document;
+    DaxDomNode *svg, *g, *line;
+    ClutterUnits *units;
+
+    document = dax_dom_document_new_from_file ("09_05.svg", NULL);
+    g_assert (DAX_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
+    g_assert (DAX_IS_SVG_ELEMENT (svg));
+
+    /* <g> */
+    g = dax_dom_node_get_last_child (svg);
+    g_assert (DAX_IS_G_ELEMENT (g));
+
+    /* <line> */
+    line = dax_dom_node_get_first_child (g);
+    g_assert (DAX_IS_LINE (line));
+
+    units = dax_line_get_x1 (DAX_LINE (line));
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 100.0f);
+    units = dax_line_get_y1 (DAX_LINE (line));
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 300.0f);
+    units = dax_line_get_x2 (DAX_LINE (line));
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 300.0f);
+    units = dax_line_get_y2 (DAX_LINE (line));
+    g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 100.0f);
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -347,6 +379,7 @@ main (int   argc,
     g_test_add_func ("/parser/script", test_script);
     g_test_add_func ("/parser/circle", test_circle);
     g_test_add_func ("/parser/handler", test_handler);
+    g_test_add_func ("/parser/line", test_line);
 
     return g_test_run ();
 }
