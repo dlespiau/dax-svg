@@ -32,6 +32,7 @@
 #include "dax-element-svg.h"
 #include "dax-element-text.h"
 #include "dax-element-title.h"
+#include "dax-element-tspan.h"
 #include "dax-document.h"
 
 G_DEFINE_TYPE (DaxDocument, dax_document, DAX_TYPE_DOM_DOCUMENT)
@@ -64,6 +65,8 @@ dax_document_create_element(DaxDomDocument  *self,
         return dax_element_rect_new ();
     if (strcmp (tag_name, "text") == 0)
         return dax_element_text_new ();
+    if (strcmp (tag_name, "tspan") == 0)
+        return dax_element_tspan_new ();
     if (strcmp (tag_name, "animate") == 0)
         return dax_element_animate_new ();
     if (strcmp (tag_name, "polyline") == 0)

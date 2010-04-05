@@ -38,7 +38,7 @@ source_c =				\
 	dax-element-desc.c		\
 	dax-element-g.c			\
 	dax-element-handler.c		\
-	dax-element-line.c			\
+	dax-element-line.c		\
 	dax-element-path.c		\
 	dax-element-polyline.c		\
 	dax-element-rect.c		\
@@ -47,6 +47,7 @@ source_c =				\
 	dax-element-text.c		\
 	dax-element-title.c		\
 	dax-element-traversal.c		\
+	dax-element-tspan.c		\
 	dax-enum-types.c		\
 	dax-gjs-context.c		\
 	dax-knot-sequence.c		\
@@ -81,7 +82,7 @@ source_h =				\
 	dax-element-desc.h		\
 	dax-element-g.h			\
 	dax-element-handler.h		\
-	dax-element-line.h			\
+	dax-element-line.h		\
 	dax-element-path.h		\
 	dax-element-polyline.h		\
 	dax-element-rect.h		\
@@ -90,6 +91,7 @@ source_h =				\
 	dax-element-text.h		\
 	dax-element-title.h		\
 	dax-element-traversal.h		\
+	dax-element-tspan.h		\
 	dax-gjs-context.h		\
 	dax-knot-sequence.h		\
 	dax-paramspec.h			\
