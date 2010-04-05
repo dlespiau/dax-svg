@@ -19,6 +19,10 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <string.h>
+
+#include <clutter/clutter.h>
+
 #include "dax-internals.h"
 #include "dax-utils.h"
 #include "dax-paramspec.h"
@@ -239,6 +243,58 @@ dax_param_spec_boxed (const gchar   *name,
  */
 
 static gint
+dax_param_units_array_from_string (GParamSpec *pspec,
+                                   const char *str,
+                                   GArray     *array)
+{
+    gchar *units_start, *start, *end;
+    gint parsed_elements = 0;
+    ClutterUnits units;
+    gboolean success;
+
+    /* The idea is to insert '\0' between each unit */
+    start = units_start = g_strdup (str);
+    end = strchr (start, ',');
+
+    if (end) {
+        /* ','-separated list */
+        do {
+            *end = '\0';
+            success = clutter_units_from_string (&units, units_start);
+            if (!success) {
+                parsed_elements = -1;
+                break;
+            }
+            parsed_elements++;
+            g_array_append_val (array, units);
+            units_start = end + 1;
+            end = strchr (units_start, ',');
+        } while (end);
+    } else {
+        /* white space-separated list */
+        guint len;
+
+        len = strlen (start);
+        do {
+            end = units_start;
+            _dax_utils_find_next_space (&end);
+            *end = '\0';
+            success = clutter_units_from_string (&units, units_start);
+            if (!success) {
+                parsed_elements = -1;
+                break;
+            }
+            parsed_elements++;
+            g_array_append_val (array, units);
+            units_start = end + 1;
+        } while (units_start < (start + len));
+    }
+
+    g_free (start);
+    return parsed_elements;
+}
+
+static gint
 dax_param_float_array_from_string (GParamSpec *pspec,
                                    const char *str,
                                    GArray     *array)
@@ -274,13 +330,12 @@ dax_param_array_from_string (GParamSpec *pspec,
     gboolean success;
     GArray *array;
 
-    switch (array_pspec->element_type) {
-    case G_TYPE_FLOAT:
+    if (array_pspec->element_type == G_TYPE_FLOAT)
         element_size = sizeof (float);
-        break;
-    default:
+    else if (array_pspec->element_type == CLUTTER_TYPE_UNITS)
+        element_size = sizeof (ClutterUnits);
+    else
         g_assert_not_reached ();
-    }
 
     if (array_pspec->size != DAX_PARAM_SPEC_ARRAY_NOT_SIZED) {
         array = g_array_sized_new (FALSE, FALSE,
@@ -302,15 +357,16 @@ dax_param_array_from_string (GParamSpec *pspec,
                                    expected_elements);
     }
 
-    switch (array_pspec->element_type) {
-    case G_TYPE_FLOAT:
+    if (array_pspec->element_type == G_TYPE_FLOAT)
         parsed_elements = dax_param_float_array_from_string (pspec,
                                                              string,
                                                              array);
-        break;
-    default:
+    else if (array_pspec->element_type == CLUTTER_TYPE_UNITS)
+        parsed_elements = dax_param_units_array_from_string (pspec,
+                                                             string,
+                                                             array);
+    else
         g_assert_not_reached ();
-    }
 
     if (expected_elements != parsed_elements)
         g_warning ("parsed %d elements but was expecting %d",

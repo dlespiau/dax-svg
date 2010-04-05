@@ -29,6 +29,7 @@ G_BEGIN_DECLS
 void        _dax_utils_skip_space               (char **str);
 void        _dax_utils_skip_space_and_char      (char  **str,
                                                  gchar   skip_me);
+void        _dax_utils_find_next_space          (gchar **str);
 guint       _dax_utils_count_commas             (const gchar *str);
 guint       _dax_utils_count_words              (const gchar *str);
 gboolean    _dax_utils_parse_simple_float       (gchar **string,

@@ -168,25 +168,25 @@ dax_element_svg_class_init (DaxElementSvgClass *klass)
     object_class->finalize = dax_element_svg_finalize;
 
     pspec = dax_param_spec_enum ("version",
-                                    "Version",
-                                    "The SVG language version to which this "
-                                    "document fragment conforms",
-                                    DAX_TYPE_SVG_VERSION,
-                                    DAX_SVG_VERSION_1_2,
-                                    DAX_PARAM_READWRITE,
-                                    DAX_PARAM_NONE,
-                                    svg_ns);
+                                 "Version",
+                                 "The SVG language version to which this "
+                                 "document fragment conforms",
+                                 DAX_TYPE_SVG_VERSION,
+                                 DAX_SVG_VERSION_1_2,
+                                 DAX_PARAM_READWRITE,
+                                 DAX_PARAM_NONE,
+                                 svg_ns);
     g_object_class_install_property (object_class, PROP_VERSION, pspec);
 
     pspec = dax_param_spec_enum ("baseProfile",
-                                    "Base profile",
-                                    "The minimum SVG language profile believed "
-                                    "necessary to correctly render the content",
-                                    DAX_TYPE_SVG_BASE_PROFILE,
-                                    DAX_SVG_BASE_PROFILE_DEFAULT,
-                                    DAX_PARAM_READWRITE,
-                                    DAX_PARAM_NONE,
-                                    svg_ns);
+                                 "Base profile",
+                                 "The minimum SVG language profile believed "
+                                 "necessary to correctly render the content",
+                                 DAX_TYPE_SVG_BASE_PROFILE,
+                                 DAX_SVG_BASE_PROFILE_DEFAULT,
+                                 DAX_PARAM_READWRITE,
+                                 DAX_PARAM_NONE,
+                                 svg_ns);
     g_object_class_install_property (object_class, PROP_BASE_PROFILE, pspec);
 
     pspec = g_param_spec_boxed ("width",

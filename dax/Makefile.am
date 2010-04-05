@@ -44,6 +44,7 @@ source_c =				\
 	dax-element-rect.c		\
 	dax-element-script.c		\
 	dax-element-svg.c		\
+	dax-element-text.c		\
 	dax-element-title.c		\
 	dax-element-traversal.c		\
 	dax-enum-types.c		\
@@ -86,6 +87,7 @@ source_h =				\
 	dax-element-rect.h		\
 	dax-element-script.h		\
 	dax-element-svg.h		\
+	dax-element-text.h		\
 	dax-element-title.h		\
 	dax-element-traversal.h		\
 	dax-gjs-context.h		\

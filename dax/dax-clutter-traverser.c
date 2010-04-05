@@ -487,9 +487,9 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
     event_target = DAX_XML_EVENT_TARGET (target);
     event_listener = DAX_XML_EVENT_LISTENER (node);
     dax_xml_event_target_add_event_listener (event_target,
-                                                event_name,
-                                                event_listener,
-                                                FALSE);
+                                             event_name,
+                                             event_listener,
+                                             FALSE);
 
 }
 
@@ -518,8 +518,8 @@ clutter_path_new_from_line (DaxElementLine *line)
 }
 
 static void
-dax_clutter_traverser_traverse_line (DaxTraverser *traverser,
-                                     DaxElementLine      *node)
+dax_clutter_traverser_traverse_line (DaxTraverser   *traverser,
+                                     DaxElementLine *node)
 {
     DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
     DaxClutterTraverserPrivate *priv = build->priv;
@@ -537,6 +537,47 @@ dax_clutter_traverser_traverse_line (DaxTraverser *traverser,
         g_object_set (line, "border-color", stroke_color, NULL);
 
     clutter_container_add_actor (priv->container, line);
+}
+
+static ClutterActor *
+clutter_text_new_from_dax_text (DaxElementText *text)
+{
+    ClutterActor *text_actor;
+    GArray *xs, *ys;
+    ClutterUnits *x_u, *y_u;
+    gfloat x, y;
+    gchar *flatten_text;
+
+    xs = dax_element_text_get_x (text);
+    ys = dax_element_text_get_y (text);
+
+    x_u = &g_array_index (xs, ClutterUnits, 0);
+    y_u = &g_array_index (ys, ClutterUnits, 0);
+
+    x = clutter_units_to_pixels (x_u);
+    y = clutter_units_to_pixels (y_u);
+
+    flatten_text = dax_element_text_get_text (text);
+
+    text_actor = clutter_text_new ();
+    clutter_text_set_text (CLUTTER_TEXT (text_actor), flatten_text);
+
+    clutter_actor_set_position (text_actor, x, y);
+
+    return text_actor;
+}
+
+static void
+dax_clutter_traverser_traverse_text (DaxTraverser   *traverser,
+                                     DaxElementText *node)
+{
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+    DaxClutterTraverserPrivate *priv = build->priv;
+    ClutterActor *text;
+
+    text = clutter_text_new_from_dax_text (node);
+
+    clutter_container_add_actor (priv->container, text);
 }
 
 /*
@@ -611,6 +652,7 @@ dax_clutter_traverser_class_init (DaxClutterTraverserClass *klass)
     traverser_class->traverse_script = dax_clutter_traverser_traverse_script;
     traverser_class->traverse_handler = dax_clutter_traverser_traverse_handler;
     traverser_class->traverse_line = dax_clutter_traverser_traverse_line;
+    traverser_class->traverse_text = dax_clutter_traverser_traverse_text;
 }
 
 static void

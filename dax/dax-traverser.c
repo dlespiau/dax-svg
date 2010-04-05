@@ -34,61 +34,67 @@ struct _DaxTraverserPrivate
 
 static void
 dax_traverser_traverse_svg_real (DaxTraverser  *self,
-                                    DaxElementSvg *node)
+                                 DaxElementSvg *node)
 {
 }
 
 static void
 dax_traverser_traverse_g_real (DaxTraverser *self,
-                                  DaxElementG  *node)
+                               DaxElementG  *node)
 {
 }
 
 static void
 dax_traverser_traverse_path_real (DaxTraverser   *self,
-                                     DaxElementPath *node)
+                                  DaxElementPath *node)
 {
 }
 
 static void
 dax_traverser_traverse_rect_real (DaxTraverser   *self,
-                                     DaxElementRect *node)
+                                  DaxElementRect *node)
 {
 }
 
 static void
-dax_traverser_traverse_polyline_real (DaxTraverser      *self,
-                                         DaxElementPolyline *node)
+dax_traverser_traverse_polyline_real (DaxTraverser       *self,
+                                      DaxElementPolyline *node)
 {
 }
 
 static void
 dax_traverser_traverse_animate_real (DaxTraverser      *self,
-                                        DaxElementAnimate *node)
+                                     DaxElementAnimate *node)
 {
 }
 
 static void
 dax_traverser_traverse_circle_real (DaxTraverser     *self,
-                                       DaxElementCircle *node)
+                                    DaxElementCircle *node)
 {
 }
 
 static void
 dax_traverser_traverse_script_real (DaxTraverser     *self,
-                                       DaxElementScript *node)
+                                    DaxElementScript *node)
 {
 }
 
 static void
 dax_traverser_traverse_handler_real (DaxTraverser      *self,
-                                        DaxElementHandler *node)
+                                     DaxElementHandler *node)
 {
 }
 
 static void
-dax_traverser_traverse_line_real (DaxTraverser *self,
-                                  DaxElementLine      *node)
+dax_traverser_traverse_line_real (DaxTraverser   *self,
+                                  DaxElementLine *node)
+{
+}
+
+static void
+dax_traverser_traverse_text_real (DaxTraverser   *self,
+                                  DaxElementText *node)
 {
 }
 
@@ -156,6 +162,7 @@ dax_traverser_class_init (DaxTraverserClass *klass)
     klass->traverse_script = dax_traverser_traverse_script_real;
     klass->traverse_handler = dax_traverser_traverse_handler_real;
     klass->traverse_line = dax_traverser_traverse_line_real;
+    klass->traverse_text = dax_traverser_traverse_text_real;
 }
 
 static void
@@ -177,7 +184,7 @@ dax_traverser_new (DaxDomNode *root)
 
 void
 dax_traverser_set_root (DaxTraverser *self,
-                           DaxDomNode   *root)
+                        DaxDomNode   *root)
 {
     DaxTraverserPrivate *priv;
 
@@ -191,7 +198,7 @@ dax_traverser_set_root (DaxTraverser *self,
 
 static void
 dax_traverse_node (DaxTraverser *traverser,
-                      DaxDomNode   *node)
+                   DaxDomNode   *node)
 {
     DAX_NOTE (TRAVERSER, "traversing %s %p", G_OBJECT_TYPE_NAME (node),
                  node);
@@ -204,6 +211,8 @@ dax_traverse_node (DaxTraverser *traverser,
         dax_traverser_traverse_path (traverser, (DaxElementPath *)node);
     else if (DAX_IS_ELEMENT_RECT (node))
         dax_traverser_traverse_rect (traverser, (DaxElementRect *)node);
+    else if (DAX_IS_ELEMENT_TEXT (node))
+        dax_traverser_traverse_text (traverser, (DaxElementText *)node);
     else if (DAX_IS_ELEMENT_POLYLINE (node))
         dax_traverser_traverse_polyline (traverser, (DaxElementPolyline *)node);
     else if (DAX_IS_ELEMENT_ANIMATE (node))
@@ -220,7 +229,7 @@ dax_traverse_node (DaxTraverser *traverser,
 
 static void
 dax_traverser_walk_tree (DaxTraverser *traverser,
-                            DaxDomNode   *node)
+                         DaxDomNode   *node)
 {
     dax_traverse_node (traverser, node);
     node = node->first_child;
@@ -244,7 +253,7 @@ dax_traverser_apply (DaxTraverser *self)
 
 void
 dax_traverser_traverse_svg (DaxTraverser  *self,
-                               DaxElementSvg *node)
+                            DaxElementSvg *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -253,7 +262,7 @@ dax_traverser_traverse_svg (DaxTraverser  *self,
 
 void
 dax_traverser_traverse_g (DaxTraverser *self,
-                             DaxElementG  *node)
+                          DaxElementG  *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -262,7 +271,7 @@ dax_traverser_traverse_g (DaxTraverser *self,
 
 void
 dax_traverser_traverse_path (DaxTraverser   *self,
-                                DaxElementPath *node)
+                             DaxElementPath *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -271,7 +280,7 @@ dax_traverser_traverse_path (DaxTraverser   *self,
 
 void
 dax_traverser_traverse_rect (DaxTraverser   *self,
-                                DaxElementRect *node)
+                             DaxElementRect *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -279,8 +288,8 @@ dax_traverser_traverse_rect (DaxTraverser   *self,
 }
 
 void
-dax_traverser_traverse_polyline (DaxTraverser      *self,
-                                    DaxElementPolyline *node)
+dax_traverser_traverse_polyline (DaxTraverser       *self,
+                                 DaxElementPolyline *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -289,7 +298,7 @@ dax_traverser_traverse_polyline (DaxTraverser      *self,
 
 void
 dax_traverser_traverse_animate (DaxTraverser      *self,
-                                   DaxElementAnimate *node)
+                                DaxElementAnimate *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -298,7 +307,7 @@ dax_traverser_traverse_animate (DaxTraverser      *self,
 
 void
 dax_traverser_traverse_circle (DaxTraverser     *self,
-                                  DaxElementCircle *node)
+                               DaxElementCircle *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -307,7 +316,7 @@ dax_traverser_traverse_circle (DaxTraverser     *self,
 
 void
 dax_traverser_traverse_script (DaxTraverser     *self,
-                                  DaxElementScript *node)
+                               DaxElementScript *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -316,7 +325,7 @@ dax_traverser_traverse_script (DaxTraverser     *self,
 
 void
 dax_traverser_traverse_handler (DaxTraverser      *self,
-                                   DaxElementHandler *node)
+                                DaxElementHandler *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
@@ -324,10 +333,19 @@ dax_traverser_traverse_handler (DaxTraverser      *self,
 }
 
 void
-dax_traverser_traverse_line (DaxTraverser *self,
-                             DaxElementLine      *node)
+dax_traverser_traverse_line (DaxTraverser   *self,
+                             DaxElementLine *node)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
     klass->traverse_line (self, node);
+}
+
+void
+dax_traverser_traverse_text (DaxTraverser   *self,
+                             DaxElementText *node)
+{
+    DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_text (self, node);
 }

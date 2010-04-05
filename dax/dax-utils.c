@@ -40,6 +40,13 @@ _dax_utils_skip_space_and_char (gchar **str,
 		(*str)++;
 }
 
+void
+_dax_utils_find_next_space (gchar **str)
+{
+    while ((**str) && !g_ascii_isspace (**str))
+        (*str)++;
+}
+
 guint
 _dax_utils_count_commas (const gchar *str)
 {

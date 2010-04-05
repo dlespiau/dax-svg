@@ -34,6 +34,7 @@
 #include "dax-element-rect.h"
 #include "dax-element-script.h"
 #include "dax-element-svg.h"
+#include "dax-element-text.h"
 
 G_BEGIN_DECLS
 
@@ -87,8 +88,10 @@ struct _DaxTraverserClass
                                  DaxElementScript *node);
     void (*traverse_handler)    (DaxTraverser      *traverser,
                                  DaxElementHandler *node);
-    void (*traverse_line)       (DaxTraverser *traverser,
-                                 DaxElementLine      *node);
+    void (*traverse_line)       (DaxTraverser   *traverser,
+                                 DaxElementLine *node);
+    void (*traverse_text)       (DaxTraverser   *traverser,
+                                 DaxElementText *node);
 };
 
 GType           dax_traverser_get_type          (void) G_GNUC_CONST;
@@ -116,8 +119,10 @@ void            dax_traverser_traverse_script   (DaxTraverser     *self,
                                                  DaxElementScript *node);
 void            dax_traverser_traverse_handler  (DaxTraverser      *self,
                                                  DaxElementHandler *node);
-void            dax_traverser_traverse_line     (DaxTraverser *self,
-                                                 DaxElementLine      *node);
+void            dax_traverser_traverse_line     (DaxTraverser   *self,
+                                                 DaxElementLine *node);
+void            dax_traverser_traverse_text     (DaxTraverser   *self,
+                                                 DaxElementText *node);
 G_END_DECLS
 
 #endif /* __DAX_TRAVERSER_H__ */

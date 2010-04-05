@@ -362,6 +362,43 @@ test_line (void)
     g_assert_cmpfloat (clutter_units_get_unit_value(units), ==, 100.0f);
 }
 
+static void
+test_text (void)
+{
+    DaxDomDocument *document;
+    DaxDomNode *svg, *desc, *text;
+    GArray *array;
+    ClutterUnits *units;
+    gfloat value;
+
+    document = dax_dom_document_new_from_file ("10_01.svg", NULL);
+    g_assert (DAX_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
+
+    /* <desc> */
+    desc = dax_dom_node_get_first_child (svg);
+    g_assert (DAX_IS_ELEMENT_DESC (desc));
+
+    /* <text> */
+    text = dax_dom_node_get_next_sibling (desc);
+    g_assert (DAX_IS_ELEMENT_TEXT (text));
+
+    array = dax_element_text_get_x (DAX_ELEMENT_TEXT (text));
+    g_assert_cmpint (array->len, ==, 1);
+    units = &g_array_index (array, ClutterUnits, 0);
+    value = clutter_units_get_unit_value (units);
+    g_assert_cmpfloat (value, ==, 250);
+
+    array = dax_element_text_get_y (DAX_ELEMENT_TEXT (text));
+    g_assert_cmpint (array->len, ==, 1);
+    units = &g_array_index (array, ClutterUnits, 0);
+    value = clutter_units_get_unit_value (units);
+    g_assert_cmpfloat (value, ==, 150);
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -380,6 +417,7 @@ main (int   argc,
     g_test_add_func ("/parser/circle", test_circle);
     g_test_add_func ("/parser/handler", test_handler);
     g_test_add_func ("/parser/line", test_line);
+    g_test_add_func ("/parser/text", test_text);
 
     return g_test_run ();
 }

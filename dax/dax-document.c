@@ -30,6 +30,7 @@
 #include "dax-element-rect.h"
 #include "dax-element-script.h"
 #include "dax-element-svg.h"
+#include "dax-element-text.h"
 #include "dax-element-title.h"
 #include "dax-document.h"
 
@@ -37,7 +38,7 @@ G_DEFINE_TYPE (DaxDocument, dax_document, DAX_TYPE_DOM_DOCUMENT)
 
 #define DOCUMENT_PRIVATE(o)                                 \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
-                                      DAX_TYPE_DOCUMENT, \
+                                      DAX_TYPE_DOCUMENT,    \
                                       DaxDocumentPrivate))
 
 struct _DaxDocumentPrivate
@@ -50,8 +51,8 @@ struct _DaxDocumentPrivate
 
 static DaxDomElement *
 dax_document_create_element(DaxDomDocument  *self,
-                               const gchar        *tag_name,
-                               GError            **err)
+                            const gchar     *tag_name,
+                            GError         **err)
 {
     if (strcmp (tag_name, "svg") == 0)
         return dax_element_svg_new ();
@@ -61,6 +62,8 @@ dax_document_create_element(DaxDomDocument  *self,
         return dax_element_path_new ();
     if (strcmp (tag_name, "rect") == 0)
         return dax_element_rect_new ();
+    if (strcmp (tag_name, "text") == 0)
+        return dax_element_text_new ();
     if (strcmp (tag_name, "animate") == 0)
         return dax_element_animate_new ();
     if (strcmp (tag_name, "polyline") == 0)
@@ -87,9 +90,9 @@ dax_document_create_element(DaxDomDocument  *self,
 
 static void
 dax_document_get_property (GObject    *object,
-                              guint       property_id,
-                              GValue     *value,
-                              GParamSpec *pspec)
+                           guint       property_id,
+                           GValue     *value,
+                           GParamSpec *pspec)
 {
     switch (property_id)
     {
@@ -100,9 +103,9 @@ dax_document_get_property (GObject    *object,
 
 static void
 dax_document_set_property (GObject      *object,
-                              guint         property_id,
-                              const GValue *value,
-                              GParamSpec   *pspec)
+                           guint         property_id,
+                           const GValue *value,
+                           GParamSpec   *pspec)
 {
     switch (property_id)
     {
