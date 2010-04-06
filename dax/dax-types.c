@@ -207,7 +207,7 @@ dax_duration_get_type (void)
 
     if (g_once_init_enter (&dax_duration_type__volatile)) {
         GType dax_duration_type =
-            g_boxed_type_register_static (ISS("DaxDuration"),
+            g_boxed_type_register_static (I_("DaxDuration"),
                                           (GBoxedCopyFunc)dax_duration_copy,
                                           (GBoxedFreeFunc)dax_duration_free);
 
@@ -341,7 +341,7 @@ dax_repeat_count_get_type (void)
 
     if (g_once_init_enter (&dax_repeat_count_type__volatile)) {
         GType dax_repeat_count_type =
-            g_boxed_type_register_static (ISS("DaxRepeatCount"),
+            g_boxed_type_register_static (I_("DaxRepeatCount"),
                                           (GBoxedCopyFunc)dax_repeat_count_copy,
                                           (GBoxedFreeFunc)dax_repeat_count_free);
 

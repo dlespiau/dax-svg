@@ -155,10 +155,10 @@ dax_init (gint    *argc,
     g_type_init ();
     clutter_init (argc, argv);
 
-    xml_ns = ISS(XML_NS_URI);
-    xmlns_ns = ISS(XMLNS_NS_URI);
-    xmlevents_ns = ISS(XML_EVENTS_NS_URI);
-    svg_ns = ISS(SVG_NS_URI);
+    xml_ns = I_(XML_NS_URI);
+    xmlns_ns = I_(XMLNS_NS_URI);
+    xmlevents_ns = I_(XML_EVENTS_NS_URI);
+    svg_ns = I_(SVG_NS_URI);
 
     g_value_register_transform_func (G_TYPE_STRING,
                                      G_TYPE_FLOAT,

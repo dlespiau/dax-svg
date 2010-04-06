@@ -30,7 +30,7 @@ dax_xml_event_target_get_type (void)
     if (G_UNLIKELY (a_type == 0))
         a_type =
             g_type_register_static_simple (G_TYPE_INTERFACE,
-                                           ISS("DaxXmlEventTarget"),
+                                           I_("DaxXmlEventTarget"),
                                            sizeof (DaxXmlEventTargetIface),
                                            NULL, 0, NULL, 0);
 

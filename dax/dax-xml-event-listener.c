@@ -30,7 +30,7 @@ dax_xml_event_listener_get_type (void)
     if (G_UNLIKELY (a_type == 0)) {
         a_type =
             g_type_register_static_simple (G_TYPE_INTERFACE,
-                                           ISS("DaxXmlEventListener"),
+                                           I_("DaxXmlEventListener"),
                                            sizeof (DaxXmlEventListenerIface),
                                            NULL, 0, NULL, 0);
     }

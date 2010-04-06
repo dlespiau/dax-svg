@@ -47,7 +47,7 @@ dax_xml_event_get_type (void)
 
     if (g_once_init_enter (&dax_xml_event_type__volatile)) {
         GType dax_xml_event_type =
-            g_boxed_type_register_static (ISS("DaxXmlEvent"),
+            g_boxed_type_register_static (I_("DaxXmlEvent"),
                                           (GBoxedCopyFunc)dax_xml_event_copy,
                                           (GBoxedFreeFunc)dax_xml_event_free);
         g_once_init_leave (&dax_xml_event_type__volatile,
