@@ -23,6 +23,7 @@
 #include "dax-debug.h"
 #include "dax-private.h"
 #include "dax-paramspec.h"
+#include "dax-document.h"
 #include "dax-element-svg.h"
 #include "dax-element.h"
 
@@ -40,6 +41,7 @@ enum
     PROP_FILL,
     PROP_FILL_OPACITY,
     PROP_STROKE,
+    PROP_BASE_IRI
 };
 
 struct _DaxElementPrivate
@@ -47,6 +49,7 @@ struct _DaxElementPrivate
     ClutterColor *fill;
     gfloat fill_opacity;
     ClutterColor *stroke;
+    gchar *base_iri;
 };
 
 /*
@@ -141,6 +144,9 @@ dax_element_get_property (GObject    *object,
     case PROP_FILL_OPACITY:
         g_value_set_float (value, priv->fill_opacity);
         break;
+    case PROP_BASE_IRI:
+        g_value_set_string (value, dax_element_get_base_iri (element));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -173,6 +179,11 @@ dax_element_set_property (GObject      *object,
         break;
     case PROP_FILL_OPACITY:
         priv->fill_opacity = g_value_get_float (value);
+        break;
+    case PROP_BASE_IRI:
+        if (priv->base_iri)
+            g_free (priv->base_iri);
+        priv->base_iri = g_value_dup_string (value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -230,6 +241,16 @@ dax_element_class_init (DaxElementClass *klass)
                                 1.0f,
                                 DAX_PARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_FILL_OPACITY, pspec);
+
+    pspec = dax_param_spec_string ("base",
+                                   "Base IRI",
+                                   "base IRI other than the base IRI of the "
+                                   "document or external entity",
+                                   NULL,
+                                   DAX_PARAM_READWRITE,
+                                   DAX_PARAM_NONE,
+                                   xml_ns);
+    g_object_class_install_property (object_class, PROP_BASE_IRI, pspec);
 }
 
 static void
@@ -295,9 +316,29 @@ dax_element_get_fill_opacity (DaxElement *element)
     return element->priv->fill_opacity;
 }
 
+const gchar *
+dax_element_get_base_iri (DaxElement *element)
+{
+    DaxElementPrivate *priv;
+    DaxDomNode *parent;
+
+    g_return_val_if_fail (DAX_IS_ELEMENT (element), NULL);
+
+    priv = element->priv;
+    if (priv->base_iri)
+        return priv->base_iri;
+
+    parent = ((DaxDomNode *) element)->parent_node;
+    if (DAX_IS_DOCUMENT (parent))
+        return dax_document_get_base_iri ((DaxDocument *) parent);
+    else
+        return dax_element_get_base_iri ((DaxElement *) parent);
+}
+
 /*
  * TraitAccess
  */
+
 gfloat
 dax_element_getFloatTrait (DaxElement *element,
                            const char *name)

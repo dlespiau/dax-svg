@@ -32,9 +32,10 @@ G_BEGIN_DECLS
 
 typedef struct _DaxParamSpecClass DaxParamSpecClass;
 
-typedef struct _DaxParamSpecEnum  DaxParamSpecEnum;
-typedef struct _DaxParamSpecBoxed DaxParamSpecBoxed;
-typedef struct _DaxParamSpecArray DaxParamSpecArray;
+typedef struct _DaxParamSpecEnum   DaxParamSpecEnum;
+typedef struct _DaxParamSpecString DaxParamSpecString;
+typedef struct _DaxParamSpecBoxed  DaxParamSpecBoxed;
+typedef struct _DaxParamSpecArray  DaxParamSpecArray;
 
 #define DAX_PARAM_SPEC_CLASS(pclass) \
     (G_TYPE_CHECK_CLASS_CAST ((pclass), G_TYPE_PARAM, DaxParamSpecClass))
@@ -125,7 +126,61 @@ GParamSpec *    dax_param_spec_enum         (const gchar   *name,
                                              DaxParamFlags  dax_flags,
                                              const gchar   *namespace_uri);
 
-G_END_DECLS
+/*
+ * DaxParamSpecString
+ */
+
+/**
+ * DaxParamSpecString:
+ *
+ * A #GParamSpecString derived structure that contains extra meta data for string
+ * properties.
+ */
+struct _DaxParamSpecString
+{
+  GParamSpecString  parent_instance;
+
+  DaxParamFlags   flags;
+  const gchar    *namespace_uri;
+};
+
+/**
+ * DAX_TYPE_PARAM_STRING:
+ *
+ * The #GType of #DaxParamSpecString.
+ */
+#define DAX_TYPE_PARAM_STRING          (dax_param_string_get_type ())
+
+/**
+ * DAX_IS_PARAM_SPEC_STRING:
+ * @pspec: a valid #GParamSpec instance
+ *
+ * Checks whether the given #GParamSpec is of type %DAX_TYPE_PARAM_STRING.
+ *
+ * Returns: %TRUE on success.
+ */
+#define DAX_IS_PARAM_SPEC_STRING(pspec) \
+        (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), DAX_TYPE_PARAM_STRING))
+
+/**
+ * DAX_PARAM_SPEC_STRING:
+ * @pspec: a valid #GParamSpec instance
+ *
+ * Cast a #GParamSpec instance into a #DaxParamSpecString.
+ */
+#define DAX_PARAM_SPEC_STRING(pspec)                            \
+          (G_TYPE_CHECK_INSTANCE_CAST ((pspec),                 \
+                                       DAX_TYPE_PARAM_STRING,   \
+                                       DaxParamSpecString))
+
+GType           dax_param_string_get_type     (void) G_GNUC_CONST;
+GParamSpec *    dax_param_spec_string         (const gchar   *name,
+                                               const gchar   *nick,
+                                               const gchar   *blurb,
+                                               const gchar   *default_value,
+                                               GParamFlags    g_flags,
+                                               DaxParamFlags  dax_flags,
+                                               const gchar   *namespace_uri);
 
 /*
  * DaxParamSpecBoxed
@@ -243,5 +298,7 @@ GParamSpec *    dax_param_spec_array         (const gchar   *name,
                                               GParamFlags    g_flags,
                                               DaxParamFlags  dax_flags,
                                               const char    *namespace_uri);
+
+G_END_DECLS
 
 #endif /* __DAX_PARAMSPEC_H__ */

@@ -29,28 +29,20 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_ELEMENT dax_element_get_type()
 
-#define DAX_ELEMENT(obj)                             \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                 \
-                                 DAX_TYPE_ELEMENT,   \
-                                 DaxElement))
+#define DAX_ELEMENT(obj) \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj), DAX_TYPE_ELEMENT, DaxElement))
 
-#define DAX_ELEMENT_CLASS(klass)                 \
-    (G_TYPE_CHECK_CLASS_CAST ((klass),              \
-                              DAX_TYPE_ELEMENT,  \
-                              DaxElementClass))
+#define DAX_ELEMENT_CLASS(klass) \
+    (G_TYPE_CHECK_CLASS_CAST ((klass), DAX_TYPE_ELEMENT, DaxElementClass))
 
-#define DAX_IS_ELEMENT(obj)          \
-    (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
-                                 DAX_TYPE_ELEMENT))
+#define DAX_IS_ELEMENT(obj) \
+    (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DAX_TYPE_ELEMENT))
 
 #define DAX_IS_ELEMENT_CLASS(klass) \
-    (G_TYPE_CHECK_CLASS_TYPE ((klass), \
-                              DAX_TYPE_ELEMENT))
+    (G_TYPE_CHECK_CLASS_TYPE ((klass), DAX_TYPE_ELEMENT))
 
-#define DAX_ELEMENT_GET_CLASS(obj)                   \
-    (G_TYPE_INSTANCE_GET_CLASS ((obj),                  \
-                                DAX_TYPE_ELEMENT,    \
-                                DaxElementClass))
+#define DAX_ELEMENT_GET_CLASS(obj) \
+    (G_TYPE_INSTANCE_GET_CLASS ((obj), DAX_TYPE_ELEMENT, DaxElementClass))
 
 typedef struct _DaxElement DaxElement;
 typedef struct _DaxElementClass DaxElementClass;
@@ -70,10 +62,12 @@ struct _DaxElementClass
 
 GType dax_element_get_type (void) G_GNUC_CONST;
 
-DaxDomElement   *dax_element_new              (void);
-const ClutterColor *dax_element_get_fill_color   (DaxElement *element);
-const ClutterColor *dax_element_get_stroke_color (DaxElement *element);
-gfloat              dax_element_get_fill_opacity (DaxElement *element);
+DaxDomElement *         dax_element_new                 (void);
+const ClutterColor *    dax_element_get_fill_color      (DaxElement *element);
+const ClutterColor *    dax_element_get_stroke_color    (DaxElement *element);
+gfloat                  dax_element_get_fill_opacity    (DaxElement *element);
+
+const gchar *           dax_element_get_base_iri        (DaxElement *element);
 
 /*
  * Trait API
@@ -84,11 +78,11 @@ gfloat              dax_element_get_fill_opacity (DaxElement *element);
 #define dax_element_set_float_trait(element, name, value) \
     dax_element_setFloatTrait(element, name, value)
 
-gfloat              dax_element_getFloatTrait    (DaxElement *element,
-                                                     const char    *name);
-void                dax_element_setFloatTrait    (DaxElement *element,
-                                                     const char    *name,
-                                                     gfloat         value);
+gfloat                  dax_element_getFloatTrait       (DaxElement *element,
+                                                         const char    *name);
+void                    dax_element_setFloatTrait       (DaxElement *element,
+                                                         const char    *name,
+                                                         gfloat         value);
 
 G_END_DECLS
 

@@ -29,6 +29,7 @@ G_BEGIN_DECLS
 const gchar *xml_ns;
 const gchar *xmlns_ns;
 const gchar *xmlevents_ns;
+const gchar *xlink_ns;
 const gchar *svg_ns;
 
 G_END_DECLS

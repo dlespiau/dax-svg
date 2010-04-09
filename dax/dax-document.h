@@ -69,7 +69,8 @@ struct _DaxDocumentClass
 
 GType dax_document_get_type (void) G_GNUC_CONST;
 
-DaxDomDocument *dax_document_new (void);
+DaxDomDocument *    dax_document_new            (void);
+const gchar *       dax_document_get_base_iri   (DaxDocument *document);
 
 G_END_DECLS
 

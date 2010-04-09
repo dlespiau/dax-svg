@@ -19,6 +19,9 @@
 
 #include <string.h>
 
+#include "dax-internals.h"
+#include "dax-private.h"
+#include "dax-paramspec.h"
 #include "dax-element-animate.h"
 #include "dax-element-circle.h"
 #include "dax-element-desc.h"
@@ -42,8 +45,16 @@ G_DEFINE_TYPE (DaxDocument, dax_document, DAX_TYPE_DOM_DOCUMENT)
                                       DAX_TYPE_DOCUMENT,    \
                                       DaxDocumentPrivate))
 
+enum
+{
+    PROP_0,
+
+    PROP_BASE_IRI
+};
+
 struct _DaxDocumentPrivate
 {
+    gchar *base_iri;
 };
 
 /*
@@ -97,8 +108,14 @@ dax_document_get_property (GObject    *object,
                            GValue     *value,
                            GParamSpec *pspec)
 {
+    DaxDocument *document = (DaxDocument *) object;
+    DaxDocumentPrivate *priv = document->priv;
+
     switch (property_id)
     {
+    case PROP_BASE_IRI:
+        g_value_set_string (value, priv->base_iri);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -110,8 +127,16 @@ dax_document_set_property (GObject      *object,
                            const GValue *value,
                            GParamSpec   *pspec)
 {
+    DaxDocument *document = (DaxDocument *) object;
+    DaxDocumentPrivate *priv = document->priv;
+
     switch (property_id)
     {
+    case PROP_BASE_IRI:
+        if (priv->base_iri)
+            g_free (priv->base_iri);
+        priv->base_iri = g_value_dup_string (value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -134,8 +159,9 @@ dax_document_class_init (DaxDocumentClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     DaxDomDocumentClass *document_class = DAX_DOM_DOCUMENT_CLASS (klass);
+    GParamSpec *pspec;
 
-    /* g_type_class_add_private (klass, sizeof (DaxDocumentPrivate)); */
+    g_type_class_add_private (klass, sizeof (DaxDocumentPrivate));
 
     object_class->get_property = dax_document_get_property;
     object_class->set_property = dax_document_set_property;
@@ -143,16 +169,34 @@ dax_document_class_init (DaxDocumentClass *klass)
     object_class->finalize = dax_document_finalize;
 
     document_class->create_element = dax_document_create_element;
+
+    pspec = dax_param_spec_string ("base",
+                                   "Base IRI",
+                                   "base IRI other than the base IRI of the "
+                                   "document or external entity",
+                                   NULL,
+                                   DAX_PARAM_READWRITE,
+                                   DAX_PARAM_NONE,
+                                   xml_ns);
+    g_object_class_install_property (object_class, PROP_BASE_IRI, pspec);
 }
 
 static void
 dax_document_init (DaxDocument *self)
 {
-    /* self->priv = DOCUMENT_PRIVATE (self); */
+    self->priv = DOCUMENT_PRIVATE (self);
 }
 
 DaxDomDocument *
 dax_document_new (void)
 {
     return g_object_new (DAX_TYPE_DOCUMENT, NULL);
+}
+
+const gchar *
+dax_document_get_base_iri (DaxDocument *document)
+{
+    g_return_val_if_fail (DAX_IS_DOCUMENT (document), NULL);
+
+    return document->priv->base_iri;
 }

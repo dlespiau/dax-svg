@@ -148,6 +148,104 @@ dax_param_spec_enum (const gchar   *name,
 }
 
 /*
+ * DaxParamSpecString
+ */
+
+static void
+dax_param_string_init (GParamSpec *pspec)
+{
+#if 0
+    DaxParamSpecString *espec = DAX_PARAM_SPEC_STRING (pspec);
+#endif
+}
+
+static void
+dax_param_string_class_init (GParamSpecClass *klass)
+{
+    klass->value_type = G_TYPE_STRING;
+
+    ((DaxParamSpecClass *)klass)->from_string = NULL;
+    ((DaxParamSpecClass *)klass)->to_string = NULL;
+}
+
+GType
+dax_param_string_get_type (void)
+{
+    static volatile gsize dax_param_string_type__volatile = 0;
+
+    if (g_once_init_enter (&dax_param_string_type__volatile)) {
+        GType type;
+
+        static const GTypeInfo info = {
+            sizeof (DaxParamSpecClass),
+            NULL,
+            NULL,
+            (GClassInitFunc) dax_param_string_class_init,
+            NULL,
+            NULL,
+            sizeof (DaxParamSpecString),
+            0,
+            (GInstanceInitFunc) dax_param_string_init
+        };
+
+        type = g_type_register_static (G_TYPE_PARAM_STRING,
+                                       "DaxParamSpecString",
+                                       &info,
+                                       0);
+
+        g_once_init_leave (&dax_param_string_type__volatile, type);
+    }
+
+    return dax_param_string_type__volatile;
+}
+
+/**
+ * dax_param_spec_string:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @string_type: a #GType derived from %G_TYPE_STRING
+ * @default_value: default value for the property specified
+ * @g_flags: flags for the underlying GParamSpec property
+ * @dax_flags: flags specific to Dax
+ * @namespace_uri: the namespace URI for the parameter. The string given has to
+ *                 be an interned string.
+ *
+ * Creates a new #DaxParamSpecString instance specifying a %G_TYPE_STRING
+ * property.
+ *
+ * See g_param_spec_internal() for details on property names.
+ *
+ * Returns: a newly created parameter specification
+ */
+
+GParamSpec*
+dax_param_spec_string (const gchar   *name,
+                       const gchar   *nick,
+                       const gchar   *blurb,
+                       const gchar   *default_value,
+                       GParamFlags    g_flags,
+                       DaxParamFlags  dax_flags,
+                       const char    *namespace_uri)
+{
+    DaxParamSpecString *dax_string_spec;
+
+    dax_string_spec = g_param_spec_internal (DAX_TYPE_PARAM_STRING,
+                                             name,
+                                             nick,
+                                             blurb,
+                                             g_flags);
+
+    G_PARAM_SPEC_STRING (dax_string_spec)->default_value =
+        (gchar *) default_value;
+
+    dax_string_spec->flags = dax_flags;
+    dax_string_spec->namespace_uri = namespace_uri;
+
+    return G_PARAM_SPEC (dax_string_spec);
+}
+
+/*
  * DaxParamSpecBoxed
  */
 

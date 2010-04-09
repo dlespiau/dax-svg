@@ -33,11 +33,13 @@
 #define XML_NS_URI          "http://www.w3.org/XML/1998/namespace"
 #define XMLNS_NS_URI        "http://www.w3.org/2000/xmlns/"
 #define XML_EVENTS_NS_URI   "http://www.w3.org/2001/xml-events"
+#define XLINK_NS_URI        "http://www.w3.org/1999/xlink"
 #define SVG_NS_URI          "http://www.w3.org/2000/svg"
 
 const gchar *xml_ns;
 const gchar *xmlns_ns;
 const gchar *xmlevents_ns;
+const gchar *xlink_ns;
 const gchar *svg_ns;
 
 typedef struct {
@@ -158,6 +160,7 @@ dax_init (gint    *argc,
     xml_ns = I_(XML_NS_URI);
     xmlns_ns = I_(XMLNS_NS_URI);
     xmlevents_ns = I_(XML_EVENTS_NS_URI);
+    xlink_ns = I_(XLINK_NS_URI);
     svg_ns = I_(SVG_NS_URI);
 
     g_value_register_transform_func (G_TYPE_STRING,

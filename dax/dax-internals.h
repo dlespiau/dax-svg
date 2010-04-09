@@ -43,18 +43,18 @@
 #define unused(x)		DAX_UNUSED(x)
 
 /* no, not the International Space Station. */
-#define ISS(s)       (g_intern_static_string((s)))
+#define I_(s)           (g_intern_static_string((s)))
 
 /* GParamSpec related macros */
-#define DAX_PARAM_READABLE                       \
+#define DAX_PARAM_READABLE                          \
     G_PARAM_READABLE    | G_PARAM_STATIC_NAME  |    \
     G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB
 
-#define DAX_PARAM_WRITABLE                       \
+#define DAX_PARAM_WRITABLE                          \
     G_PARAM_WRITABLE    | G_PARAM_STATIC_NAME  |    \
     G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB
 
-#define DAX_PARAM_READWRITE                      \
+#define DAX_PARAM_READWRITE                         \
     G_PARAM_READABLE    | G_PARAM_WRITABLE    |     \
     G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |     \
     G_PARAM_STATIC_BLURB

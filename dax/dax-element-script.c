@@ -28,28 +28,30 @@
 
 G_DEFINE_TYPE (DaxElementScript, dax_element_script, DAX_TYPE_ELEMENT)
 
-#define ELEMENT_SCRIPT_PRIVATE(o)                                 \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                        \
-                                      DAX_TYPE_ELEMENT_SCRIPT, \
+#define ELEMENT_SCRIPT_PRIVATE(o)                               \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
+                                      DAX_TYPE_ELEMENT_SCRIPT,  \
                                       DaxElementScriptPrivate))
 
 enum
 {
     PROP_0,
 
-    PROP_TYPE
+    PROP_TYPE,
+    PROP_HREF,
 };
 
 struct _DaxElementScriptPrivate
 {
     DaxScriptType type;
+    gchar *href;
 };
 
 static void
 dax_element_script_get_property (GObject    *object,
-                                    guint       property_id,
-                                    GValue     *value,
-                                    GParamSpec *pspec)
+                                 guint       property_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec)
 {
     DaxElementScript *self = DAX_ELEMENT_SCRIPT (object);
     DaxElementScriptPrivate *priv = self->priv;
@@ -59,6 +61,9 @@ dax_element_script_get_property (GObject    *object,
     case PROP_TYPE:
         g_value_set_enum (value, priv->type);
         break;
+    case PROP_HREF:
+        g_value_set_string (value, priv->href);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -66,9 +71,9 @@ dax_element_script_get_property (GObject    *object,
 
 static void
 dax_element_script_set_property (GObject      *object,
-                                    guint         property_id,
-                                    const GValue *value,
-                                    GParamSpec   *pspec)
+                                 guint         property_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec)
 {
     DaxElementScript *self = DAX_ELEMENT_SCRIPT (object);
     DaxElementScriptPrivate *priv = self->priv;
@@ -77,6 +82,9 @@ dax_element_script_set_property (GObject      *object,
     {
     case PROP_TYPE:
         priv->type = g_value_get_enum (value);
+        break;
+    case PROP_HREF:
+        priv->href = g_value_dup_string (value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -109,14 +117,24 @@ dax_element_script_class_init (DaxElementScriptClass *klass)
     object_class->finalize = dax_element_script_finalize;
 
     pspec = dax_param_spec_enum ("type",
-                                    "Type",
-                                    "Identifies the programming language used",
-                                    DAX_TYPE_SCRIPT_TYPE,
-                                    DAX_SCRIPT_TYPE_ECMASCRIPT,
-                                    DAX_PARAM_READWRITE,
-                                    DAX_PARAM_NONE,
-                                    svg_ns);
+                                 "Type",
+                                 "Identifies the programming language used",
+                                 DAX_TYPE_SCRIPT_TYPE,
+                                 DAX_SCRIPT_TYPE_ECMASCRIPT,
+                                 DAX_PARAM_READWRITE,
+                                 DAX_PARAM_NONE,
+                                 svg_ns);
     g_object_class_install_property (object_class, PROP_TYPE, pspec);
+
+    pspec = dax_param_spec_string ("href",
+                                   "href",
+                                   "An IRI reference to an external resource "
+                                   "containing the script code",
+                                   NULL,
+                                   DAX_PARAM_READWRITE,
+                                   DAX_PARAM_NONE,
+                                   xlink_ns);
+    g_object_class_install_property (object_class, PROP_HREF, pspec);
 }
 
 static void
@@ -142,14 +160,29 @@ dax_element_script_get_script_type (const DaxElementScript *script)
 const gchar *
 dax_element_script_get_code (const DaxElementScript *script)
 {
+    DaxElementScriptPrivate *priv;
     DaxDomNode *text;
 
     g_return_val_if_fail (DAX_IS_ELEMENT_SCRIPT (script), NULL);
 
-    text = dax_dom_node_get_first_child (DAX_DOM_NODE (script));
-    if (text && DAX_IS_DOM_TEXT (text)) {
-        DaxDomCharacterData *char_data = DAX_DOM_CHARACTER_DATA (text);
-        return dax_dom_character_data_get_data (char_data);
+    priv = script->priv;
+
+    /* If a 'script' element has both an 'xlink:href' attribute and child
+     * character data, the executable content for the script is retrieved from
+     * the IRI of the 'xlink:href' attribute, and the child content is not
+     * added to the scripting context - REC-SVGTiny12-20081222 p.205 */
+
+    if (priv->href) {
+        const gchar *base;
+
+        base = dax_element_get_base_iri ((DaxElement *) script);
+
+    } else {
+        text = dax_dom_node_get_first_child (DAX_DOM_NODE (script));
+        if (text && DAX_IS_DOM_CHARACTER_DATA (text)) {
+            DaxDomCharacterData *char_data = DAX_DOM_CHARACTER_DATA (text);
+            return dax_dom_character_data_get_data (char_data);
+        }
     }
 
     return "";
