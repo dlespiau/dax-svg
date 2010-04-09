@@ -19,6 +19,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cogl/cogl.h>
+
 #include "clutter-shape.h"
 
 #ifndef CLUTTER_PARAM_READWRITE
@@ -47,6 +49,7 @@ struct _ClutterShapePrivate
     ClutterColor *color;            /* NULL means fill color */
     ClutterColor *border_color;     /* NULL means stroke color */
     ClutterPath *path;
+    CoglHandle cogl_path;
 };
 
 static void clutter_path_draw_cogl (const ClutterPathNode *node,
@@ -123,7 +126,12 @@ clutter_shape_paint (ClutterActor *self)
   ClutterShapePrivate *priv = shape->priv;
   ClutterColor         tmp_col;
 
-  clutter_path_foreach (priv->path, clutter_path_draw_cogl, NULL);
+  if (priv->cogl_path == COGL_INVALID_HANDLE) {
+      clutter_path_foreach (priv->path, clutter_path_draw_cogl, NULL);
+      priv->cogl_path = cogl_handle_ref (cogl_get_path ());
+  } else {
+      cogl_set_path (priv->cogl_path);
+  }
 
   if (priv->color && priv->border_color) {
       _apply_opacity_to_color (self, priv->color, &tmp_col);
@@ -198,6 +206,10 @@ clutter_shape_set_property (GObject      *object,
         }
         break;
     case PROP_PATH:
+        if (priv->cogl_path) {
+            cogl_handle_unref (priv->cogl_path);
+            priv->cogl_path = COGL_INVALID_HANDLE;
+        }
         if (priv->path)
             g_object_unref (priv->path);
         priv->path = g_value_get_object (value);
@@ -217,6 +229,9 @@ clutter_shape_finalize (GObject *object)
 
     if (priv->path)
         g_object_unref (priv->path);
+
+    if (priv->cogl_path)
+        cogl_handle_unref (priv->path);
 
     G_OBJECT_CLASS (clutter_shape_parent_class)->finalize (object);
 }
