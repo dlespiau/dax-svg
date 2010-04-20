@@ -467,8 +467,8 @@ dax_param_array_from_string (GParamSpec *pspec,
         g_assert_not_reached ();
 
     if (expected_elements != parsed_elements)
-        g_warning ("parsed %d elements but was expecting %d",
-                   parsed_elements, expected_elements);
+        g_warning ("%s: parsed \"%s\": %d elements found but was expecting %d",
+                   pspec->name, string, parsed_elements, expected_elements);
 
     success = parsed_elements == expected_elements;
 
