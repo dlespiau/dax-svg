@@ -32,7 +32,7 @@ struct _ParserContext {
 
 static void
 dax_dom_document_read_node (DaxDomDocument *document,
-                               ParserContext     *ctx)
+                            ParserContext  *ctx)
 {
     int type;
 
@@ -124,6 +124,42 @@ dax_dom_document_read_node (DaxDomDocument *document,
 }
 
 /**
+ * dax_dom_document_new_from_memory:
+ *
+ * Creates a new #DaxDomDocument. FIXME
+ *
+ * Return value: the newly created #DaxDomDocument instance
+ */
+DaxDomDocument *
+dax_dom_document_new_from_memory (const gchar  *buffer,
+                                  gint          size,
+                                  const gchar  *base_url,
+                                  GError      **error)
+{
+    DaxDomDocument *document;
+    ParserContext ctx;
+    int ret;
+
+    ctx.reader = xmlReaderForMemory(buffer, size, base_url, NULL,
+                                    XML_PARSE_XINCLUDE);
+    if (ctx.reader == NULL)
+        return NULL;
+
+    document = dax_document_new ();
+    ctx.current_node = DAX_DOM_NODE (document);
+
+    ret = xmlTextReaderRead (ctx.reader);
+    while (ret == 1) {
+        dax_dom_document_read_node (document, &ctx);
+        ret = xmlTextReaderRead(ctx.reader);
+    }
+    xmlFreeTextReader(ctx.reader);
+    /* FIXME: handle the error case where ret = -1 */
+
+    return document;
+}
+
+/**
  * dax_dom_document_new_from_file:
  *
  * Creates a new #DaxDomDocument. FIXME
@@ -132,7 +168,7 @@ dax_dom_document_read_node (DaxDomDocument *document,
  */
 DaxDomDocument *
 dax_dom_document_new_from_file (const gchar  *filename,
-                                   GError    **error)
+                                GError      **error)
 {
     DaxDomDocument *document;
     ParserContext ctx;

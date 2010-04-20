@@ -26,8 +26,12 @@
 
 G_BEGIN_DECLS
 
-DaxDomDocument *dax_dom_document_new_from_file (const gchar  *filename,
-                                                      GError      **error);
+DaxDomDocument *    dax_dom_document_new_from_file      (const gchar  *filename,
+                                                         GError      **error);
+DaxDomDocument *    dax_dom_document_new_from_memory    (const gchar  *buffer,
+                                                         gint          size,
+                                                         const gchar  *base_url,
+                                                         GError      **error);
 
 G_END_DECLS
 

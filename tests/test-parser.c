@@ -399,6 +399,55 @@ test_text (void)
     g_assert_cmpfloat (value, ==, 150);
 }
 
+const char image_use_base[] =
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+"<svg xmlns=\"http://www.w3.org/2000/svg\" "
+     "xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
+     "version=\"1.2\" baseProfile=\"tiny\" viewBox=\"0 0 100 100\">"
+  "<g xml:base=\"http://a.example.org/aaa/\">\n"
+    "<g xml:base=\"/bbb/ccc/\">\n"
+      "<g xml:base=\"../ddd/\" xml:id=\"bar\">\n"
+        "<image xml:id=\"foo\" xlink:href=\"foo.jpg\" width=\"100\" "
+               "height=\"100\"/>\n"
+       "</g>\n"
+    "</g>\n"
+  "</g>\n"
+  "<g xml:base=\"http://z.example.net/zzz/\">\n"
+    "<g xml:base=\"/yyy/xxx/\">\n"
+       "<g xml:base=\"../xxx/\">\n"
+         "<use xlink:href=\"#foo\" />\n"
+         "<use xlink:href=\"#bar\" />\n"
+         "<use xlink:href=\"#bar\" xml:base=\"../ggg/\" />\n"
+       "</g>\n"
+    "</g>\n"
+  "</g>\n"
+"</svg>";
+
+static void
+test_base (void)
+{
+    DaxDomDocument *document;
+    DaxDomNode *svg, *g1, *g2;
+
+    document = dax_dom_document_new_from_memory (image_use_base,
+                                                 sizeof (image_use_base) - 1,
+                                                 "http://www.example.com",
+                                                 NULL);
+    g_assert (DAX_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
+
+    /* <g> */
+    g1 = dax_dom_node_get_first_child (svg);
+    g_assert (DAX_IS_ELEMENT_G (g1));
+
+    /* <g> */
+    g2 = dax_dom_node_get_next_sibling (g1);
+    g_assert (DAX_IS_ELEMENT_G (g2));
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -418,6 +467,7 @@ main (int   argc,
     g_test_add_func ("/parser/handler", test_handler);
     g_test_add_func ("/parser/line", test_line);
     g_test_add_func ("/parser/text", test_text);
+    g_test_add_func ("/parser/xml-base", test_base);
 
     return g_test_run ();
 }
