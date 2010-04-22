@@ -71,6 +71,8 @@ GType dax_document_get_type (void) G_GNUC_CONST;
 
 DaxDomDocument *    dax_document_new            (void);
 const gchar *       dax_document_get_base_iri   (DaxDocument *document);
+void                dax_document_set_base_iri   (DaxDocument *document,
+                                                 const char  *base_iri);
 
 G_END_DECLS
 

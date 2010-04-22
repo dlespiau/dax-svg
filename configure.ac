@@ -90,7 +90,10 @@ AC_C_CONST
 # Check for header files
 AC_HEADER_STDC
 
-PKG_CHECK_MODULES([DAX], [glib-2.0 >= 2.22 gobject-2.0 clutter-1.0 clutter-gst-1.0 gjs-gi-1.0  gjs-1.0])
+PKG_CHECK_MODULES([DAX],
+                  [gjs-gi-1.0 gjs-1.0
+                   clutter-1.0 clutter-gst-1.0
+                   glib-2.0 >= 2.22 gobject-2.0 gio-2.0])
 AC_SUBST(DAX_CFLAGS)
 AC_SUBST(DAX_LIBS)
 

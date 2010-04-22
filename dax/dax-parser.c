@@ -133,19 +133,20 @@ dax_dom_document_read_node (DaxDomDocument *document,
 DaxDomDocument *
 dax_dom_document_new_from_memory (const gchar  *buffer,
                                   gint          size,
-                                  const gchar  *base_url,
+                                  const gchar  *base_iri,
                                   GError      **error)
 {
     DaxDomDocument *document;
     ParserContext ctx;
     int ret;
 
-    ctx.reader = xmlReaderForMemory(buffer, size, base_url, NULL,
+    ctx.reader = xmlReaderForMemory(buffer, size, base_iri, NULL,
                                     XML_PARSE_XINCLUDE);
     if (ctx.reader == NULL)
         return NULL;
 
     document = dax_document_new ();
+    dax_document_set_base_iri (DAX_DOCUMENT (document), base_iri);
     ctx.current_node = DAX_DOM_NODE (document);
 
     ret = xmlTextReaderRead (ctx.reader);

@@ -19,6 +19,8 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <gio/gio.h>
+
 #include "dax-internals.h"
 #include "dax-debug.h"
 #include "dax-private.h"
@@ -33,6 +35,10 @@ G_DEFINE_ABSTRACT_TYPE (DaxElement, dax_element, DAX_TYPE_DOM_ELEMENT)
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
                                       DAX_TYPE_ELEMENT,     \
                                       DaxElementPrivate))
+
+/*
+ * FIXME: {get,set}_base_iri() probably belongs to DomElement
+ */
 
 enum
 {
@@ -49,8 +55,24 @@ struct _DaxElementPrivate
     ClutterColor *fill;
     gfloat fill_opacity;
     ClutterColor *stroke;
-    gchar *base_iri;
+    gchar *base_iri;                /* xml:base value in the DOM tree */
+    gchar *resolved_base_iri;       /* cache resolved xml:base */
 };
+
+static void
+clear_resolved_iri (DaxElement *element)
+{
+    DaxElementPrivate *priv = element->priv;
+
+    if (priv->resolved_base_iri == NULL)
+        return;
+
+    /* resolved_base_iri can be base_iri in the case base_iri is an [UI]RI */
+    if (priv->base_iri == priv->resolved_base_iri)
+        g_free (priv->resolved_base_iri);
+
+    priv->resolved_base_iri = NULL;
+}
 
 /*
  * DaxDomElement overloading
@@ -181,6 +203,9 @@ dax_element_set_property (GObject      *object,
         priv->fill_opacity = g_value_get_float (value);
         break;
     case PROP_BASE_IRI:
+        /* Remove cached base_iri if needed */
+        clear_resolved_iri (element);
+        /* Time to get a new iri */
         if (priv->base_iri)
             g_free (priv->base_iri);
         priv->base_iri = g_value_dup_string (value);
@@ -199,6 +224,15 @@ dax_element_dispose (GObject *object)
 static void
 dax_element_finalize (GObject *object)
 {
+    DaxElement *element = DAX_ELEMENT (object);
+    DaxElementPrivate *priv = element->priv;
+
+    if (priv->base_iri) {
+        g_free (priv->base_iri);
+        priv->base_iri = NULL;
+    }
+    clear_resolved_iri (element);
+
     G_OBJECT_CLASS (dax_element_parent_class)->finalize (object);
 }
 
@@ -210,6 +244,7 @@ dax_element_class_init (DaxElementClass *klass)
     GParamSpec *pspec;
 
     g_type_class_add_private (klass, sizeof (DaxElementPrivate));
+
 
     object_class->get_property = dax_element_get_property;
     object_class->set_property = dax_element_set_property;
@@ -316,23 +351,65 @@ dax_element_get_fill_opacity (DaxElement *element)
     return element->priv->fill_opacity;
 }
 
-const gchar *
-dax_element_get_base_iri (DaxElement *element)
+/* That's a bit restrictive as a definition of an URI but that's the two
+ * schemes we want to support anyway */
+static gboolean
+is_iri (const char *str)
 {
-    DaxElementPrivate *priv;
+    return g_str_has_prefix (str, "http://") ||
+           g_str_has_prefix (str, "file://");
+}
+
+static const char *
+get_parent_base_iri (DaxElement *element)
+{
     DaxDomNode *parent;
-
-    g_return_val_if_fail (DAX_IS_ELEMENT (element), NULL);
-
-    priv = element->priv;
-    if (priv->base_iri)
-        return priv->base_iri;
 
     parent = ((DaxDomNode *) element)->parent_node;
     if (DAX_IS_DOCUMENT (parent))
         return dax_document_get_base_iri ((DaxDocument *) parent);
     else
         return dax_element_get_base_iri ((DaxElement *) parent);
+}
+
+const gchar *
+dax_element_get_base_iri (DaxElement *element)
+{
+    DaxElementPrivate *priv;
+
+    g_return_val_if_fail (DAX_IS_ELEMENT (element), NULL);
+
+    priv = element->priv;
+
+    if (priv->resolved_base_iri)
+        return priv->resolved_base_iri;
+
+    /* If xml:base is set, it's time to do some work */
+    if (priv->base_iri) {
+
+        if (is_iri (priv->base_iri)) {
+            /* the value on the attribute is an actual uri */
+            priv->resolved_base_iri = priv->base_iri;
+        } else {
+            /* relative uri to resolve */
+            const gchar *parent_base_uri;
+            GFile *resolved_file, *parent_file;
+
+            parent_base_uri = get_parent_base_iri (element);
+            parent_file = g_file_new_for_uri (parent_base_uri);
+
+            resolved_file = g_file_resolve_relative_path (parent_file,
+                                                          priv->base_iri);
+            priv->resolved_base_iri = g_file_get_uri (resolved_file);
+
+            g_object_unref (parent_file);
+            g_object_unref (resolved_file);
+        }
+
+        return priv->resolved_base_iri;
+    }
+
+    return get_parent_base_iri (element);
 }
 
 /*

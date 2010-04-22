@@ -151,6 +151,14 @@ dax_document_dispose (GObject *object)
 static void
 dax_document_finalize (GObject *object)
 {
+    DaxDocument *document = DAX_DOCUMENT (object);
+    DaxDocumentPrivate *priv = document->priv;
+
+    if (priv->base_iri) {
+        g_free (priv->base_iri);
+        priv->base_iri = NULL;
+    }
+
     G_OBJECT_CLASS (dax_document_parent_class)->finalize (object);
 }
 
@@ -199,4 +207,13 @@ dax_document_get_base_iri (DaxDocument *document)
     g_return_val_if_fail (DAX_IS_DOCUMENT (document), NULL);
 
     return document->priv->base_iri;
+}
+
+void
+dax_document_set_base_iri (DaxDocument *document,
+                           const char  *base_iri)
+{
+    g_return_if_fail (DAX_IS_DOCUMENT (document));
+
+    document->priv->base_iri = g_strdup (base_iri);
 }

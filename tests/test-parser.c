@@ -1,3 +1,25 @@
+/*
+ * Dax - Load and draw SVG
+ *
+ * Copyright © 2009, 2010 Intel Corporation.
+ *
+ * Authored by: Damien Lespiau <damien.lespiau@intel.com>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms and conditions of the GNU Lesser General Public License,
+ * version 2.1, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+#include <string.h>
 
 #include <glib.h>
 
@@ -427,7 +449,8 @@ static void
 test_base (void)
 {
     DaxDomDocument *document;
-    DaxDomNode *svg, *g1, *g2;
+    DaxDomNode *svg, *g1, *g2, *g3;
+    const gchar *iri;
 
     document = dax_dom_document_new_from_memory (image_use_base,
                                                  sizeof (image_use_base) - 1,
@@ -438,14 +461,29 @@ test_base (void)
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
     g_assert (DAX_IS_ELEMENT_SVG (svg));
+    iri = dax_element_get_base_iri (DAX_ELEMENT (svg));
+    g_assert_cmpstr (iri, ==, "http://www.example.com");
 
     /* <g> */
     g1 = dax_dom_node_get_first_child (svg);
     g_assert (DAX_IS_ELEMENT_G (g1));
+    iri = dax_element_get_base_iri (DAX_ELEMENT (g1));
+    g_assert_cmpstr (iri, ==, "http://a.example.org/aaa/");
 
     /* <g> */
-    g2 = dax_dom_node_get_next_sibling (g1);
+    g2 = dax_dom_node_get_first_child (g1);
     g_assert (DAX_IS_ELEMENT_G (g2));
+    iri = dax_element_get_base_iri (DAX_ELEMENT (g2));
+    g_assert_cmpstr (iri, ==, "http://a.example.org/bbb/ccc/");
+
+    /* <g> */
+    g3 = dax_dom_node_get_first_child (g2);
+    g_assert (DAX_IS_ELEMENT_G (g3));
+    iri = dax_element_get_base_iri (DAX_ELEMENT (g3));
+    /* glib <= 2.24.0 don't remove the dot segments in GDummyFile */
+    g_assert (strcmp (iri, "http://a.example.org/bbb/ddd/") == 0 ||
+              strcmp (iri, "http://a.example.org/bbb/ccc/../ddd/") == 0);
+
 }
 
 int
