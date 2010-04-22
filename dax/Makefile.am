@@ -94,7 +94,6 @@ source_h =				\
 	dax-element-tspan.h		\
 	dax-gjs-context.h		\
 	dax-knot-sequence.h		\
-	dax-paramspec.h			\
 	dax-parser.h			\
 	dax-svg-exception.h		\
 	dax-traverser.h			\
@@ -109,6 +108,7 @@ source_h_private = 		\
 	dax-debug.h		\
 	dax-dom-private.h	\
 	dax-internals.h		\
+	dax-paramspec.h		\
 	dax-private.h		\
 	dax-utils.h		\
 	dax-xml-private.h	\

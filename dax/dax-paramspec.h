@@ -24,6 +24,8 @@
 
 #include <glib-object.h>
 
+#include "dax-internals.h"
+
 G_BEGIN_DECLS
 
 /*
