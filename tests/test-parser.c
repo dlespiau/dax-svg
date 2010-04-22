@@ -446,7 +446,7 @@ const char image_use_base[] =
 "</svg>";
 
 static void
-test_base (void)
+test_base_id (void)
 {
     DaxDomDocument *document;
     DaxDomNode *svg, *g1, *g2, *g3;
@@ -484,6 +484,10 @@ test_base (void)
     g_assert (strcmp (iri, "http://a.example.org/bbb/ddd/") == 0 ||
               strcmp (iri, "http://a.example.org/bbb/ccc/../ddd/") == 0);
 
+    /* check we've parsed the id */
+    g_assert_cmpstr (dax_dom_element_get_id (DAX_DOM_ELEMENT (g3)),
+                     ==,
+                     "bar");
 }
 
 int
@@ -505,7 +509,7 @@ main (int   argc,
     g_test_add_func ("/parser/handler", test_handler);
     g_test_add_func ("/parser/line", test_line);
     g_test_add_func ("/parser/text", test_text);
-    g_test_add_func ("/parser/xml-base", test_base);
+    g_test_add_func ("/parser/xml-base-id", test_base_id);
 
     return g_test_run ();
 }

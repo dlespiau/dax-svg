@@ -88,21 +88,24 @@ DaxDomElement *dax_dom_element_new (void);
 #define dax_dom_element_set_attribute \
     dax_dom_element_setAttribute
 
-const gchar *dax_dom_element_getAttributeNS  (DaxDomElement  *self,
-                                                 const gchar       *ns,
-                                                 const gchar       *name,
-                                                 GError           **err);
-void         dax_dom_element_setAttributeNS  (DaxDomElement  *self,
-                                                 const gchar       *ns,
-                                                 const gchar       *name,
-                                                 const gchar       *value,
-                                                 GError           **err);
-const gchar *dax_dom_element_getAttribute    (DaxDomElement *self,
+const gchar *   dax_dom_element_getAttributeNS  (DaxDomElement  *self,
+                                                 const gchar    *ns,
+                                                 const gchar    *name,
+                                                 GError        **err);
+void            dax_dom_element_setAttributeNS  (DaxDomElement  *self,
+                                                 const gchar    *ns,
+                                                 const gchar    *name,
+                                                 const gchar    *value,
+                                                 GError        **err);
+const gchar *   dax_dom_element_getAttribute    (DaxDomElement *self,
                                                  const gchar      *name);
-void         dax_dom_element_setAttribute    (DaxDomElement  *self,
-                                                 const gchar       *name,
-                                                 const gchar       *value,
-                                                 GError           **err);
+void            dax_dom_element_setAttribute    (DaxDomElement  *self,
+                                                 const gchar    *name,
+                                                 const gchar    *value,
+                                                 GError        **err);
+const gchar *   dax_dom_element_get_id          (DaxDomElement *element);
+void            dax_dom_element_set_id          (DaxDomElement *element,
+                                                 const gchar   *id);
 G_END_DECLS
 
 #endif /* __DAX_DOM_ELEMENT_H__ */

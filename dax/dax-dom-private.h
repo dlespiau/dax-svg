@@ -37,15 +37,20 @@ const gchar *xmlevents_ns;
 
 /* dax-dom-document.c */
 
-void            _dax_dom_document_add_namespace                  (DaxDomDocument *document,
-                                                                     const gchar       *uri,
-                                                                     const gchar       *prefix);
-void            _dax_dom_document_add_namespace_static           (DaxDomDocument *document,
-                                                                     const gchar       *uri,
-                                                                     const gchar       *prefix);
-const gchar *   _dax_dom_document_get_prefix_for_interned_uri    (DaxDomDocument *document,
-                                                                     const gchar       *uri);
+void            _dax_dom_document_add_namespace                 (DaxDomDocument *document,
+                                                                 const gchar    *uri,
+                                                                 const gchar    *prefix);
+void            _dax_dom_document_add_namespace_static          (DaxDomDocument *document,
+                                                                 const gchar    *uri,
+                                                                 const gchar    *prefix);
+const gchar *   _dax_dom_document_get_prefix_for_interned_uri   (DaxDomDocument *document,
+                                                                 const gchar    *uri);
 
+gboolean        _dax_dom_document_set_element_id    (DaxDomDocument *document,
+                                                     DaxDomElement  *element,
+                                                     const gchar    *id);
+void            _dax_dom_document_unset_id          (DaxDomDocument *document,
+                                                     const gchar    *id);
 
 /* dax-dom-element.c */
 

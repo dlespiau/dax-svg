@@ -25,14 +25,15 @@ G_DEFINE_ABSTRACT_TYPE (DaxDomDocument,
                         dax_dom_document,
                         DAX_TYPE_DOM_NODE);
 
-#define DOM_DOCUMENT_PRIVATE(o) 					            \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o), 			            \
-                                      DAX_TYPE_DOM_DOCUMENT, \
+#define DOM_DOCUMENT_PRIVATE(o)                                 \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
+                                      DAX_TYPE_DOM_DOCUMENT,    \
                                       DaxDomDocumentPrivate))
 
 struct _DaxDomDocumentPrivate
 {
     GPtrArray *namespaces;
+    GHashTable *id2element;
 };
 
 /*
@@ -41,8 +42,8 @@ struct _DaxDomDocumentPrivate
 
 void
 _dax_dom_document_add_namespace_static (DaxDomDocument *document,
-                                           const gchar       *uri,
-                                           const gchar       *prefix)
+                                        const gchar    *uri,
+                                        const gchar    *prefix)
 {
     DaxXmlNamespace *ns;
 
@@ -55,8 +56,8 @@ _dax_dom_document_add_namespace_static (DaxDomDocument *document,
 
 void
 _dax_dom_document_add_namespace (DaxDomDocument *document,
-                                    const gchar       *uri,
-                                    const gchar       *prefix)
+                                 const gchar    *uri,
+                                 const gchar    *prefix)
 {
     DaxXmlNamespace *ns;
 
@@ -69,7 +70,7 @@ _dax_dom_document_add_namespace (DaxDomDocument *document,
 
 const gchar *
 _dax_dom_document_get_prefix_for_interned_uri (DaxDomDocument *document,
-                                                  const gchar       *uri)
+                                               const gchar    *uri)
 {
     DaxDomDocumentPrivate *priv = document->priv;
     guint i;
@@ -99,6 +100,35 @@ _dax_dom_document_free_namespaces (DaxDomDocument *document)
     g_ptr_array_free (priv->namespaces, TRUE);
 }
 
+gboolean
+_dax_dom_document_set_element_id (DaxDomDocument *document,
+                                  DaxDomElement  *element,
+                                  const gchar    *id)
+{
+    DaxDomDocumentPrivate *priv = document->priv;
+    DaxDomElement *found;
+
+    found = g_hash_table_lookup (priv->id2element, id);
+    if (found) {
+        g_warning ("Trying to set the ID of a %s element to %s, but this "
+                   "ID is already taken", G_OBJECT_TYPE_NAME (element), id);
+        return FALSE;
+    }
+    /* it's ok to cast to gchar * here as we don't provide a destruction
+     * function for the keys in priv->id2element and thus the hash table does
+     * not touch the key */
+    g_hash_table_insert (priv->id2element, (gchar *)id, element);
+    return TRUE;
+}
+
+void
+_dax_dom_document_unset_id (DaxDomDocument *document,
+                            const gchar    *id)
+{
+    g_hash_table_remove (document->priv->id2element, id);
+}
+
+
 /*
  * DaxDomDocument
  */
@@ -123,8 +153,8 @@ dax_dom_document_get_document_element(DaxDomDocument *self)
 
 DaxDomElement *
 dax_dom_document_create_element (DaxDomDocument  *self,
-                                    const gchar        *tag_name,
-                                    GError            **err)
+                                 const gchar     *tag_name,
+                                 GError         **err)
 {
     DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (self);
     DaxDomNode *node;
@@ -146,9 +176,9 @@ dax_dom_document_create_element (DaxDomDocument  *self,
 
 DaxDomElement *
 dax_dom_document_create_element_ns (DaxDomDocument  *self,
-                                       const gchar        *namespace_uri,
-                                       const gchar        *qualified_name,
-                                       GError            **err)
+                                    const gchar     *namespace_uri,
+                                    const gchar     *qualified_name,
+                                    GError         **err)
 {
     DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (self);
     DaxDomNode *node;
@@ -173,7 +203,7 @@ dax_dom_document_create_element_ns (DaxDomDocument  *self,
 
 DaxDomElement *
 dax_dom_document_get_element_by_id (DaxDomDocument *self,
-                                       const gchar       *id)
+                                    const gchar    *id)
 {
     DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (self);
 
@@ -191,9 +221,9 @@ dax_dom_document_get_element_by_id (DaxDomDocument *self,
 
 static void
 dax_dom_document_get_property (GObject    *object,
-                                  guint       property_id,
-                                  GValue     *value,
-                                  GParamSpec *pspec)
+                               guint       property_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
 {
     switch (property_id)
     {
@@ -204,9 +234,9 @@ dax_dom_document_get_property (GObject    *object,
 
 static void
 dax_dom_document_set_property (GObject      *object,
-                                  guint         property_id,
-                                  const GValue *value,
-                                  GParamSpec   *pspec)
+                               guint         property_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
 {
     switch (property_id)
     {
@@ -224,9 +254,11 @@ dax_dom_document_dispose (GObject *object)
 static void
 dax_dom_document_finalize (GObject *object)
 {
-    DaxDomDocument *self = DAX_DOM_DOCUMENT (object);
+    DaxDomDocument *document = DAX_DOM_DOCUMENT (object);
+    DaxDomDocumentPrivate *priv = document->priv;
 
-    _dax_dom_document_free_namespaces (self);
+    _dax_dom_document_free_namespaces (document);
+    g_hash_table_unref (priv->id2element);
 
     G_OBJECT_CLASS (dax_dom_document_parent_class)->finalize (object);
 }
@@ -254,6 +286,8 @@ dax_dom_document_init (DaxDomDocument *self)
     priv->namespaces = g_ptr_array_sized_new (5);
     _dax_dom_document_add_namespace_static (self, xml_ns, "xml");
     _dax_dom_document_add_namespace_static (self, xmlns_ns, "xmlns");
+
+    priv->id2element = g_hash_table_new (g_str_hash, g_str_equal);
 }
 
 DaxDomDocument *
@@ -263,8 +297,8 @@ dax_dom_document_new (void)
 }
 
 DaxDomText *
-dax_dom_document_create_text_node (DaxDomDocument  *self,
-                                      const gchar        *data)
+dax_dom_document_create_text_node (DaxDomDocument *self,
+                                   const gchar    *data)
 {
     DaxDomNode *node;
     DaxDomText *text;

@@ -69,36 +69,36 @@ struct _DaxDomDocumentClass
     DaxDomNodeClass parent_class;
 
     DaxDomElement *(*create_element)    (DaxDomDocument  *self,
-                                            const gchar        *tag_name,
-                                            GError            **err);
+                                         const gchar     *tag_name,
+                                         GError         **err);
     DaxDomElement *(*create_element_ns) (DaxDomDocument  *self,
-                                            const gchar        *namespace_uri,
-                                            const gchar        *qualified_name,
-                                            GError            **err);
+                                         const gchar     *namespace_uri,
+                                         const gchar     *qualified_name,
+                                         GError         **err);
     DaxDomElement *(*get_element_by_id) (DaxDomDocument *self,
-                                            const gchar       *id);
+                                         const gchar       *id);
 };
 
-GType              dax_dom_document_get_type             (void) G_GNUC_CONST;
+GType           dax_dom_document_get_type             (void) G_GNUC_CONST;
 
 DaxDomDocument *dax_dom_document_new                  (void);
 
 DaxDomElement  *dax_dom_document_get_document_element (DaxDomDocument *self);
 
 DaxDomElement  *dax_dom_document_create_element       (DaxDomDocument  *self,
-                                                             const gchar        *tag_name,
-                                                             GError            **err);
+                                                       const gchar     *tag_name,
+                                                       GError         **err);
 
 DaxDomElement  *dax_dom_document_create_element_ns    (DaxDomDocument  *self,
-                                                             const gchar        *namespace_uri,
-                                                             const gchar        *qualified_name,
-                                                             GError            **err);
+                                                       const gchar     *namespace_uri,
+                                                       const gchar     *qualified_name,
+                                                       GError         **err);
 
 DaxDomText     *dax_dom_document_create_text_node     (DaxDomDocument  *self,
-                                                             const gchar        *data);
+                                                       const gchar     *data);
 
 DaxDomElement  *dax_dom_document_get_element_by_id    (DaxDomDocument *self,
-                                                             const gchar       *id);
+                                                       const gchar    *id);
 
 G_END_DECLS
 
