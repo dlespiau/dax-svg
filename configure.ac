@@ -164,6 +164,8 @@ AC_CONFIG_FILES([
     Makefile
     build/Makefile
     build/autotools/Makefile
+    data/Makefile
+    data/xsl/Makefile
     dax/Makefile
     tests/Makefile
     tools/Makefile
