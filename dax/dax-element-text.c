@@ -190,7 +190,17 @@ dax_element_text_class_init (DaxElementTextClass *klass)
 static void
 dax_element_text_init (DaxElementText *self)
 {
-    self->priv = ELEMENT_TEXT_PRIVATE (self);
+    DaxElementTextPrivate *priv;
+    ClutterUnits zero;
+
+    self->priv = priv = ELEMENT_TEXT_PRIVATE (self);
+
+    /* Lacuna value of x and y is "0" */
+    clutter_units_from_pixels (&zero, 0);
+    priv->x = g_array_sized_new (FALSE, FALSE, sizeof (ClutterUnits), 1);
+    g_array_append_val (priv->x, zero);
+    priv->y = g_array_sized_new (FALSE, FALSE, sizeof (ClutterUnits), 1);
+    g_array_append_val (priv->y, zero);
 }
 
 DaxDomElement *
