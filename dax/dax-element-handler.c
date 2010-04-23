@@ -175,7 +175,7 @@ dax_element_handler_class_init (DaxElementHandlerClass *klass)
                                     "Identifies the programming language used",
                                     DAX_TYPE_SCRIPT_TYPE,
                                     DAX_SCRIPT_TYPE_ECMASCRIPT,
-                                    DAX_PARAM_READWRITE,
+                                    DAX_GPARAM_READWRITE,
                                     DAX_PARAM_NONE,
                                     svg_ns);
     g_object_class_install_property (object_class, PROP_TYPE, pspec);
@@ -185,7 +185,7 @@ dax_element_handler_class_init (DaxElementHandlerClass *klass)
                                     "The name of the event to handle",
                                     DAX_TYPE_XML_EVENT_TYPE,
                                     DAX_XML_EVENT_TYPE_DEFAULT,
-                                    DAX_PARAM_READWRITE,
+                                    DAX_GPARAM_READWRITE,
                                     DAX_PARAM_NONE,
                                     xmlevents_ns);
     g_object_class_install_property (object_class, PROP_EVENT_TYPE, pspec);

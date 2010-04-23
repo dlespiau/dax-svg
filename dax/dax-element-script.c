@@ -121,7 +121,7 @@ dax_element_script_class_init (DaxElementScriptClass *klass)
                                  "Identifies the programming language used",
                                  DAX_TYPE_SCRIPT_TYPE,
                                  DAX_SCRIPT_TYPE_ECMASCRIPT,
-                                 DAX_PARAM_READWRITE,
+                                 DAX_GPARAM_READWRITE,
                                  DAX_PARAM_NONE,
                                  svg_ns);
     g_object_class_install_property (object_class, PROP_TYPE, pspec);
@@ -131,7 +131,7 @@ dax_element_script_class_init (DaxElementScriptClass *klass)
                                    "An IRI reference to an external resource "
                                    "containing the script code",
                                    NULL,
-                                   DAX_PARAM_READWRITE,
+                                   DAX_GPARAM_READWRITE,
                                    DAX_PARAM_NONE,
                                    xlink_ns);
     g_object_class_install_property (object_class, PROP_HREF, pspec);

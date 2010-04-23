@@ -170,7 +170,7 @@ dax_element_circle_class_init (DaxElementCircleClass *klass)
                                   "The x coordinate of the center "
                                   "of the circle",
                                   CLUTTER_TYPE_UNITS,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_CX, pspec);
@@ -180,7 +180,7 @@ dax_element_circle_class_init (DaxElementCircleClass *klass)
                                   "The y coordinate of the center "
                                   "of the circle",
                                   CLUTTER_TYPE_UNITS,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_CY, pspec);
@@ -189,7 +189,7 @@ dax_element_circle_class_init (DaxElementCircleClass *klass)
                                   "Radius",
                                   "The radius of the circle",
                                   CLUTTER_TYPE_UNITS,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_RADIUS, pspec);

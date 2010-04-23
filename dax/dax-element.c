@@ -258,14 +258,14 @@ dax_element_class_init (DaxElementClass *klass)
                                 "Fill color",
                                 "The fill color of the element",
                                 CLUTTER_TYPE_COLOR,
-                                DAX_PARAM_READWRITE);
+                                DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_FILL, pspec);
 
     pspec = g_param_spec_boxed ("stroke",
                                 "Stoke color",
                                 "The color of the outline of the element",
                                 CLUTTER_TYPE_COLOR,
-                                DAX_PARAM_READWRITE);
+                                DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_STROKE, pspec);
 
     pspec = g_param_spec_float ("fill-opacity",
@@ -274,7 +274,7 @@ dax_element_class_init (DaxElementClass *klass)
                                 "paint the interior of the element",
                                 0.0f, 1.0f,
                                 1.0f,
-                                DAX_PARAM_READWRITE);
+                                DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_FILL_OPACITY, pspec);
 
     pspec = dax_param_spec_string ("base",
@@ -282,7 +282,7 @@ dax_element_class_init (DaxElementClass *klass)
                                    "base IRI other than the base IRI of the "
                                    "document or external entity",
                                    NULL,
-                                   DAX_PARAM_READWRITE,
+                                   DAX_GPARAM_READWRITE,
                                    DAX_PARAM_NONE,
                                    xml_ns);
     g_object_class_install_property (object_class, PROP_BASE_IRI, pspec);

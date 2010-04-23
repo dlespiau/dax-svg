@@ -181,7 +181,7 @@ dax_element_line_class_init (DaxElementLineClass *klass)
                                   "The x-axis coordinate of the start of the "
                                   "line",
                                   CLUTTER_TYPE_UNITS,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_X1, pspec);
@@ -191,7 +191,7 @@ dax_element_line_class_init (DaxElementLineClass *klass)
                                   "The y-axis coordinate of the start of the "
                                   "line",
                                   CLUTTER_TYPE_UNITS,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_Y1, pspec);
@@ -201,7 +201,7 @@ dax_element_line_class_init (DaxElementLineClass *klass)
                                   "The x-axis coordinate of the end of the "
                                   "line",
                                   CLUTTER_TYPE_UNITS,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_X2, pspec);
@@ -211,7 +211,7 @@ dax_element_line_class_init (DaxElementLineClass *klass)
                                   "The y-axis coordinate of the end of the "
                                   "line",
                                   CLUTTER_TYPE_UNITS,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_Y2, pspec);

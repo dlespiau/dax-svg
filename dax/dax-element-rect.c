@@ -240,7 +240,7 @@ dax_element_rect_class_init (DaxElementRectClass *klass)
                                       CLUTTER_UNIT_PIXEL,
                                       0.0f, G_MAXFLOAT,
                                       0.0f,
-                                      DAX_PARAM_READWRITE);
+                                      DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_X, pspec);
 
     pspec = clutter_param_spec_units ("y",
@@ -249,7 +249,7 @@ dax_element_rect_class_init (DaxElementRectClass *klass)
                                       CLUTTER_UNIT_PIXEL,
                                       0.0f, G_MAXFLOAT,
                                       0.0f,
-                                      DAX_PARAM_READWRITE);
+                                      DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_Y, pspec);
 
     pspec = clutter_param_spec_units ("width",
@@ -258,7 +258,7 @@ dax_element_rect_class_init (DaxElementRectClass *klass)
                                       CLUTTER_UNIT_PIXEL,
                                       0.0f, G_MAXFLOAT,
                                       0.0f,
-                                      DAX_PARAM_READWRITE);
+                                      DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_WIDTH, pspec);
 
     pspec = clutter_param_spec_units ("height",
@@ -267,7 +267,7 @@ dax_element_rect_class_init (DaxElementRectClass *klass)
                                       CLUTTER_UNIT_PIXEL,
                                       0.0f, G_MAXFLOAT,
                                       0.0f,
-                                      DAX_PARAM_READWRITE);
+                                      DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_HEIGHT, pspec);
 
     pspec = clutter_param_spec_units ("rx",
@@ -276,7 +276,7 @@ dax_element_rect_class_init (DaxElementRectClass *klass)
                                       CLUTTER_UNIT_PIXEL,
                                       0.0f, G_MAXFLOAT,
                                       0.0f,
-                                      DAX_PARAM_READWRITE);
+                                      DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_RX, pspec);
 
     pspec = clutter_param_spec_units ("ry",
@@ -285,7 +285,7 @@ dax_element_rect_class_init (DaxElementRectClass *klass)
                                       CLUTTER_UNIT_PIXEL,
                                       0.0f, G_MAXFLOAT,
                                       0.0f,
-                                      DAX_PARAM_READWRITE);
+                                      DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_RY, pspec);
 }
 

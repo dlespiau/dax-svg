@@ -110,7 +110,7 @@ dax_element_path_class_init (DaxElementPathClass *klass)
                                 "Path data",
                                 "", /* FIXME */
                                 CLUTTER_TYPE_PATH,
-                                DAX_PARAM_READWRITE);
+                                DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_PATH, pspec);
 }
 

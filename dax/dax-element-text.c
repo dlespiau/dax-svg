@@ -151,7 +151,7 @@ dax_element_text_class_init (DaxElementTextClass *klass)
                                   "Absolute X coordinate of glyphs",
                                   CLUTTER_TYPE_UNITS,
                                   DAX_PARAM_SPEC_ARRAY_NOT_SIZED,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_X, pspec);
@@ -161,7 +161,7 @@ dax_element_text_class_init (DaxElementTextClass *klass)
                                   "Absolute Y coordinate of glyphs",
                                   CLUTTER_TYPE_UNITS,
                                   DAX_PARAM_SPEC_ARRAY_NOT_SIZED,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_Y, pspec);
@@ -171,7 +171,7 @@ dax_element_text_class_init (DaxElementTextClass *klass)
                                  "Whether the text can be edited",
                                  DAX_TYPE_TEXT_EDITABLE,
                                  DAX_TEXT_EDITABLE_DEFAULT,
-                                 DAX_PARAM_READWRITE,
+                                 DAX_GPARAM_READWRITE,
                                  DAX_PARAM_NONE,
                                  svg_ns);
     g_object_class_install_property (object_class, PROP_EDITABLE, pspec);
@@ -181,7 +181,7 @@ dax_element_text_class_init (DaxElementTextClass *klass)
                                   "Supplemental rotation of glyphs",
                                   G_TYPE_FLOAT,
                                   DAX_PARAM_SPEC_ARRAY_NOT_SIZED,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_ROTATE, pspec);

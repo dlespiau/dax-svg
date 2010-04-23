@@ -173,7 +173,7 @@ dax_element_svg_class_init (DaxElementSvgClass *klass)
                                  "document fragment conforms",
                                  DAX_TYPE_SVG_VERSION,
                                  DAX_SVG_VERSION_1_2,
-                                 DAX_PARAM_READWRITE,
+                                 DAX_GPARAM_READWRITE,
                                  DAX_PARAM_NONE,
                                  svg_ns);
     g_object_class_install_property (object_class, PROP_VERSION, pspec);
@@ -184,7 +184,7 @@ dax_element_svg_class_init (DaxElementSvgClass *klass)
                                  "necessary to correctly render the content",
                                  DAX_TYPE_SVG_BASE_PROFILE,
                                  DAX_SVG_BASE_PROFILE_DEFAULT,
-                                 DAX_PARAM_READWRITE,
+                                 DAX_GPARAM_READWRITE,
                                  DAX_PARAM_NONE,
                                  svg_ns);
     g_object_class_install_property (object_class, PROP_BASE_PROFILE, pspec);
@@ -194,7 +194,7 @@ dax_element_svg_class_init (DaxElementSvgClass *klass)
                                 "The intrinsic width of the SVG document "
                                 "fragment",
                                 CLUTTER_TYPE_UNITS,
-                                DAX_PARAM_READWRITE);
+                                DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_WIDTH, pspec);
 
     pspec = g_param_spec_boxed ("height",
@@ -202,7 +202,7 @@ dax_element_svg_class_init (DaxElementSvgClass *klass)
                                 "The intrinsic height of the SVG "
                                 "document fragment",
                                 CLUTTER_TYPE_UNITS,
-                                DAX_PARAM_READWRITE);
+                                DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_HEIGHT, pspec);
 
     pspec = dax_param_spec_array ("viewBox",
@@ -211,7 +211,7 @@ dax_element_svg_class_init (DaxElementSvgClass *klass)
                                   "be fit",
                                   G_TYPE_FLOAT,
                                   4,
-                                  DAX_PARAM_READWRITE,
+                                  DAX_GPARAM_READWRITE,
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_VIEW_BOX, pspec);

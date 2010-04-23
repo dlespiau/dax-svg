@@ -280,7 +280,7 @@ dax_dom_element_class_init (DaxDomElementClass *klass)
                                    "ID",
                                    "A unique identifier for the element",
                                    NULL,
-                                   DAX_PARAM_READWRITE,
+                                   DAX_GPARAM_READWRITE,
                                    DAX_PARAM_NONE,
                                    xml_ns);
     g_object_class_install_property (object_class, PROP_ID, pspec);

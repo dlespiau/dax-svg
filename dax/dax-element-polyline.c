@@ -111,7 +111,7 @@ dax_element_polyline_class_init (DaxElementPolylineClass *klass)
                                  "Points",
                                  "", /* FIXME */
                                  DAX_TYPE_KNOT_SEQUENCE,
-                                 DAX_PARAM_READWRITE);
+                                 DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_POINTS, pspec);
 }
 

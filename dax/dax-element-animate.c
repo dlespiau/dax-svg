@@ -190,7 +190,7 @@ dax_element_animate_class_init (DaxElementAnimateClass *klass)
                                     "defined",
                                     DAX_TYPE_ANIMATION_ATTRIBUTE_TYPE,
                                     DAX_ANIMATION_ATTRIBUTE_TYPE_AUTO,
-                                    DAX_PARAM_READWRITE,
+                                    DAX_GPARAM_READWRITE,
                                     DAX_PARAM_NONE,
                                     svg_ns);
     g_object_class_install_property (object_class, PROP_ATTRIBUTE_TYPE, pspec);
@@ -199,35 +199,35 @@ dax_element_animate_class_init (DaxElementAnimateClass *klass)
                                  "Attribute name",
                                  "The name of the animated attribute",
                                  NULL,
-                                 DAX_PARAM_READWRITE);
+                                 DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_ATTRIBUTE_NAME, pspec);
 
     pspec = g_param_spec_string ("from",
                                  "From",
                                  "The starting value of the animation",
                                  NULL,
-                                 DAX_PARAM_READWRITE);
+                                 DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_FROM, pspec);
 
     pspec = g_param_spec_string ("to",
                                  "To",
                                  "The ending value of the animation",
                                  NULL,
-                                 DAX_PARAM_READWRITE);
+                                 DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_TO, pspec);
 
     pspec = g_param_spec_boxed ("dur",
                                 "Duration",
                                 "The simple duration",
                                 DAX_TYPE_DURATION,
-                                DAX_PARAM_READWRITE);
+                                DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_DURATION, pspec);
 
     pspec = g_param_spec_boxed ("repeatCount",
                                 "Repeat count",
                                 "The number of iterations of the animation",
                                 DAX_TYPE_REPEAT_COUNT,
-                                DAX_PARAM_READWRITE);
+                                DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_REPEAT_COUNT, pspec);
 }
 

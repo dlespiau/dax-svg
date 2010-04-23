@@ -183,7 +183,7 @@ dax_document_class_init (DaxDocumentClass *klass)
                                    "base IRI other than the base IRI of the "
                                    "document or external entity",
                                    NULL,
-                                   DAX_PARAM_READWRITE,
+                                   DAX_GPARAM_READWRITE,
                                    DAX_PARAM_NONE,
                                    xml_ns);
     g_object_class_install_property (object_class, PROP_BASE_IRI, pspec);
