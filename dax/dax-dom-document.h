@@ -97,7 +97,10 @@ DaxDomElement  *dax_dom_document_create_element_ns    (DaxDomDocument  *self,
 DaxDomText     *dax_dom_document_create_text_node     (DaxDomDocument  *self,
                                                        const gchar     *data);
 
-DaxDomElement  *dax_dom_document_get_element_by_id    (DaxDomDocument *self,
+#define dax_dom_document_get_element_by_id \
+    dax_dom_document_getElementById
+
+DaxDomElement  *dax_dom_document_getElementById       (DaxDomDocument *self,
                                                        const gchar    *id);
 
 G_END_DECLS

@@ -1,7 +1,29 @@
+/*
+ * Dax - Load and draw SVG
+ *
+ * Copyright © 2009, 2010 Intel Corporation.
+ *
+ * Authored by: Damien Lespiau <damien.lespiau@intel.com>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms and conditions of the GNU Lesser General Public License,
+ * version 2.1, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
+ */
 
 #include <glib.h>
 
 #include <dax.h>
+
+#include "test-common.h"
 
 static const gchar svg_ns[] = "http://www.w3.org/2000/svg";
 
@@ -76,6 +98,27 @@ test_dom_text (void)
         "Example SVG file");
 }
 
+
+static void
+test_document_get_element_by_id (void)
+{
+    DaxDomDocument *document;
+    DaxDomElement *g;
+    const gchar *iri;
+
+    document = dax_dom_document_new_from_memory (image_use_base,
+                                                 sizeof (image_use_base) - 1,
+                                                 "http://www.example.com",
+                                                 NULL);
+    g = dax_dom_document_get_element_by_id (document, "bar");
+    g_assert (g);
+    g_assert (DAX_IS_ELEMENT_G (g));
+    /* check it's the right id */
+    g_assert_cmpstr (dax_dom_element_get_id (DAX_DOM_ELEMENT (g)),
+                     ==,
+                     "bar");
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -86,6 +129,8 @@ main (int   argc,
 
     g_test_add_func ("/dom/node", test_dom_node);
     g_test_add_func ("/dom/text", test_dom_text);
+    g_test_add_func ("/dom/document/getElementById",
+                     test_document_get_element_by_id);
 
     return g_test_run ();
 }

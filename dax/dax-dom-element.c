@@ -327,21 +327,26 @@ dax_dom_element_set_id (DaxDomElement *element,
     DaxDomElementPrivate *priv;
     DaxDomDocument *document;
     gboolean id_is_valid;
+    gchar *new_id;
 
     g_return_if_fail (DAX_DOM_ELEMENT (element));
 
     priv = element->priv;
+
+    new_id = g_strdup (id);
     document = ((DaxDomNode *) element)->owner_document;
-    id_is_valid = _dax_dom_document_set_element_id (document, element, id);
-    if (!id_is_valid)
+    id_is_valid = _dax_dom_document_set_element_id (document, element, new_id);
+    if (!id_is_valid) {
+        g_free (new_id);
         return;
+    }
 
     if (priv->id) {
         _dax_dom_document_unset_id (document, priv->id);
         g_free (priv->id);
     }
 
-    priv->id = g_strdup (id);
+    priv->id = new_id;
     g_object_notify ((GObject *) element, "id");
 }
 

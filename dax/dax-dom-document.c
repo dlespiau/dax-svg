@@ -116,7 +116,7 @@ _dax_dom_document_set_element_id (DaxDomDocument *document,
     }
     /* it's ok to cast to gchar * here as we don't provide a destruction
      * function for the keys in priv->id2element and thus the hash table does
-     * not touch the key */
+     * not touch the key, ever */
     g_hash_table_insert (priv->id2element, (gchar *)id, element);
     return TRUE;
 }
@@ -128,95 +128,19 @@ _dax_dom_document_unset_id (DaxDomDocument *document,
     g_hash_table_remove (document->priv->id2element, id);
 }
 
-
 /*
- * DaxDomDocument
+ * DaxDomDocument implementation
  */
 
-DaxDomElement *
-dax_dom_document_get_document_element(DaxDomDocument *self)
+static DaxDomElement *
+dax_dom_document_get_element_by_id_real (DaxDomDocument *document,
+                                         const gchar    *id)
 {
-    DaxDomNode *document_node;
-    DaxDomNode *element_node;
-
-    g_return_val_if_fail (DAX_IS_DOM_DOCUMENT (self), NULL);
-
-    document_node = DAX_DOM_NODE (self);
-    element_node = dax_dom_node_get_first_child (document_node);
-
-    return DAX_DOM_ELEMENT (element_node);
-}
-
-/* DOM attributes */
-
-/* DOM methods */
-
-DaxDomElement *
-dax_dom_document_create_element (DaxDomDocument  *self,
-                                 const gchar     *tag_name,
-                                 GError         **err)
-{
-    DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (self);
-    DaxDomNode *node;
-    DaxDomElement *element = NULL;
-
-    g_return_val_if_fail (klass != NULL, NULL);
-
-    if (klass->create_element)
-        element = klass->create_element (self, tag_name, err);
-
-    if (G_UNLIKELY (element == NULL))
-        return NULL;
-
-    node = DAX_DOM_NODE (element);
-    node->owner_document = self;
-
-    return element;
-}
-
-DaxDomElement *
-dax_dom_document_create_element_ns (DaxDomDocument  *self,
-                                    const gchar     *namespace_uri,
-                                    const gchar     *qualified_name,
-                                    GError         **err)
-{
-    DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (self);
-    DaxDomNode *node;
-    DaxDomElement *element = NULL;
-
-    g_return_val_if_fail (klass != NULL, NULL);
-
-    if (klass->create_element_ns)
-        element = klass->create_element_ns (self,
-                                            namespace_uri,
-                                            qualified_name,
-                                            err);
-
-    if (G_UNLIKELY (element == NULL))
-        return NULL;
-
-    node = DAX_DOM_NODE (element);
-    node->owner_document = self;
-
-    return element;
-}
-
-DaxDomElement *
-dax_dom_document_get_element_by_id (DaxDomDocument *self,
-                                    const gchar    *id)
-{
-    DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (self);
-
-    g_return_val_if_fail (klass != NULL, NULL);
-
-    if (klass->get_element_by_id)
-        return klass->get_element_by_id (self, id);
-
-    return NULL;
+    return g_hash_table_lookup (document->priv->id2element, id);
 }
 
 /*
- * GObject overloading
+ * GObject implementation
  */
 
 static void
@@ -267,6 +191,7 @@ static void
 dax_dom_document_class_init (DaxDomDocumentClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
+    DaxDomDocumentClass *document_class = DAX_DOM_DOCUMENT_CLASS (klass);
 
     g_type_class_add_private (klass, sizeof (DaxDomDocumentPrivate));
 
@@ -274,6 +199,8 @@ dax_dom_document_class_init (DaxDomDocumentClass *klass)
     object_class->set_property = dax_dom_document_set_property;
     object_class->dispose = dax_dom_document_dispose;
     object_class->finalize = dax_dom_document_finalize;
+
+    document_class->get_element_by_id = dax_dom_document_get_element_by_id_real;
 }
 
 static void
@@ -296,8 +223,26 @@ dax_dom_document_new (void)
     return g_object_new (DAX_TYPE_DOM_DOCUMENT, NULL);
 }
 
+/*
+ * DaxDomDocument
+ */
+
+DaxDomElement *
+dax_dom_document_get_document_element (DaxDomDocument *document)
+{
+    DaxDomNode *document_node;
+    DaxDomNode *element_node;
+
+    g_return_val_if_fail (DAX_IS_DOM_DOCUMENT (document), NULL);
+
+    document_node = DAX_DOM_NODE (document);
+    element_node = dax_dom_node_get_first_child (document_node);
+
+    return DAX_DOM_ELEMENT (element_node);
+}
+
 DaxDomText *
-dax_dom_document_create_text_node (DaxDomDocument *self,
+dax_dom_document_create_text_node (DaxDomDocument *document,
                                    const gchar    *data)
 {
     DaxDomNode *node;
@@ -309,7 +254,72 @@ dax_dom_document_create_text_node (DaxDomDocument *self,
 
     dax_dom_character_data_set_data (DAX_DOM_CHARACTER_DATA (text), data);
     node = DAX_DOM_NODE (text);
-    node->owner_document = self;
+    node->owner_document = document;
 
     return text;
+}
+
+/* DOM attributes */
+
+/* DOM methods */
+
+DaxDomElement *
+dax_dom_document_create_element (DaxDomDocument  *document,
+                                 const gchar     *tag_name,
+                                 GError         **err)
+{
+    DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (document);
+    DaxDomNode *node;
+    DaxDomElement *element = NULL;
+
+    g_return_val_if_fail (klass != NULL, NULL);
+
+    if (klass->create_element)
+        element = klass->create_element (document, tag_name, err);
+
+    if (G_UNLIKELY (element == NULL))
+        return NULL;
+
+    node = DAX_DOM_NODE (element);
+    node->owner_document = document;
+
+    return element;
+}
+
+DaxDomElement *
+dax_dom_document_create_element_ns (DaxDomDocument  *document,
+                                    const gchar     *namespace_uri,
+                                    const gchar     *qualified_name,
+                                    GError         **err)
+{
+    DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (document);
+    DaxDomNode *node;
+    DaxDomElement *element = NULL;
+
+    g_return_val_if_fail (klass != NULL, NULL);
+
+    if (klass->create_element_ns)
+        element = klass->create_element_ns (document,
+                                            namespace_uri,
+                                            qualified_name,
+                                            err);
+
+    if (G_UNLIKELY (element == NULL))
+        return NULL;
+
+    node = DAX_DOM_NODE (element);
+    node->owner_document = document;
+
+    return element;
+}
+
+DaxDomElement *
+dax_dom_document_getElementById (DaxDomDocument *document,
+                                 const gchar    *id)
+{
+    DaxDomDocumentClass *klass = DAX_DOM_DOCUMENT_GET_CLASS (document);
+
+    g_return_val_if_fail (klass != NULL, NULL);
+
+    return klass->get_element_by_id (document, id);
 }

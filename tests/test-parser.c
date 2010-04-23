@@ -25,6 +25,8 @@
 
 #include <dax.h>
 
+#include "test-common.h"
+
 static void
 test_simple_document_from_file (void)
 {
@@ -420,30 +422,6 @@ test_text (void)
     value = clutter_units_get_unit_value (units);
     g_assert_cmpfloat (value, ==, 150);
 }
-
-const char image_use_base[] =
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<svg xmlns=\"http://www.w3.org/2000/svg\" "
-     "xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
-     "version=\"1.2\" baseProfile=\"tiny\" viewBox=\"0 0 100 100\">"
-  "<g xml:base=\"http://a.example.org/aaa/\">\n"
-    "<g xml:base=\"/bbb/ccc/\">\n"
-      "<g xml:base=\"../ddd/\" xml:id=\"bar\">\n"
-        "<image xml:id=\"foo\" xlink:href=\"foo.jpg\" width=\"100\" "
-               "height=\"100\"/>\n"
-       "</g>\n"
-    "</g>\n"
-  "</g>\n"
-  "<g xml:base=\"http://z.example.net/zzz/\">\n"
-    "<g xml:base=\"/yyy/xxx/\">\n"
-       "<g xml:base=\"../xxx/\">\n"
-         "<use xlink:href=\"#foo\" />\n"
-         "<use xlink:href=\"#bar\" />\n"
-         "<use xlink:href=\"#bar\" xml:base=\"../ggg/\" />\n"
-       "</g>\n"
-    "</g>\n"
-  "</g>\n"
-"</svg>";
 
 static void
 test_base_id (void)
