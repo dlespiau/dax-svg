@@ -1,9 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2010 Intel Corporation.
- *
- * Authored by: Damien Lespiau <damien.lespiau@intel.com>
+ * Copyright © 2009 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -19,15 +17,23 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __DAX_PRIVATE_H__
-#define __DAX_PRIVATE_H__
+#include "dax-dom-private.h"
+#include "dax-dom-core.h"
 
-#include <glib.h>
+const gchar *xml_ns;
+const gchar *xmlns_ns;
+const gchar *xmlevents_ns;
+const gchar *xlink_ns;
 
-G_BEGIN_DECLS
+gboolean
+dax_dom_init (gint     *argc,
+              gchar  ***argv,
+              GError   *error)
+{
+    xml_ns = I_(DAX_DOM_XML_NS_URI);
+    xmlns_ns = I_(DAX_DOM_XMLNS_NS_URI);
+    xmlevents_ns = I_(DAX_DOM_XML_EVENTS_NS_URI);
+    xlink_ns = I_(DAX_DOM_XLINK_NS_URI);
 
-const gchar *svg_ns;
-
-G_END_DECLS
-
-#endif /* __DAX_PRIVATE_H__ */
+    return TRUE;
+}

@@ -19,6 +19,7 @@
 
 #include <string.h>
 
+#include "dax-dom.h"
 #include "dax-internals.h"
 #include "dax-private.h"
 #include "dax-paramspec.h"

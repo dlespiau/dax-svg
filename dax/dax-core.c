@@ -22,6 +22,7 @@
 #include <glib-object.h>
 #include <clutter/clutter.h>
 
+#include "dax-dom-core.h"
 #include "dax-internals.h"
 #include "dax-debug.h"
 #include "dax-utils.h"
@@ -30,16 +31,8 @@
 #include "dax-element-script.h"
 #include "dax-core.h"
 
-#define XML_NS_URI          "http://www.w3.org/XML/1998/namespace"
-#define XMLNS_NS_URI        "http://www.w3.org/2000/xmlns/"
-#define XML_EVENTS_NS_URI   "http://www.w3.org/2001/xml-events"
-#define XLINK_NS_URI        "http://www.w3.org/1999/xlink"
 #define SVG_NS_URI          "http://www.w3.org/2000/svg"
 
-const gchar *xml_ns;
-const gchar *xmlns_ns;
-const gchar *xmlevents_ns;
-const gchar *xlink_ns;
 const gchar *svg_ns;
 
 typedef struct {
@@ -90,7 +83,7 @@ enum_find_value_by_name (enum_value  *data,
 
 #define DEFINE_TRANSFORM_FUNCS(enum_type, EnumType)                         \
 static void                                                                 \
-transform_dax_##enum_type##_string (const GValue *src,                   \
+transform_dax_##enum_type##_string (const GValue *src,                      \
                                        GValue       *dest)                  \
 {                                                                           \
     const gchar *name;                                                      \
@@ -109,7 +102,7 @@ transform_dax_##enum_type##_string (const GValue *src,                   \
 }                                                                           \
                                                                             \
 static void                                                                 \
-transform_string_dax_##enum_type (const GValue *src,                     \
+transform_string_dax_##enum_type (const GValue *src,                        \
                                      GValue       *dest)                    \
 {                                                                           \
     const gchar *name;                                                      \
@@ -124,11 +117,11 @@ transform_string_dax_##enum_type (const GValue *src,                     \
 }
 
 #define INSTALL_TRANSFORM_FUNCS(enum_type, ENUM_TYPE)                       \
-    g_value_register_transform_func (DAX_TYPE_##ENUM_TYPE,               \
+    g_value_register_transform_func (DAX_TYPE_##ENUM_TYPE,                  \
                                      G_TYPE_STRING,                         \
-                                     transform_dax_##enum_type##_string);\
+                                     transform_dax_##enum_type##_string);   \
     g_value_register_transform_func (G_TYPE_STRING,                         \
-                                     DAX_TYPE_##ENUM_TYPE,               \
+                                     DAX_TYPE_##ENUM_TYPE,                  \
                                      transform_string_dax_##enum_type);
 
 static enum_value svg_version_enum_values[3] = {
@@ -148,7 +141,7 @@ DEFINE_TRANSFORM_FUNCS(script_type, ScriptType)
 
 void
 dax_init (gint    *argc,
-             gchar ***argv)
+          gchar ***argv)
 {
 #ifdef DAX_ENABLE_DEBUG
     _dax_debug_init ();
@@ -157,10 +150,7 @@ dax_init (gint    *argc,
     g_type_init ();
     clutter_init (argc, argv);
 
-    xml_ns = I_(XML_NS_URI);
-    xmlns_ns = I_(XMLNS_NS_URI);
-    xmlevents_ns = I_(XML_EVENTS_NS_URI);
-    xlink_ns = I_(XLINK_NS_URI);
+    dax_dom_init (argc, argv, NULL);
     svg_ns = I_(SVG_NS_URI);
 
     g_value_register_transform_func (G_TYPE_STRING,

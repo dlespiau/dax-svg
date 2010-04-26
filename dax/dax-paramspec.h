@@ -65,10 +65,16 @@ struct _DaxParamSpecClass
  */
 typedef enum /*< skip >*/
 {
-    DAX_PARAM_NONE        = 0,
-    DAX_PARAM_PROPERTY    = 1 << 0,
-    DAX_PARAM_ANIMATABLE  = 1 << 1,
-    DAX_PARAM_INHERITABLE = 1 << 2
+    DAX_PARAM_NONE           = 0,
+    DAX_PARAM_VERSION_1_0    = 1 << 0,
+    DAX_PARAM_VERSION_1_1    = 1 << 1,
+    DAX_PARAM_VERSION_1_2    = 1 << 2,
+    DAX_PARAM_PROFILE_FULL   = 1 << 3,
+    DAX_PARAM_PROFILE_MOBILE = 1 << 4,
+    DAX_PARAM_PROFILE_TINY   = 1 << 5,
+    DAX_PARAM_PROPERTY       = 1 << 6,
+    DAX_PARAM_ANIMATABLE     = 1 << 7,
+    DAX_PARAM_INHERITABLE    = 1 << 8
 } DaxParamFlags;
 
 /*

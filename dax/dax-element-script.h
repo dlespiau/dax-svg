@@ -30,14 +30,14 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_ELEMENT_SCRIPT dax_element_script_get_type()
 
-#define DAX_ELEMENT_SCRIPT(obj)                              \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                         \
-                                 DAX_TYPE_ELEMENT_SCRIPT,    \
+#define DAX_ELEMENT_SCRIPT(obj)                             \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
+                                 DAX_TYPE_ELEMENT_SCRIPT,   \
                                  DaxElementScript))
 
-#define DAX_ELEMENT_SCRIPT_CLASS(klass)                  \
-    (G_TYPE_CHECK_CLASS_CAST ((klass),                      \
-                              DAX_TYPE_ELEMENT_SCRIPT,   \
+#define DAX_ELEMENT_SCRIPT_CLASS(klass)                 \
+    (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
+                              DAX_TYPE_ELEMENT_SCRIPT,  \
                               DaxElementScriptClass))
 
 #define DAX_IS_ELEMENT_SCRIPT(obj) \
@@ -46,9 +46,9 @@ G_BEGIN_DECLS
 #define DAX_IS_ELEMENT_SCRIPT_CLASS(klass) \
     (G_TYPE_CHECK_CLASS_TYPE ((klass), DAX_TYPE_ELEMENT_SCRIPT))
 
-#define DAX_ELEMENT_SCRIPT_GET_CLASS(obj)                \
+#define DAX_ELEMENT_SCRIPT_GET_CLASS(obj)                   \
     (G_TYPE_INSTANCE_GET_CLASS ((obj),                      \
-                                DAX_TYPE_ELEMENT_SCRIPT, \
+                                DAX_TYPE_ELEMENT_SCRIPT,    \
                                 DaxElementScriptClass))
 
 typedef struct _DaxElementScript DaxElementScript;
@@ -77,8 +77,8 @@ struct _DaxElementScriptClass
 
 GType               dax_element_script_get_type          (void) G_GNUC_CONST;
 
-DaxDomElement *  dax_element_script_new               (void);
-DaxScriptType    dax_element_script_get_script_type   (const DaxElementScript *script);
+DaxDomElement *     dax_element_script_new               (void);
+DaxScriptType       dax_element_script_get_script_type   (const DaxElementScript *script);
 const gchar *       dax_element_script_get_code          (const DaxElementScript *script);
 
 G_END_DECLS

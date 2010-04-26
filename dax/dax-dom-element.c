@@ -20,6 +20,8 @@
 #include <string.h>
 
 #include "dax-enum-types.h"
+#include "dax-dom-core.h"
+#include "dax-private.h"
 #include "dax-debug.h"
 #include "dax-xml-event-target.h"
 #include "dax-dom-private.h"

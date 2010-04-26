@@ -21,6 +21,7 @@
 
 #include <string.h>
 
+#include "dax-dom.h"
 #include "dax-internals.h"
 #include "dax-private.h"
 #include "dax-enum-types.h"
@@ -39,9 +40,9 @@ G_DEFINE_TYPE_WITH_CODE (DaxElementHandler,
                          G_IMPLEMENT_INTERFACE (DAX_TYPE_XML_EVENT_LISTENER,
                                                 dax_xml_event_listener_init))
 
-#define ELEMENT_HANDLER_PRIVATE(o)                                  \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                          \
-                                      DAX_TYPE_ELEMENT_HANDLER,  \
+#define ELEMENT_HANDLER_PRIVATE(o)                              \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
+                                      DAX_TYPE_ELEMENT_HANDLER, \
                                       DaxElementHandlerPrivate))
 
 enum

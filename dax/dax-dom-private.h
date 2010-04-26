@@ -31,9 +31,7 @@
 
 G_BEGIN_DECLS
 
-const gchar *xml_ns;
-const gchar *xmlns_ns;
-const gchar *xmlevents_ns;
+#define I_(s)           (g_intern_static_string((s)))
 
 /* dax-dom-document.c */
 

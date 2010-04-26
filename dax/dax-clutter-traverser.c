@@ -512,13 +512,6 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
                           G_CALLBACK (on_button_release_event), target);
         break;
     case DAX_XML_EVENT_TYPE_LOAD:
-    {
-        if (G_UNLIKELY (!DAX_IS_ELEMENT_SVG (target))) {
-            g_warning (G_STRLOC ": Trying to listen to \"load\" on an element "
-                       "that is not <svg>");
-            break;
-        }
-
         if (dax_dom_element_get_loaded (target)) {
             on_load_event (target, TRUE, NULL);
         } else  {
@@ -526,7 +519,6 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
                               G_CALLBACK (on_load_event), NULL);
         }
         break;
-    }
     case DAX_XML_EVENT_TYPE_NONE:
     default:
         g_warning (G_STRLOC ": Unkown event %d", event_type);

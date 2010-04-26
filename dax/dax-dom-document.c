@@ -18,6 +18,7 @@
  */
 
 #include "dax-dom-private.h"
+#include "dax-dom-core.h"
 #include "dax-dom-element.h"
 #include "dax-dom-document.h"
 

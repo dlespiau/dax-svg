@@ -26,6 +26,7 @@ source_c =				\
 	dax-core.c			\
 	dax-debug.c			\
 	dax-dom-character-data.c	\
+	dax-dom-core.c			\
 	dax-dom-document.c		\
 	dax-dom-element.c		\
 	dax-dom-exception.c		\
@@ -68,10 +69,12 @@ source_h =				\
 	dax-actor.h			\
 	dax-clutter-traverser.h		\
 	dax-core.h			\
-	dax-dom-forward.h		\
+	dax-dom.h			\
 	dax-dom-character-data.h	\
+	dax-dom-core.h			\
 	dax-dom-document.h		\
 	dax-dom-element.h		\
+	dax-dom-forward.h		\
 	dax-dom-exception.h		\
 	dax-dom-node.h			\
 	dax-dom-text.h			\
