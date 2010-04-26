@@ -147,8 +147,6 @@ stamp-dax-enum-types.h: $(source_h) dax-enum-types.h.in Makefile
 	rm -f xgen-ceth && \
 	echo timestamp > $(@F)
 
-# dax-enum-types.c should really depend on $(source_h) but it would make
-# this rule trigger every single time a header is touched. We don't want that.
 dax-enum-types.c: dax-enum-types.h dax-enum-types.c.in
 	$(QUIET_GEN)( $(GLIB_MKENUMS) \
 		--template $(srcdir)/dax-enum-types.c.in \

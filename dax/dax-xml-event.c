@@ -37,6 +37,9 @@ dax_xml_event_free (DaxXmlEvent *event)
     if (event == NULL)
         return;
 
+    if (event->any.target)
+        g_object_unref (event->any.target);
+
     g_slice_free (DaxXmlEvent, event);
 }
 
@@ -55,4 +58,16 @@ dax_xml_event_get_type (void)
     }
 
     return dax_xml_event_type__volatile;
+}
+
+void
+dax_xml_event_from_type (DaxXmlEvent       *xml_event,
+                         DaxXmlEventType    type,
+                         DaxXmlEventTarget *target)
+{
+    DaxXmlAnyEvent *any;
+
+    any = &xml_event->any;
+    any->type = type;
+    any->target = g_object_ref (target);
 }

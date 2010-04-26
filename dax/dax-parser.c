@@ -19,6 +19,7 @@
 
 #include <libxml/xmlreader.h>
 
+#include "dax-dom-private.h"
 #include "dax-debug.h"
 #include "dax-document.h"
 #include "dax-parser.h"
@@ -84,14 +85,22 @@ dax_dom_document_read_node (DaxDomDocument *document,
         if (is_empty) {
             DAX_NOTE (PARSING,
                          "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
+
+            /* Signal the element its children and itself have been parsed */
+            _dax_dom_element_signal_parsed (
+                    DAX_DOM_ELEMENT (ctx->current_node));
+
             ctx->current_node = ctx->current_node->parent_node;
         }
         break;
     }
 
     case DAX_DOM_NODE_TYPE_END_ELEMENT:
-        DAX_NOTE (PARSING,
-                     "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
+        DAX_NOTE (PARSING, "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
+
+        /* Signal the element its children and itself have been parsed */
+        _dax_dom_element_signal_parsed (DAX_DOM_ELEMENT (ctx->current_node));
+
         ctx->current_node = ctx->current_node->parent_node;
         break;
 

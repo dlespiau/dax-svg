@@ -30,17 +30,20 @@
 G_BEGIN_DECLS
 
 #define DAX_TYPE_XML_EVENT           (dax_xml_event_get_type ())
-#define DAX_VALUE_HOLDS_XML_EVENT    (G_VALUE_HOLDS ((x), \
-                                                        DAX_TYPE_XML_EVENT))
+#define DAX_VALUE_HOLDS_XML_EVENT    (G_VALUE_HOLDS ((x), DAX_TYPE_XML_EVENT))
 
+typedef struct _DaxXmlLoadEvent  DaxXmlLoadEvent;
 typedef struct _DaxXmlMouseEvent DaxXmlMouseEvent;
 typedef struct _DaxXmlAnyEvent   DaxXmlAnyEvent;
 
-#define DAX_XML_EVENT_TYPE_DEFAULT   DAX_XML_EVENT_TYPE_NONE
+#define DAX_XML_EVENT_TYPE_DEFAULT              DAX_XML_EVENT_TYPE_NONE
+#define DAX_XML_EVENT_TYPE_FIRST_MOUSE_EVENT    DAX_XML_EVENT_TYPE_CLICK
+#define DAX_XML_EVENT_TYPE_LAST_MOUSE_EVENT     DAX_XML_EVENT_TYPE_CLICK
 typedef enum
 {
     DAX_XML_EVENT_TYPE_NONE,
-    DAX_XML_EVENT_TYPE_CLICK,
+    DAX_XML_EVENT_TYPE_LOAD,
+    DAX_XML_EVENT_TYPE_CLICK
 } DaxXmlEventType;
 
 struct _DaxXmlAnyEvent
@@ -67,24 +70,35 @@ struct _DaxXmlMouseEvent
     guint32 button;
 };
 
+struct _DaxXmlLoadEvent
+{
+    DaxXmlEventType type;
+    DaxXmlEventTarget *target;
+    DaxXmlEventTarget *current_target;
+    gboolean cancelable;
+    gboolean default_prevented;
+};
+
 union _DaxXmlEvent
 {
     DaxXmlEventType type;
     DaxXmlAnyEvent any;
     DaxXmlMouseEvent mouse_event;
+    DaxXmlLoadEvent load_event;
 };
 
-GType                   dax_xml_event_get_type        (void) G_GNUC_CONST;
+GType           dax_xml_event_get_type      (void) G_GNUC_CONST;
 
-DaxXmlEvent *        dax_xml_event_copy            (const DaxXmlEvent *event);
-void                    dax_xml_event_free            (DaxXmlEvent *event);
+DaxXmlEvent *   dax_xml_event_copy          (const DaxXmlEvent *event);
+void            dax_xml_event_free          (DaxXmlEvent *event);
+void            dax_xml_event_from_type     (DaxXmlEvent       *event,
+                                             DaxXmlEventType    type,
+                                             DaxXmlEventTarget *target);
 #if 0
-gboolean                dax_xml_event_from_string     (DaxXmlEvent *event,
-                                                          const gchar    *string);
-gchar *                 dax_xml_event_to_string       (const DaxXmlEvent *event);
+gchar *         dax_xml_event_to_string     (const DaxXmlEvent *event);
 
 #endif
 
 G_END_DECLS
 
-#endif
+#endif /* __DAX_XML_EVENT_H__ */

@@ -39,6 +39,8 @@ static const GDebugKey dax_debug_keys[] = {
   { "parsing",   DAX_DEBUG_PARSING   },
   { "namespace", DAX_DEBUG_NAMESPACE },
   { "traverser", DAX_DEBUG_TRAVERSER },
+  { "event",     DAX_DEBUG_EVENT     },
+  { "loading",   DAX_DEBUG_LOADING   }
 };
 
 /**
@@ -72,10 +74,9 @@ _dax_debug_init (void)
   if (env_string == NULL)
     return TRUE;
 
-  _dax_debug_flags =
-    g_parse_debug_string (env_string,
-                          dax_debug_keys,
-                          G_N_ELEMENTS (dax_debug_keys));
+  _dax_debug_flags = g_parse_debug_string (env_string,
+                                           dax_debug_keys,
+                                           G_N_ELEMENTS (dax_debug_keys));
 
   return TRUE;
 }

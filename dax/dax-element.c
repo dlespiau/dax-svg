@@ -190,15 +190,15 @@ dax_element_set_property (GObject      *object,
         const ClutterColor *color;
         color = clutter_value_get_color (value);
         priv->fill = clutter_color_copy (color);
-    }
         break;
+    }
     case PROP_STROKE:
     {
         const ClutterColor *color;
         color = clutter_value_get_color (value);
         priv->stroke = clutter_color_copy (color);
-    }
         break;
+    }
     case PROP_FILL_OPACITY:
         priv->fill_opacity = g_value_get_float (value);
         break;
@@ -244,7 +244,6 @@ dax_element_class_init (DaxElementClass *klass)
     GParamSpec *pspec;
 
     g_type_class_add_private (klass, sizeof (DaxElementPrivate));
-
 
     object_class->get_property = dax_element_get_property;
     object_class->set_property = dax_element_set_property;

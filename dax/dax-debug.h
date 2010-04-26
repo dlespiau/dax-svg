@@ -39,21 +39,23 @@ typedef enum
     DAX_DEBUG_PARSING         = 1 << 1,
     DAX_DEBUG_NAMESPACE       = 1 << 2,
     DAX_DEBUG_TRAVERSER       = 1 << 3,
+    DAX_DEBUG_EVENT           = 1 << 4,
+    DAX_DEBUG_LOADING         = 1 << 5
 } DaxDebugFlag;
 
 #ifdef __GNUC__
 
-#define DAX_NOTE(type,x,a...)                                \
+#define DAX_NOTE(type,x,a...)                                   \
     G_STMT_START {                                              \
-        if (_dax_debug_flags & DAX_DEBUG_##type)          \
+        if (_dax_debug_flags & DAX_DEBUG_##type)                \
         { g_message ("[" #type "] " G_STRLOC ": " x, ##a); }    \
     } G_STMT_END
 
-#define DAX_TIMESTAMP(type,x,a...)                           \
+#define DAX_TIMESTAMP(type,x,a...)                              \
     G_STMT_START {                                              \
-        if (_dax_debug_flags & DAX_DEBUG_##type)          \
+        if (_dax_debug_flags & DAX_DEBUG_##type)                \
         { g_message ("[" #type "]" " %li:"  G_STRLOC ": "       \
-                     x, _dax_get_timestamp(), ##a); }        \
+                     x, _dax_get_timestamp(), ##a); }           \
     } G_STMT_END
 
 #else /* !__GNUC__ */
@@ -62,9 +64,9 @@ typedef enum
  * empty arguments to the macro, which means we have to
  * do an intemediate printf.
  */
-#define DAX_NOTE(type,...)                                   \
+#define DAX_NOTE(type,...)                                      \
     G_STMT_START {                                              \
-        if (_dax_debug_flags & DAX_DEBUG_##type)          \
+        if (_dax_debug_flags & DAX_DEBUG_##type)                \
         {                                                       \
             gchar * _fmt = g_strdup_printf (__VA_ARGS__);       \
             g_message ("[" #type "] " G_STRLOC ": %s",_fmt);    \
@@ -72,13 +74,13 @@ typedef enum
         }                                                       \
     } G_STMT_END
 
-#define DAX_TIMESTAMP(type,...)                              \
+#define DAX_TIMESTAMP(type,...)                                 \
     G_STMT_START {                                              \
-        if (_dax_debug_flags & DAX_DEBUG_##type)          \
+        if (_dax_debug_flags & DAX_DEBUG_##type)                \
         {                                                       \
             gchar * _fmt = g_strdup_printf (__VA_ARGS__);       \
             g_message ("[" #type "]" " %li:"  G_STRLOC ": %s",  \
-                       _dax_get_timestamp(), _fmt);          \
+                       _dax_get_timestamp(), _fmt);             \
             g_free (_fmt);                                      \
         }                                                       \
     } G_STMT_END

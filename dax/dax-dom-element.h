@@ -29,36 +29,52 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_DOM_ELEMENT dax_dom_element_get_type()
 
-#define DAX_DOM_ELEMENT(obj)                             \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
-                                 DAX_TYPE_DOM_ELEMENT,   \
-                                 DaxDomElement))
+#define DAX_DOM_ELEMENT(obj) \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj), DAX_TYPE_DOM_ELEMENT, DaxDomElement))
 
-#define DAX_DOM_ELEMENT_CLASS(klass)                 \
-    (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
-                              DAX_TYPE_DOM_ELEMENT,  \
+#define DAX_DOM_ELEMENT_CLASS(klass)                \
+    (G_TYPE_CHECK_CLASS_CAST ((klass),              \
+                              DAX_TYPE_DOM_ELEMENT, \
                               DaxDomElementClass))
 
-#define DAX_IS_DOM_ELEMENT(obj)      \
-    (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
-                                 DAX_TYPE_DOM_ELEMENT))
+#define DAX_IS_DOM_ELEMENT(obj) \
+    (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DAX_TYPE_DOM_ELEMENT))
 
 #define DAX_IS_DOM_ELEMENT_CLASS(klass)  \
-    (G_TYPE_CHECK_CLASS_TYPE ((klass),      \
-                              DAX_TYPE_DOM_ELEMENT))
+    (G_TYPE_CHECK_CLASS_TYPE ((klass), DAX_TYPE_DOM_ELEMENT))
 
-#define DAX_DOM_ELEMENT_GET_CLASS(obj)                   \
-    (G_TYPE_INSTANCE_GET_CLASS ((obj),                      \
-                                DAX_TYPE_DOM_ELEMENT,    \
+#define DAX_DOM_ELEMENT_GET_CLASS(obj)                  \
+    (G_TYPE_INSTANCE_GET_CLASS ((obj),                  \
+                                DAX_TYPE_DOM_ELEMENT,   \
                                 DaxDomElementClass))
 
 typedef struct _DaxDomElementClass DaxDomElementClass;
 typedef struct _DaxDomElementPrivate DaxDomElementPrivate;
 
+#define DAX_DOM_ELEMENT_FLAG_NONE       0
+#define DAX_DOM_ELEMENT_FLAG_PARSED     1 << 0
+#define DAX_DOM_ELEMENT_FLAG_LOADED     1 << 1
+
+#define DAX_DOM_ELEMENT_SET_FLAG(e, f) \
+    (e->flags |= DAX_DOM_ELEMENT_FLAG_##f)
+
+#define DAX_DOM_ELEMENT_UNSET_FLAG(e, f) \
+    (e->flags &= ~(DAX_DOM_ELEMENT_FLAG_##f))
+
+#define DAX_DOM_ELEMENT_FLAG_IS_SET(e, f) \
+    (e->flags & DAX_DOM_ELEMENT_FLAG_##f)
+
 struct _DaxDomElement
 {
+    /*< private >*/
     DaxDomNode parent;
 
+    /*< public >*/
+    guint32 flags;
+
+    /* NOTE: 32bits hole in 64bits environments */
+
+    /*< private >*/
     DaxDomElementPrivate *priv;
 };
 
@@ -66,13 +82,17 @@ struct _DaxDomElementClass
 {
     DaxDomNodeClass parent_class;
 
-    const gchar *(*get_attribute)   (DaxDomElement *self,
-                                     const gchar      *name);
+    const gchar *   (*get_attribute)    (DaxDomElement *self,
+                                         const gchar   *name);
 
-    void         (*set_attribute)   (DaxDomElement  *self,
-                                     const gchar       *name,
-                                     const gchar       *value,
-                                     GError           **err);
+    void            (*set_attribute)    (DaxDomElement  *self,
+                                         const gchar    *name,
+                                         const gchar    *value,
+                                         GError        **err);
+
+    void            (*parsed)           (DaxDomElement *self);
+    void            (*loaded)           (DaxDomElement *self,
+                                         gboolean       loaded);
 };
 
 GType dax_dom_element_get_type (void) G_GNUC_CONST;
@@ -106,6 +126,10 @@ void            dax_dom_element_setAttribute    (DaxDomElement  *self,
 const gchar *   dax_dom_element_get_id          (DaxDomElement *element);
 void            dax_dom_element_set_id          (DaxDomElement *element,
                                                  const gchar   *id);
+void            dax_dom_element_set_loaded      (DaxDomElement *element,
+                                                 gboolean       loaded);
+gboolean        dax_dom_element_get_loaded      (DaxDomElement *element);
+
 G_END_DECLS
 
 #endif /* __DAX_DOM_ELEMENT_H__ */

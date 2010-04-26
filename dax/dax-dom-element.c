@@ -56,11 +56,22 @@ enum
     PROP_ID,
 };
 
+enum
+{
+    PARSED,
+    LOADED,
+
+    LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL];
+
 struct _DaxDomElementPrivate
 {
     GPtrArray *param_pools;
     GHashTable *listeners;          /* event => list of <EventListener>s */
     gchar *id;
+    guint to_load;                  /* number of children not yet "loaded" */
 };
 
 /*
@@ -120,14 +131,12 @@ _dax_dom_element_handle_event (DaxDomElement *element,
     const gchar *event_name;
     GSList *listeners_list, *iter;
 
-    event_name = dax_enum_to_string (DAX_TYPE_XML_EVENT_TYPE,
-                                        event->type);
+    event_name = dax_enum_to_string (DAX_TYPE_XML_EVENT_TYPE, event->type);
 
     listeners_list = g_hash_table_lookup (priv->listeners, event_name);
     if (listeners_list == NULL) {
-        g_warning (G_STRLOC ": Received event %s on %s, but no listeners "
-                   "registered",
-                   event_name,
+        g_warning (G_STRLOC ": Received event %s (%d) on %s, but no listeners "
+                   "registered", event_name, event->type,
                    G_OBJECT_TYPE_NAME (element));
         return;
     }
@@ -135,8 +144,70 @@ _dax_dom_element_handle_event (DaxDomElement *element,
     for (iter = listeners_list; iter; iter = g_slist_next (iter)) {
         EventListener *el = iter->data;
 
+        DAX_NOTE (EVENT, "%s fires the \"%s\" event on %s",
+                  G_OBJECT_TYPE_NAME (element), event_name,
+                  G_OBJECT_TYPE_NAME(el->listener));
+
         dax_xml_event_listener_handle_event (el->listener, event);
     }
+}
+
+static gboolean
+is_loaded (DaxDomElement *element)
+{
+    return DAX_DOM_ELEMENT_FLAG_IS_SET (element, LOADED);
+}
+
+static void
+on_child_loaded (DaxDomElement *child,
+                 DaxDomElement *element)
+{
+    DaxDomElementPrivate *priv = element->priv;
+
+    priv->to_load--;
+    if (priv->to_load == 0) {
+        /* "loaded" is sent from here when this element is loaded and is
+         * waiting for one or more of its children to be loaded */
+        g_signal_emit (element, signals[LOADED], 0, TRUE);
+    }
+}
+
+void
+_dax_dom_element_signal_parsed (DaxDomElement *element)
+{
+    DaxDomElementPrivate *priv = element->priv;
+    DaxDomNode *cur;
+
+    /* We default to being loaded, it's up to the implementation of "parsed"
+     * to call set_loaded (element, FALSE); if it's not loaded yet */
+    dax_dom_element_set_loaded (element, TRUE);
+
+    /* This element is now parsed */
+    g_signal_emit (element, signals[PARSED], 0);
+    DAX_DOM_ELEMENT_SET_FLAG (element, PARSED);
+
+    /* this element is ready if loaded and if its children elements are loaded
+     * too. If we need to wait for elements to be ready, connect the to the
+     * loaded signal of such elements */
+    cur = ((DaxDomNode *) element)->first_child;
+    for ( ; cur ; cur = cur->next_sibling) {
+        if (!DAX_IS_DOM_ELEMENT (cur))
+            continue;
+
+        if (is_loaded ((DaxDomElement *)cur))
+            continue;
+
+        priv->to_load++;
+        g_signal_connect (cur, "loaded", G_CALLBACK (on_child_loaded), element);
+    }
+
+    if (priv->to_load == 0) {
+        g_signal_emit (element, signals[LOADED], 0, TRUE);
+        return;
+    }
+
+    DAX_NOTE (LOADING, "%s is waiting for %d children to be loaded",
+              G_OBJECT_TYPE_NAME (element), priv->to_load);
 }
 
 /*
@@ -162,6 +233,9 @@ dax_dom_element_add_event_listener (DaxXmlEventTarget   *target,
     DaxDomElementPrivate *priv = self->priv;
     EventListener *new_el;
     GSList *listeners_list;
+
+    DAX_NOTE (EVENT, "add listener (%s) on %s for event \"%s\"",
+              G_OBJECT_TYPE_NAME (listener), G_OBJECT_TYPE_NAME (target), type);
 
     if (priv->listeners == NULL) {
         priv->listeners = g_hash_table_new_full (g_str_hash, g_str_equal,
@@ -194,6 +268,25 @@ dax_xml_event_target_init (DaxXmlEventTargetIface *iface)
 {
     iface->add_event_listener = dax_dom_element_add_event_listener;
     iface->remove_event_listener = dax_dom_element_remove_event_listener;
+}
+
+/*
+ * DaxDomElement default signals
+ */
+
+static void
+dax_dom_element_loaded_real (DaxDomElement *element,
+                             gboolean       loaded)
+{
+    if (loaded) {
+        DAX_NOTE (LOADING, "%s is now loaded", G_OBJECT_TYPE_NAME (element));
+        DAX_DOM_ELEMENT_SET_FLAG (element, LOADED);
+    } else {
+        DAX_NOTE (LOADING, "%s has been unloaded",
+                  G_OBJECT_TYPE_NAME (element));
+        DAX_DOM_ELEMENT_UNSET_FLAG (element, LOADED);
+        g_signal_emit (element, signals[LOADED], 0, FALSE);
+    }
 }
 
 /*
@@ -267,6 +360,7 @@ static void
 dax_dom_element_class_init (DaxDomElementClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
+    DaxDomElementClass *element_class = DAX_DOM_ELEMENT_CLASS (klass);
     GParamSpec *pspec;
 
     g_type_class_add_private (klass, sizeof (DaxDomElementPrivate));
@@ -276,6 +370,8 @@ dax_dom_element_class_init (DaxDomElementClass *klass)
     object_class->dispose = dax_dom_element_dispose;
     object_class->finalize = dax_dom_element_finalize;
 
+    element_class->loaded = dax_dom_element_loaded_real;
+
     pspec = dax_param_spec_string ("id",
                                    "ID",
                                    "A unique identifier for the element",
@@ -284,6 +380,25 @@ dax_dom_element_class_init (DaxDomElementClass *klass)
                                    DAX_PARAM_NONE,
                                    xml_ns);
     g_object_class_install_property (object_class, PROP_ID, pspec);
+
+    signals[PARSED] =
+        g_signal_new (I_("parsed"),
+                      G_TYPE_FROM_CLASS (object_class),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (DaxDomElementClass, parsed),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__VOID,
+                      G_TYPE_NONE, 0);
+
+    signals[LOADED] =
+        g_signal_new (I_("loaded"),
+                      G_TYPE_FROM_CLASS (object_class),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (DaxDomElementClass, loaded),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__BOOLEAN,
+                      G_TYPE_NONE, 1,
+                      G_TYPE_BOOLEAN);
 }
 
 static void
@@ -296,10 +411,11 @@ dax_dom_element_init (DaxDomElement *self)
 
     priv->param_pools = g_ptr_array_sized_new (5);
 
-    /* FIXME declare xml:id */
     /* xml */
     pool = g_param_spec_pool_new (FALSE);
     g_ptr_array_add (priv->param_pools, pool);
+
+    priv->to_load = 1;      /* we need at least to load this element */
 }
 
 DaxDomElement *
@@ -350,15 +466,42 @@ dax_dom_element_set_id (DaxDomElement *element,
     g_object_notify ((GObject *) element, "id");
 }
 
+void
+dax_dom_element_set_loaded (DaxDomElement *element,
+                            gboolean       loaded)
+{
+    DaxDomElementPrivate *priv = element->priv;
+
+    g_return_if_fail (DAX_IS_DOM_ELEMENT (element));
+
+    if (loaded && priv->to_load > 0) {
+        priv->to_load--;
+    } else {
+        DAX_DOM_ELEMENT_UNSET_FLAG (element, LOADED);
+        priv->to_load++;
+    }
+
+    if (priv->to_load == 0 && DAX_DOM_ELEMENT_FLAG_IS_SET (element, PARSED))
+        g_signal_emit (element, signals[LOADED], 0, TRUE);
+}
+
+gboolean
+dax_dom_element_get_loaded (DaxDomElement *element)
+{
+    g_return_val_if_fail (DAX_IS_DOM_ELEMENT (element), FALSE);
+
+    return DAX_DOM_ELEMENT_FLAG_IS_SET (element, LOADED);
+}
+
 /*
  * Methods
  */
 
 const gchar *
 dax_dom_element_getAttributeNS (DaxDomElement  *self,
-                                const gchar       *ns,
-                                const gchar       *name,
-                                GError           **err)
+                                const gchar    *ns,
+                                const gchar    *name,
+                                GError        **err)
 {
 #if 0
     DaxDomElementClass *klass = DAX_DOM_ELEMENT_GET_CLASS (self);
@@ -374,10 +517,10 @@ dax_dom_element_getAttributeNS (DaxDomElement  *self,
 
 void
 dax_dom_element_setAttributeNS (DaxDomElement  *self,
-                                const gchar       *namespace_uri,
-                                const gchar       *qualified_name,
-                                const gchar       *value,
-                                GError           **err)
+                                const gchar    *namespace_uri,
+                                const gchar    *qualified_name,
+                                const gchar    *value,
+                                GError        **err)
 {
     const gchar *local_name, *interned_ns;
     guint prefix_len = 0;

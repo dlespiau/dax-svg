@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include "dax-enum-types.h"
+#include "dax-debug.h"
 #include "dax-js-context.h"
 #include "dax-xml-event.h"
 #include "dax-xml-event-target.h"
@@ -444,8 +445,26 @@ on_button_release_event (ClutterActor *actor,
     xml_event_from_clutter_event (&xml_event, event, target);
 
     _dax_dom_element_handle_event (target_element,
-                                      dax_xml_event_copy (&xml_event));
+                                   dax_xml_event_copy (&xml_event));
     return TRUE;
+}
+
+static void
+on_load_event (DaxDomElement *element,
+               gboolean       loaded,
+               gpointer       user_data)
+{
+    DaxXmlEventTarget *target = DAX_XML_EVENT_TARGET (element);
+    DaxXmlEvent load_event;
+
+    dax_xml_event_from_type (&load_event, DAX_XML_EVENT_TYPE_LOAD, target);
+
+    _dax_dom_element_handle_event (element, dax_xml_event_copy (&load_event));
+}
+
+static gboolean event_needs_reactive (DaxXmlEventType type)
+{
+    return type < DAX_XML_EVENT_TYPE_FIRST_MOUSE_EVENT;
 }
 
 static void
@@ -468,28 +487,51 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
     g_object_get (node, "event", &event_type, NULL);
     event_name = dax_enum_to_string (DAX_TYPE_XML_EVENT_TYPE, event_type);
 
+    event_target = DAX_XML_EVENT_TARGET (target);
+    event_listener = DAX_XML_EVENT_LISTENER (node);
+
+    dax_xml_event_target_add_event_listener (event_target,
+                                             event_name,
+                                             event_listener,
+                                             FALSE);
+
+    /* if the observer is bound to an actor and the event watched requires the
+     * actor to be reactive, so be it */
     target_actor = g_object_get_qdata (G_OBJECT (target), quark_object_actor);
-    if (target_actor == NULL) {
-        g_warning (G_STRLOC ": Target has no ClutterActor bound to it");
-        return;
+    if (target_actor && event_needs_reactive (event_type)) {
+        clutter_actor_set_reactive (target_actor, TRUE);
     }
-    clutter_actor_set_reactive (target_actor, TRUE);
+
     switch (event_type) {
     case DAX_XML_EVENT_TYPE_CLICK:
+        if (G_UNLIKELY (target_actor == NULL)) {
+            g_warning (G_STRLOC ": Target has no ClutterActor bound to it");
+            break;
+        }
         g_signal_connect (target_actor, "button-release-event",
                           G_CALLBACK (on_button_release_event), target);
         break;
+    case DAX_XML_EVENT_TYPE_LOAD:
+    {
+        if (G_UNLIKELY (!DAX_IS_ELEMENT_SVG (target))) {
+            g_warning (G_STRLOC ": Trying to listen to \"load\" on an element "
+                       "that is not <svg>");
+            break;
+        }
+
+        if (dax_dom_element_get_loaded (target)) {
+            on_load_event (target, TRUE, NULL);
+        } else  {
+            g_signal_connect (target, "loaded",
+                              G_CALLBACK (on_load_event), NULL);
+        }
+        break;
+    }
     case DAX_XML_EVENT_TYPE_NONE:
     default:
         g_warning (G_STRLOC ": Unkown event %d", event_type);
     }
 
-    event_target = DAX_XML_EVENT_TARGET (target);
-    event_listener = DAX_XML_EVENT_LISTENER (node);
-    dax_xml_event_target_add_event_listener (event_target,
-                                             event_name,
-                                             event_listener,
-                                             FALSE);
 
 }
 
@@ -634,7 +676,7 @@ dax_clutter_traverser_class_init (DaxClutterTraverserClass *klass)
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     DaxTraverserClass *traverser_class = DAX_TRAVERSER_CLASS (klass);
 
-    quark_object_actor = g_quark_from_static_string ("clutter-actor");
+    quark_object_actor = g_quark_from_static_string ("dax-clutter-actor");
 
     g_type_class_add_private (klass, sizeof (DaxClutterTraverserPrivate));
 
