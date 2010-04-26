@@ -78,8 +78,7 @@ struct _DaxElementScriptClass
 GType               dax_element_script_get_type          (void) G_GNUC_CONST;
 
 DaxDomElement *     dax_element_script_new               (void);
-DaxScriptType       dax_element_script_get_script_type   (const DaxElementScript *script);
-const gchar *       dax_element_script_get_code          (const DaxElementScript *script);
+DaxScriptType       dax_element_script_get_script_type   (DaxElementScript *script);
 
 G_END_DECLS
 

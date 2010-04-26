@@ -18,6 +18,7 @@
  */
 
 #include <libxml/xmlreader.h>
+#include <gio/gio.h>
 
 #include "dax-dom-private.h"
 #include "dax-debug.h"
@@ -155,8 +156,10 @@ dax_dom_document_new_from_memory (const gchar  *buffer,
         return NULL;
 
     document = dax_document_new ();
-    dax_document_set_base_iri (DAX_DOCUMENT (document), base_iri);
     ctx.current_node = DAX_DOM_NODE (document);
+
+    /* Set up the base uri */
+    dax_document_set_base_iri (DAX_DOCUMENT (document), base_iri);
 
     ret = xmlTextReaderRead (ctx.reader);
     while (ret == 1) {
@@ -182,6 +185,8 @@ dax_dom_document_new_from_file (const gchar  *filename,
 {
     DaxDomDocument *document;
     ParserContext ctx;
+    gchar *base_uri;
+    GFile *file, *directory;
     int ret;
 
     ctx.reader = xmlNewTextReaderFilename(filename);
@@ -190,6 +195,15 @@ dax_dom_document_new_from_file (const gchar  *filename,
 
     document = dax_document_new();
     ctx.current_node = DAX_DOM_NODE (document);
+
+    /* Set up the base uri */
+    file = g_file_new_for_commandline_arg (filename);
+    directory = g_file_get_parent (file);
+    base_uri = g_file_get_uri (directory);
+    dax_document_set_base_iri ((DaxDocument *) document, base_uri);
+    g_free (base_uri);
+    g_object_unref (file);
+    g_object_unref (directory);
 
     ret = xmlTextReaderRead(ctx.reader);
     while (ret == 1) {

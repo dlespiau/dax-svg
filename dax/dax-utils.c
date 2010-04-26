@@ -200,3 +200,12 @@ _dax_utils_parse_float (char   **string,
 
 	return TRUE;
 }
+
+/* That's a bit restrictive as a definition of an URI but that's the two
+ * schemes we want to support anyway */
+gboolean
+_dax_utils_is_iri (const gchar *str)
+{
+    return g_str_has_prefix (str, "http://") ||
+           g_str_has_prefix (str, "file://");
+}

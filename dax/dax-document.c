@@ -20,9 +20,7 @@
 #include <string.h>
 
 #include "dax-dom.h"
-#include "dax-internals.h"
-#include "dax-private.h"
-#include "dax-paramspec.h"
+
 #include "dax-element-animate.h"
 #include "dax-element-circle.h"
 #include "dax-element-desc.h"
@@ -37,6 +35,10 @@
 #include "dax-element-text.h"
 #include "dax-element-title.h"
 #include "dax-element-tspan.h"
+#include "dax-internals.h"
+#include "dax-paramspec.h"
+#include "dax-private.h"
+
 #include "dax-document.h"
 
 G_DEFINE_TYPE (DaxDocument, dax_document, DAX_TYPE_DOM_DOCUMENT)
@@ -59,7 +61,7 @@ struct _DaxDocumentPrivate
 };
 
 /*
- * DaxDomDocument overloading
+ * DaxDomDocument implementation
  */
 
 static DaxDomElement *
@@ -117,6 +119,7 @@ dax_document_get_property (GObject    *object,
     case PROP_BASE_IRI:
         g_value_set_string (value, priv->base_iri);
         break;
+
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -129,15 +132,13 @@ dax_document_set_property (GObject      *object,
                            GParamSpec   *pspec)
 {
     DaxDocument *document = (DaxDocument *) object;
-    DaxDocumentPrivate *priv = document->priv;
 
     switch (property_id)
     {
     case PROP_BASE_IRI:
-        if (priv->base_iri)
-            g_free (priv->base_iri);
-        priv->base_iri = g_value_dup_string (value);
+        dax_document_set_base_iri (document, g_value_get_string (value));
         break;
+
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -155,10 +156,7 @@ dax_document_finalize (GObject *object)
     DaxDocument *document = DAX_DOCUMENT (object);
     DaxDocumentPrivate *priv = document->priv;
 
-    if (priv->base_iri) {
-        g_free (priv->base_iri);
-        priv->base_iri = NULL;
-    }
+    g_free (priv->base_iri);
 
     G_OBJECT_CLASS (dax_document_parent_class)->finalize (object);
 }
@@ -214,7 +212,13 @@ void
 dax_document_set_base_iri (DaxDocument *document,
                            const char  *base_iri)
 {
+    DaxDocumentPrivate *priv;
+
     g_return_if_fail (DAX_IS_DOCUMENT (document));
 
-    document->priv->base_iri = g_strdup (base_iri);
+    priv = document->priv;
+
+    if (priv->base_iri)
+        g_free (priv->base_iri);
+    priv->base_iri = g_strdup (base_iri);
 }

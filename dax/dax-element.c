@@ -29,6 +29,7 @@
 #include "dax-private.h"
 #include "dax-paramspec.h"
 #include "dax-js-context.h"
+#include "dax-utils.h"
 #include "dax-document.h"
 #include "dax-element-svg.h"
 #include "dax-element.h"
@@ -77,7 +78,7 @@ struct _DaxElementPrivate
 };
 
 static void
-clear_resolved_iri (DaxElement *element)
+invalid_resolved_iri (DaxElement *element)
 {
     DaxElementPrivate *priv = element->priv;
 
@@ -318,7 +319,7 @@ dax_element_set_property (GObject      *object,
         break;
     case PROP_BASE_IRI:
         /* Remove cached base_iri if needed */
-        clear_resolved_iri (element);
+        invalid_resolved_iri (element);
         /* Time to get a new iri */
         if (priv->base_iri)
             g_free (priv->base_iri);
@@ -346,11 +347,8 @@ dax_element_finalize (GObject *object)
     DaxElement *element = DAX_ELEMENT (object);
     DaxElementPrivate *priv = element->priv;
 
-    if (priv->base_iri) {
-        g_free (priv->base_iri);
-        priv->base_iri = NULL;
-    }
-    clear_resolved_iri (element);
+    invalid_resolved_iri (element);
+    g_free (priv->base_iri);
 
     G_OBJECT_CLASS (dax_element_parent_class)->finalize (object);
 }
@@ -479,15 +477,6 @@ dax_element_get_fill_opacity (DaxElement *element)
     return element->priv->fill_opacity;
 }
 
-/* That's a bit restrictive as a definition of an URI but that's the two
- * schemes we want to support anyway */
-static gboolean
-is_iri (const char *str)
-{
-    return g_str_has_prefix (str, "http://") ||
-           g_str_has_prefix (str, "file://");
-}
-
 static const char *
 get_parent_base_iri (DaxElement *element)
 {
@@ -515,7 +504,7 @@ dax_element_get_base_iri (DaxElement *element)
     /* If xml:base is set, it's time to do some work */
     if (priv->base_iri) {
 
-        if (is_iri (priv->base_iri)) {
+        if (_dax_utils_is_iri (priv->base_iri)) {
             /* the value on the attribute is an actual uri */
             priv->resolved_base_iri = priv->base_iri;
         } else {

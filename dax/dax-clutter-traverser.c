@@ -21,7 +21,6 @@
 
 #include "dax-enum-types.h"
 #include "dax-debug.h"
-#include "dax-js-context.h"
 #include "dax-xml-event.h"
 #include "dax-xml-event-target.h"
 #include "dax-dom-private.h"
@@ -45,8 +44,6 @@ struct _DaxClutterTraverserPrivate
     ClutterContainer *container;
     ClutterColor *fill_color;
     ClutterScore *score;
-
-    DaxJsContext *js_context;
 };
 
 static void
@@ -410,28 +407,6 @@ dax_clutter_traverser_traverse_animate (DaxTraverser      *traverser,
     tl = clutter_animation_get_timeline (animation);
     clutter_score_append (priv->score, NULL, tl);
 }
-static void
-dax_clutter_traverser_traverse_script (DaxTraverser     *traverser,
-                                       DaxElementScript *node)
-{
-    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
-    DaxClutterTraverserPrivate *priv = build->priv;
-    GError *error = NULL;
-    const gchar *script;
-    int retval;
-
-    script = dax_element_script_get_code (node);
-
-    if (!dax_js_context_eval (priv->js_context,
-                                 script,
-                                 strlen (script),
-                                 "svg",
-                                 &retval,
-                                 &error))
-    {
-        g_message ("Error: %s", error->message);
-    }
-}
 
 static gboolean
 on_button_release_event (ClutterActor *actor,
@@ -683,7 +658,6 @@ dax_clutter_traverser_class_init (DaxClutterTraverserClass *klass)
         dax_clutter_traverser_traverse_polyline;
     traverser_class->traverse_animate = dax_clutter_traverser_traverse_animate;
     traverser_class->traverse_circle = dax_clutter_traverser_traverse_circle;
-    traverser_class->traverse_script = dax_clutter_traverser_traverse_script;
     traverser_class->traverse_handler = dax_clutter_traverser_traverse_handler;
     traverser_class->traverse_line = dax_clutter_traverser_traverse_line;
     traverser_class->traverse_text = dax_clutter_traverser_traverse_text;
@@ -697,7 +671,6 @@ dax_clutter_traverser_init (DaxClutterTraverser *self)
     self->priv = priv = CLUTTER_TRAVERSER_PRIVATE (self);
 
     priv->score = clutter_score_new ();
-    priv->js_context = dax_js_context_get_default ();
 }
 
 DaxTraverser *

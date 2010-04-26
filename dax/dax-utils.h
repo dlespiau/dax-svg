@@ -36,6 +36,7 @@ gboolean    _dax_utils_parse_simple_float       (gchar **string,
                                                  gfloat *number);
 gboolean    _dax_utils_parse_float              (char   **string,
                                                  gfloat  *x);
+gboolean    _dax_utils_is_iri                   (const gchar *str);
 
 G_END_DECLS
 

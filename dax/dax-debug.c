@@ -40,7 +40,8 @@ static const GDebugKey dax_debug_keys[] = {
   { "namespace", DAX_DEBUG_NAMESPACE },
   { "traverser", DAX_DEBUG_TRAVERSER },
   { "event",     DAX_DEBUG_EVENT     },
-  { "loading",   DAX_DEBUG_LOADING   }
+  { "loading",   DAX_DEBUG_LOADING   },
+  { "script",    DAX_DEBUG_SCRIPT    }
 };
 
 /**
