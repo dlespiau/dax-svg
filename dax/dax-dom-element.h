@@ -24,6 +24,7 @@
 
 #include "dax-dom-forward.h"
 #include "dax-dom-node.h"
+#include "dax-xml-event-target.h"
 
 G_BEGIN_DECLS
 
@@ -129,6 +130,8 @@ void            dax_dom_element_set_id          (DaxDomElement *element,
 void            dax_dom_element_set_loaded      (DaxDomElement *element,
                                                  gboolean       loaded);
 gboolean        dax_dom_element_get_loaded      (DaxDomElement *element);
+void            dax_dom_element_handle_event    (DaxDomElement *element,
+                                                 DaxXmlEvent   *event);
 
 G_END_DECLS
 

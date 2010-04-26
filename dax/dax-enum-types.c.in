@@ -22,17 +22,22 @@
 
 const gchar *
 dax_enum_to_string (GType type,
-                       gint  value)
+                    gint  value)
 {
     GEnumClass *enum_class;
     GEnumValue *enum_value;
+    const gchar *val;
 
-    enum_class = g_type_class_peek (type);
+    enum_class = g_type_class_ref (type);
     enum_value = g_enum_get_value (enum_class, value);
     if (enum_value)
-        return enum_value->value_nick;
+        val = enum_value->value_nick;
     else
-        return "<invalid enum value>";
+        val = "<invalid enum value>";
+
+    g_type_class_unref (enum_class);
+
+    return val;
 }
 
 /*** END file-header ***/

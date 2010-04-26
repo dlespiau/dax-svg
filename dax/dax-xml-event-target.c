@@ -39,9 +39,9 @@ dax_xml_event_target_get_type (void)
 
 void
 dax_xml_event_target_add_event_listener (DaxXmlEventTarget   *target,
-                                            const gchar            *type,
-                                            DaxXmlEventListener *listener,
-                                            gboolean                use_capture)
+                                         const gchar         *type,
+                                         DaxXmlEventListener *listener,
+                                         gboolean             use_capture)
 {
     DaxXmlEventTargetIface *iface;
 
@@ -55,9 +55,9 @@ dax_xml_event_target_add_event_listener (DaxXmlEventTarget   *target,
 
 void
 dax_xml_event_target_remove_event_listener (DaxXmlEventTarget   *target,
-                                               const gchar            *type,
-                                               DaxXmlEventListener *listener,
-                                               gboolean                use_capture)
+                                            const gchar         *type,
+                                            DaxXmlEventListener *listener,
+                                            gboolean             use_capture)
 {
     DaxXmlEventTargetIface *iface;
 

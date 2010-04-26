@@ -444,8 +444,8 @@ on_button_release_event (ClutterActor *actor,
 
     xml_event_from_clutter_event (&xml_event, event, target);
 
-    _dax_dom_element_handle_event (target_element,
-                                   dax_xml_event_copy (&xml_event));
+    dax_dom_element_handle_event (target_element,
+                                  dax_xml_event_copy (&xml_event));
     return TRUE;
 }
 
@@ -459,7 +459,7 @@ on_load_event (DaxDomElement *element,
 
     dax_xml_event_from_type (&load_event, DAX_XML_EVENT_TYPE_LOAD, target);
 
-    _dax_dom_element_handle_event (element, dax_xml_event_copy (&load_event));
+    dax_dom_element_handle_event (element, dax_xml_event_copy (&load_event));
 }
 
 static gboolean event_needs_reactive (DaxXmlEventType type)

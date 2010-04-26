@@ -52,8 +52,6 @@ void            _dax_dom_document_unset_id          (DaxDomDocument *document,
 
 /* dax-dom-element.c */
 
-void            _dax_dom_element_handle_event   (DaxDomElement *element,
-                                                 DaxXmlEvent   *event);
 void            _dax_dom_element_signal_parsed  (DaxDomElement *element);
 
 G_END_DECLS

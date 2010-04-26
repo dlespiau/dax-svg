@@ -19,6 +19,8 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <string.h>
+
 #include <gio/gio.h>
 
 #include "dax-dom.h"
@@ -26,11 +28,20 @@
 #include "dax-debug.h"
 #include "dax-private.h"
 #include "dax-paramspec.h"
+#include "dax-js-context.h"
 #include "dax-document.h"
 #include "dax-element-svg.h"
 #include "dax-element.h"
 
-G_DEFINE_ABSTRACT_TYPE (DaxElement, dax_element, DAX_TYPE_DOM_ELEMENT)
+static void dax_xml_event_listener_init (DaxXmlEventListenerIface *iface);
+
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (
+        DaxElement,
+        dax_element,
+        DAX_TYPE_DOM_ELEMENT,
+        G_IMPLEMENT_INTERFACE (DAX_TYPE_XML_EVENT_LISTENER,
+                               dax_xml_event_listener_init)
+)
 
 #define ELEMENT_PRIVATE(o)                                  \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
@@ -48,7 +59,10 @@ enum
     PROP_FILL,
     PROP_FILL_OPACITY,
     PROP_STROKE,
-    PROP_BASE_IRI
+    PROP_BASE_IRI,
+
+    /* legacy event handlers */
+    PROP_ONLOAD,
 };
 
 struct _DaxElementPrivate
@@ -58,6 +72,8 @@ struct _DaxElementPrivate
     ClutterColor *stroke;
     gchar *base_iri;                /* xml:base value in the DOM tree */
     gchar *resolved_base_iri;       /* cache resolved xml:base */
+
+    gchar *onload_handler;
 };
 
 static void
@@ -73,6 +89,98 @@ clear_resolved_iri (DaxElement *element)
         g_free (priv->resolved_base_iri);
 
     priv->resolved_base_iri = NULL;
+}
+
+static void
+on_load_event (DaxElement *element,
+               gboolean    loaded,
+               gpointer    user_data)
+{
+    DaxDomElement *dom_element = (DaxDomElement *) element;
+    DaxXmlEventTarget *target = DAX_XML_EVENT_TARGET (element);
+    DaxXmlEvent load_event;
+
+    dax_xml_event_from_type (&load_event, DAX_XML_EVENT_TYPE_LOAD, target);
+
+    dax_dom_element_handle_event (dom_element,
+                                  dax_xml_event_copy (&load_event));
+}
+
+static void
+dax_element_set_onload_handler (DaxElement  *element,
+                                const gchar *script)
+{
+    DaxElementPrivate *priv = element->priv;
+
+    if (priv->onload_handler) {
+        g_free (priv->onload_handler);
+    } else {
+        /* time to add the listener */
+        DaxXmlEventTarget *target = DAX_XML_EVENT_TARGET (element);
+        DaxXmlEventListener *listener = DAX_XML_EVENT_LISTENER (element);
+
+        dax_xml_event_target_add_event_listener (target,
+                                                 "load",
+                                                 listener,
+                                                 FALSE);
+    }
+
+    priv->onload_handler = g_strdup_printf ("function __dax_handler(event) {"
+                                                "let evt=event;"
+                                                "%s"
+                                            "}",
+                                            script);
+
+    if (dax_dom_element_get_loaded ((DaxDomElement *) element)) {
+        on_load_event (element, TRUE, NULL);
+    } else  {
+        g_signal_connect (element, "loaded",
+                          G_CALLBACK (on_load_event), NULL);
+    }
+}
+
+/*
+ * XmlEventListener implementation
+ */
+
+/* handle legacy event attributes */
+
+static void
+dax_element_handle_event (DaxXmlEventListener *listener,
+                          DaxXmlEvent         *xml_event)
+{
+    DaxElement *element = DAX_ELEMENT (listener);
+    DaxElementPrivate *priv = element->priv;
+    DaxDomElement *target;
+    DaxJsContext *js_context;
+    DaxJsObject *event;
+    gchar *code;
+
+    target = (DaxDomElement *) element;
+
+    switch (xml_event->type) {
+    case DAX_XML_EVENT_TYPE_LOAD:
+        code = priv->onload_handler;
+        break;
+
+    case DAX_XML_EVENT_TYPE_NONE:
+    case DAX_XML_EVENT_TYPE_CLICK:
+    default:
+        g_warning ("Unhandled event %d", xml_event->type);
+        return;
+    }
+
+    js_context = dax_js_context_get_default ();
+    event = dax_js_context_new_object_from_xml_event (js_context, xml_event);
+
+    dax_js_context_eval (js_context, code, strlen (code), "svg", NULL, NULL);
+    dax_js_context_call_function (js_context, "__dax_handler", "o", event);
+}
+
+static void
+dax_xml_event_listener_init (DaxXmlEventListenerIface *iface)
+{
+    iface->handle_event = dax_element_handle_event;
 }
 
 /*
@@ -170,6 +278,11 @@ dax_element_get_property (GObject    *object,
     case PROP_BASE_IRI:
         g_value_set_string (value, dax_element_get_base_iri (element));
         break;
+
+    case PROP_ONLOAD:
+        g_value_set_string (value, priv->onload_handler);
+        break;
+
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -211,6 +324,11 @@ dax_element_set_property (GObject      *object,
             g_free (priv->base_iri);
         priv->base_iri = g_value_dup_string (value);
         break;
+
+    case PROP_ONLOAD:
+       dax_element_set_onload_handler (element, g_value_get_string (value));
+       break;
+
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -286,6 +404,16 @@ dax_element_class_init (DaxElementClass *klass)
                                    DAX_PARAM_NONE,
                                    xml_ns);
     g_object_class_install_property (object_class, PROP_BASE_IRI, pspec);
+
+    pspec = dax_param_spec_string ("onload",
+                                   "onload",
+                                   "Event fired when the element is loaded",
+                                   NULL,
+                                   DAX_GPARAM_READWRITE,
+                                   DAX_PARAM_VERSION_1_0 |
+                                   DAX_PARAM_VERSION_1_1,
+                                   svg_ns);
+    g_object_class_install_property (object_class, PROP_ONLOAD, pspec);
 }
 
 static void

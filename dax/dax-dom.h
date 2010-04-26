@@ -32,6 +32,10 @@ G_BEGIN_DECLS
 #include "dax-dom-exception.h"
 #include "dax-dom-node.h"
 #include "dax-dom-text.h"
+#include "dax-xml-forward.h"
+#include "dax-xml-event.h"
+#include "dax-xml-event-listener.h"
+#include "dax-xml-event-target.h"
 
 G_END_DECLS
 

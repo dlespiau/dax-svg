@@ -78,18 +78,18 @@ dax_element_handler_handle_event (DaxXmlEventListener *listener,
     target = dax_element_handler_get_target (handler);
     code = dax_element_handler_get_code (handler);
     event = dax_js_context_new_object_from_xml_event (priv->js_context,
-                                                         xml_event);
+                                                      xml_event);
     dax_js_context_eval (priv->js_context,
-                            code,
-                            strlen (code),
-                            "svg",
-                            NULL,
-                            NULL);
+                         code,
+                         strlen (code),
+                         "svg",
+                         NULL,
+                         NULL);
 
     dax_js_context_call_function (priv->js_context,
-                                     "__dax_handler",
-                                     "o",
-                                     event);
+                                  "__dax_handler",
+                                  "o",
+                                  event);
 }
 
 static void

@@ -21,9 +21,7 @@
 
 #include "dax-enum-types.h"
 #include "dax-dom-core.h"
-#include "dax-private.h"
 #include "dax-debug.h"
-#include "dax-xml-event-target.h"
 #include "dax-dom-private.h"
 #include "dax-dom-document.h"
 #include "dax-dom-element.h"
@@ -123,35 +121,6 @@ dax_dom_element_set_attribute_foreign (DaxDomElement  *self,
     }
 
     dax_dom_element_set_attribute (self, local_name, value, err);
-}
-
-void
-_dax_dom_element_handle_event (DaxDomElement *element,
-                               DaxXmlEvent   *event)
-{
-    DaxDomElementPrivate *priv = element->priv;
-    const gchar *event_name;
-    GSList *listeners_list, *iter;
-
-    event_name = dax_enum_to_string (DAX_TYPE_XML_EVENT_TYPE, event->type);
-
-    listeners_list = g_hash_table_lookup (priv->listeners, event_name);
-    if (listeners_list == NULL) {
-        g_warning (G_STRLOC ": Received event %s (%d) on %s, but no listeners "
-                   "registered", event_name, event->type,
-                   G_OBJECT_TYPE_NAME (element));
-        return;
-    }
-
-    for (iter = listeners_list; iter; iter = g_slist_next (iter)) {
-        EventListener *el = iter->data;
-
-        DAX_NOTE (EVENT, "%s fires the \"%s\" event on %s",
-                  G_OBJECT_TYPE_NAME (element), event_name,
-                  G_OBJECT_TYPE_NAME(el->listener));
-
-        dax_xml_event_listener_handle_event (el->listener, event);
-    }
 }
 
 static gboolean
@@ -498,6 +467,35 @@ dax_dom_element_get_loaded (DaxDomElement *element)
 /*
  * Methods
  */
+
+void
+dax_dom_element_handle_event (DaxDomElement *element,
+                              DaxXmlEvent   *event)
+{
+    DaxDomElementPrivate *priv = element->priv;
+    const gchar *event_name;
+    GSList *listeners_list, *iter;
+
+    event_name = dax_enum_to_string (DAX_TYPE_XML_EVENT_TYPE, event->type);
+
+    listeners_list = g_hash_table_lookup (priv->listeners, event_name);
+    if (listeners_list == NULL) {
+        g_warning (G_STRLOC ": Received event %s (%d) on %s, but no listeners "
+                   "registered", event_name, event->type,
+                   G_OBJECT_TYPE_NAME (element));
+        return;
+    }
+
+    for (iter = listeners_list; iter; iter = g_slist_next (iter)) {
+        EventListener *el = iter->data;
+
+        DAX_NOTE (EVENT, "%s fires the \"%s\" event on %s",
+                  G_OBJECT_TYPE_NAME (element), event_name,
+                  G_OBJECT_TYPE_NAME(el->listener));
+
+        dax_xml_event_listener_handle_event (el->listener, event);
+    }
+}
 
 const gchar *
 dax_dom_element_getAttributeNS (DaxDomElement  *self,
