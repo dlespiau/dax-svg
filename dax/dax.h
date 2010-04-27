@@ -20,6 +20,8 @@
 #ifndef __DAX_H__
 #define __DAX_H__
 
+#define __DAX_H_INSIDE__
+
 #include "dax-actor.h"
 #include "dax-clutter-traverser.h"
 #include "dax-core.h"
@@ -54,5 +56,7 @@
 #include "dax-xml-event.h"
 #include "dax-xml-event-target.h"
 #include "dax-xml-event-listener.h"
+
+#undef __DAX_H_INSIDE__
 
 #endif /* __DAX_H__ */

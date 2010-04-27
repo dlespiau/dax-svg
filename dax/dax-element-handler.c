@@ -67,7 +67,7 @@ struct _DaxElementHandlerPrivate
 
 static void
 dax_element_handler_handle_event (DaxXmlEventListener *listener,
-                                     DaxXmlEvent         *xml_event)
+				  DaxXmlEvent         *xml_event)
 {
     DaxElementHandler *handler = DAX_ELEMENT_HANDLER (listener);
     DaxElementHandlerPrivate *priv = handler->priv;
@@ -104,9 +104,9 @@ dax_xml_event_listener_init (DaxXmlEventListenerIface *iface)
 
 static void
 dax_element_handler_get_property (GObject    *object,
-                                     guint       property_id,
-                                     GValue     *value,
-                                     GParamSpec *pspec)
+				  guint       property_id,
+				  GValue     *value,
+				  GParamSpec *pspec)
 {
     DaxElementHandler *self = DAX_ELEMENT_HANDLER (object);
     DaxElementHandlerPrivate *priv = self->priv;
@@ -126,9 +126,9 @@ dax_element_handler_get_property (GObject    *object,
 
 static void
 dax_element_handler_set_property (GObject      *object,
-                                     guint         property_id,
-                                     const GValue *value,
-                                     GParamSpec   *pspec)
+				  guint         property_id,
+				  const GValue *value,
+				  GParamSpec   *pspec)
 {
     DaxElementHandler *self = DAX_ELEMENT_HANDLER (object);
     DaxElementHandlerPrivate *priv = self->priv;
@@ -172,23 +172,23 @@ dax_element_handler_class_init (DaxElementHandlerClass *klass)
     object_class->finalize = dax_element_handler_finalize;
 
     pspec = dax_param_spec_enum ("type",
-                                    "Type",
-                                    "Identifies the programming language used",
-                                    DAX_TYPE_SCRIPT_TYPE,
-                                    DAX_SCRIPT_TYPE_ECMASCRIPT,
-                                    DAX_GPARAM_READWRITE,
-                                    DAX_PARAM_NONE,
-                                    svg_ns);
+				 "Type",
+				 "Identifies the programming language used",
+				 DAX_TYPE_SCRIPT_TYPE,
+				 DAX_SCRIPT_TYPE_ECMASCRIPT,
+				 DAX_GPARAM_READWRITE,
+				 DAX_PARAM_NONE,
+				 svg_ns);
     g_object_class_install_property (object_class, PROP_TYPE, pspec);
 
     pspec = dax_param_spec_enum ("event",
-                                    "Event",
-                                    "The name of the event to handle",
-                                    DAX_TYPE_XML_EVENT_TYPE,
-                                    DAX_XML_EVENT_TYPE_DEFAULT,
-                                    DAX_GPARAM_READWRITE,
-                                    DAX_PARAM_NONE,
-                                    xmlevents_ns);
+				 "Event",
+				 "The name of the event to handle",
+				 DAX_TYPE_XML_EVENT_TYPE,
+				 DAX_XML_EVENT_TYPE_DEFAULT,
+				 DAX_GPARAM_READWRITE,
+				 DAX_PARAM_NONE,
+				 xmlevents_ns);
     g_object_class_install_property (object_class, PROP_EVENT_TYPE, pspec);
 }
 
@@ -222,7 +222,7 @@ dax_element_handler_get_target (DaxElementHandler *handler)
 }
 
 gchar *
-dax_element_handler_get_code (const DaxElementHandler *handler)
+dax_element_handler_get_code (DaxElementHandler *handler)
 {
     DaxDomNode *text;
 

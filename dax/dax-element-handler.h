@@ -19,6 +19,10 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#if !defined(__DAX_H_INSIDE__) && !defined(DAX_COMPILATION)
+#error "Only <dax/dax.h> can be included directly."
+#endif
+
 #ifndef __DAX_ELEMENT_HANDLER_H__
 #define __DAX_ELEMENT_HANDLER_H__
 
@@ -30,14 +34,14 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_ELEMENT_HANDLER dax_element_handler_get_type()
 
-#define DAX_ELEMENT_HANDLER(obj)                             \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                         \
-                                 DAX_TYPE_ELEMENT_HANDLER,   \
+#define DAX_ELEMENT_HANDLER(obj)                            \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
+                                 DAX_TYPE_ELEMENT_HANDLER,  \
                                  DaxElementHandler))
 
-#define DAX_ELEMENT_HANDLER_CLASS(klass)                 \
-    (G_TYPE_CHECK_CLASS_CAST ((klass),                      \
-                              DAX_TYPE_ELEMENT_HANDLER,  \
+#define DAX_ELEMENT_HANDLER_CLASS(klass)                \
+    (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
+                              DAX_TYPE_ELEMENT_HANDLER,	\
                               DaxElementHandlerClass))
 
 #define DAX_IS_ELEMENT_HANDLER(obj) \
@@ -46,9 +50,9 @@ G_BEGIN_DECLS
 #define DAX_IS_ELEMENT_HANDLER_CLASS(klass) \
     (G_TYPE_CHECK_CLASS_TYPE ((klass), DAX_TYPE_ELEMENT_HANDLER))
 
-#define DAX_ELEMENT_HANDLER_GET_CLASS(obj)                   \
-    (G_TYPE_INSTANCE_GET_CLASS ((obj),                          \
-                                DAX_TYPE_ELEMENT_HANDLER,    \
+#define DAX_ELEMENT_HANDLER_GET_CLASS(obj)                  \
+    (G_TYPE_INSTANCE_GET_CLASS ((obj),                      \
+                                DAX_TYPE_ELEMENT_HANDLER,   \
                                 DaxElementHandlerClass))
 
 typedef struct _DaxElementHandler DaxElementHandler;
@@ -67,11 +71,11 @@ struct _DaxElementHandlerClass
     DaxElementClass parent_class;
 };
 
-GType               dax_element_handler_get_type     (void) G_GNUC_CONST;
+GType           dax_element_handler_get_type     (void) G_GNUC_CONST;
 
-DaxDomElement *  dax_element_handler_new          (void);
-DaxDomElement *  dax_element_handler_get_target   (DaxElementHandler *handler);
-gchar *             dax_element_handler_get_code     (const DaxElementHandler *handler);
+DaxDomElement *	dax_element_handler_new          (void);
+DaxDomElement * dax_element_handler_get_target   (DaxElementHandler *handler);
+gchar *         dax_element_handler_get_code     (DaxElementHandler *handler);
 
 G_END_DECLS
 

@@ -4,7 +4,6 @@
  * Copyright © 2009 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
- * under the terms and conditions of the GNU Lesser General Public License,
  * version 2.1, as published by the Free Software Foundation.
  *
  * This program is distributed in the hope it will be useful, but WITHOUT ANY
@@ -216,7 +215,7 @@ dax_element_circle_new (void)
 }
 
 ClutterUnits *
-dax_element_circle_get_cx (const DaxElementCircle *circle)
+dax_element_circle_get_cx (DaxElementCircle *circle)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_CIRCLE (circle), NULL);
 
@@ -224,7 +223,7 @@ dax_element_circle_get_cx (const DaxElementCircle *circle)
 }
 
 ClutterUnits *
-dax_element_circle_get_cy (const DaxElementCircle *circle)
+dax_element_circle_get_cy (DaxElementCircle *circle)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_CIRCLE (circle), NULL);
 
@@ -232,7 +231,7 @@ dax_element_circle_get_cy (const DaxElementCircle *circle)
 }
 
 ClutterUnits *
-dax_element_circle_get_r (const DaxElementCircle *circle)
+dax_element_circle_get_r (DaxElementCircle *circle)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_CIRCLE (circle), NULL);
 

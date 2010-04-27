@@ -19,6 +19,10 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#if !defined(__DAX_H_INSIDE__) && !defined(DAX_COMPILATION)
+#error "Only <dax/dax.h> can be included directly."
+#endif
+
 #ifndef __DAX_ELEMENT_ANIMATE_H__
 #define __DAX_ELEMENT_ANIMATE_H__
 
@@ -31,14 +35,14 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_ELEMENT_ANIMATE dax_element_animate_get_type()
 
-#define DAX_ELEMENT_ANIMATE(obj)                             \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                         \
-                                 DAX_TYPE_ELEMENT_ANIMATE,   \
+#define DAX_ELEMENT_ANIMATE(obj)                            \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
+                                 DAX_TYPE_ELEMENT_ANIMATE,  \
                                  DaxElementAnimate))
 
-#define DAX_ELEMENT_ANIMATE_CLASS(klass)                 \
-    (G_TYPE_CHECK_CLASS_CAST ((klass),                      \
-                              DAX_TYPE_ELEMENT_ANIMATE,  \
+#define DAX_ELEMENT_ANIMATE_CLASS(klass)                \
+    (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
+                              DAX_TYPE_ELEMENT_ANIMATE,	\
                               DaxElementAnimateClass))
 
 #define DAX_IS_ELEMENT_ANIMATE(obj) \
@@ -47,9 +51,9 @@ G_BEGIN_DECLS
 #define DAX_IS_ELEMENT_ANIMATE_CLASS(klass) \
     (G_TYPE_CHECK_CLASS_TYPE ((klass), DAX_TYPE_ELEMENT_ANIMATE))
 
-#define DAX_ELEMENT_ANIMATE_GET_CLASS(obj)                   \
-    (G_TYPE_INSTANCE_GET_CLASS ((obj),                          \
-                                DAX_TYPE_ELEMENT_ANIMATE,    \
+#define DAX_ELEMENT_ANIMATE_GET_CLASS(obj)                  \
+    (G_TYPE_INSTANCE_GET_CLASS ((obj),                      \
+                                DAX_TYPE_ELEMENT_ANIMATE,   \
                                 DaxElementAnimateClass))
 
 typedef struct _DaxElementAnimate DaxElementAnimate;
@@ -68,15 +72,15 @@ struct _DaxElementAnimateClass
     DaxElementClass parent_class;
 };
 
-GType                       dax_element_animate_get_type             (void) G_GNUC_CONST;
+GType                   dax_element_animate_get_type            (void) G_GNUC_CONST;
 
-DaxDomElement *          dax_element_animate_new                  (void);
-DaxDuration *            dax_element_animate_get_duration         (const DaxElementAnimate *self);
-const gchar *               dax_element_animate_get_attribute_name   (const DaxElementAnimate *self);
-const gchar *               dax_element_animate_get_from             (const DaxElementAnimate *self);
-const gchar *               dax_element_animate_get_to               (const DaxElementAnimate *self);
-const DaxRepeatCount *   dax_element_animate_get_repeat_count     (const DaxElementAnimate *self);
-DaxDomElement *          dax_element_animate_get_target           (const DaxElementAnimate *self);
+DaxDomElement *         dax_element_animate_new                 (void);
+DaxDuration *           dax_element_animate_get_duration        (DaxElementAnimate *self);
+const gchar *           dax_element_animate_get_attribute_name  (DaxElementAnimate *self);
+const gchar *           dax_element_animate_get_from            (DaxElementAnimate *self);
+const gchar *           dax_element_animate_get_to              (DaxElementAnimate *self);
+const DaxRepeatCount *	dax_element_animate_get_repeat_count	(DaxElementAnimate *self);
+DaxDomElement *         dax_element_animate_get_target          (DaxElementAnimate *self);
 
 G_END_DECLS
 

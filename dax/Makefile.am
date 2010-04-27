@@ -7,6 +7,7 @@ AM_CFLAGS =			\
 	$(DAX_CFLAGS)		\
 	$(DAX_DEBUG_CFLAGS)	\
 	-DG_LOG_DOMAIN=\"Dax\"	\
+	-DDAX_COMPILATION	\
 	$(NULL)
 
 LDADD =					\

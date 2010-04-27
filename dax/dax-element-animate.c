@@ -29,9 +29,9 @@ G_DEFINE_TYPE (DaxElementAnimate,
                dax_element_animate,
                DAX_TYPE_ELEMENT)
 
-#define ELEMENT_ANIMATE_PRIVATE(o)                              \
-    (G_TYPE_INSTANCE_GET_PRIVATE ((o),                          \
-                                  DAX_TYPE_ELEMENT_ANIMATE,  \
+#define ELEMENT_ANIMATE_PRIVATE(o)                          \
+    (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
+                                  DAX_TYPE_ELEMENT_ANIMATE, \
                                   DaxElementAnimatePrivate))
 
 enum
@@ -58,7 +58,7 @@ struct _DaxElementAnimatePrivate
 
 static void
 dax_element_animate_set_duration (DaxElementAnimate *self,
-                                     DaxDuration       *duration)
+				  DaxDuration       *duration)
 {
     DaxElementAnimatePrivate *priv = self->priv;
 
@@ -69,7 +69,7 @@ dax_element_animate_set_duration (DaxElementAnimate *self,
 
 static void
 dax_element_animate_set_repeat_count (DaxElementAnimate *self,
-                                         DaxRepeatCount    *count)
+				      DaxRepeatCount    *count)
 {
     DaxElementAnimatePrivate *priv = self->priv;
 
@@ -84,9 +84,9 @@ dax_element_animate_set_repeat_count (DaxElementAnimate *self,
 
 static void
 dax_element_animate_get_property (GObject    *object,
-                                     guint       property_id,
-                                     GValue     *value,
-                                     GParamSpec *pspec)
+				  guint       property_id,
+				  GValue     *value,
+				  GParamSpec *pspec)
 {
     DaxElementAnimate *self = DAX_ELEMENT_ANIMATE (object);
     DaxElementAnimatePrivate *priv = self->priv;
@@ -117,9 +117,9 @@ dax_element_animate_get_property (GObject    *object,
 
 static void
 dax_element_animate_set_property (GObject      *object,
-                                     guint         property_id,
-                                     const GValue *value,
-                                     GParamSpec   *pspec)
+				  guint         property_id,
+				  const GValue *value,
+				  GParamSpec   *pspec)
 {
     DaxElementAnimate *self = DAX_ELEMENT_ANIMATE (object);
     DaxElementAnimatePrivate *priv = self->priv;
@@ -244,7 +244,7 @@ dax_element_animate_new (void)
 }
 
 DaxDuration *
-dax_element_animate_get_duration (const DaxElementAnimate *self)
+dax_element_animate_get_duration (DaxElementAnimate *self)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
@@ -252,7 +252,7 @@ dax_element_animate_get_duration (const DaxElementAnimate *self)
 }
 
 const gchar *
-dax_element_animate_get_attribute_name (const DaxElementAnimate *self)
+dax_element_animate_get_attribute_name (DaxElementAnimate *self)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
@@ -260,7 +260,7 @@ dax_element_animate_get_attribute_name (const DaxElementAnimate *self)
 }
 
 const gchar *
-dax_element_animate_get_from (const DaxElementAnimate *self)
+dax_element_animate_get_from (DaxElementAnimate *self)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
@@ -268,7 +268,7 @@ dax_element_animate_get_from (const DaxElementAnimate *self)
 }
 
 const gchar *
-dax_element_animate_get_to (const DaxElementAnimate *self)
+dax_element_animate_get_to (DaxElementAnimate *self)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
@@ -276,7 +276,7 @@ dax_element_animate_get_to (const DaxElementAnimate *self)
 }
 
 const DaxRepeatCount *
-dax_element_animate_get_repeat_count (const DaxElementAnimate *self)
+dax_element_animate_get_repeat_count (DaxElementAnimate *self)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_ANIMATE (self), NULL);
 
@@ -284,7 +284,7 @@ dax_element_animate_get_repeat_count (const DaxElementAnimate *self)
 }
 
 DaxDomElement *
-dax_element_animate_get_target (const DaxElementAnimate *self)
+dax_element_animate_get_target (DaxElementAnimate *self)
 {
     DaxDomNode *node;
 

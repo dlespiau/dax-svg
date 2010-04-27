@@ -19,6 +19,10 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#if !defined(__DAX_H_INSIDE__) && !defined(DAX_COMPILATION)
+#error "Only <dax/dax.h> can be included directly."
+#endif
+
 #ifndef __DAX_GJS_CONTEXT_H__
 #define __DAX_GJS_CONTEXT_H__
 

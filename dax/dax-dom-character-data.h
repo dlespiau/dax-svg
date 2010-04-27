@@ -18,7 +18,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
-/* dax-dom-character-data.h */
 
 #ifndef __DAX_DOM_CHARACTER_DATA_H__
 #define __DAX_DOM_CHARACTER_DATA_H__

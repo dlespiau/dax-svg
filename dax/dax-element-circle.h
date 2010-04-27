@@ -17,6 +17,10 @@
  * Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#if !defined(__DAX_H_INSIDE__) && !defined(DAX_COMPILATION)
+#error "Only <dax/dax.h> can be included directly."
+#endif
+
 #ifndef __DAX_ELEMENT_CIRCLE_H__
 #define __DAX_ELEMENT_CIRCLE_H__
 
@@ -28,14 +32,14 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_ELEMENT_CIRCLE dax_element_circle_get_type()
 
-#define DAX_ELEMENT_CIRCLE(obj)                              \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                         \
-                                 DAX_TYPE_ELEMENT_CIRCLE,    \
+#define DAX_ELEMENT_CIRCLE(obj)                             \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
+                                 DAX_TYPE_ELEMENT_CIRCLE,   \
                                  DaxElementCircle))
 
-#define DAX_ELEMENT_CIRCLE_CLASS(klass)                  \
-    (G_TYPE_CHECK_CLASS_CAST ((klass),                      \
-                              DAX_TYPE_ELEMENT_CIRCLE,   \
+#define DAX_ELEMENT_CIRCLE_CLASS(klass)                 \
+    (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
+                              DAX_TYPE_ELEMENT_CIRCLE,	\
                               DaxElementCircleClass))
 
 #define DAX_IS_ELEMENT_CIRCLE(obj) \
@@ -44,9 +48,9 @@ G_BEGIN_DECLS
 #define DAX_IS_ELEMENT_CIRCLE_CLASS(klass) \
     (G_TYPE_CHECK_CLASS_TYPE ((klass), DAX_TYPE_ELEMENT_CIRCLE))
 
-#define DAX_ELEMENT_CIRCLE_GET_CLASS(obj)                \
+#define DAX_ELEMENT_CIRCLE_GET_CLASS(obj)		    \
     (G_TYPE_INSTANCE_GET_CLASS ((obj),                      \
-                                DAX_TYPE_ELEMENT_CIRCLE, \
+                                DAX_TYPE_ELEMENT_CIRCLE,    \
                                 DaxElementCircleClass))
 
 typedef struct _DaxElementCircle DaxElementCircle;
@@ -68,9 +72,9 @@ struct _DaxElementCircleClass
 GType               dax_element_circle_get_type  (void) G_GNUC_CONST;
 
 DaxDomElement *     dax_element_circle_new       (void);
-ClutterUnits *      dax_element_circle_get_cx    (const DaxElementCircle *circle);
-ClutterUnits *      dax_element_circle_get_cy    (const DaxElementCircle *circle);
-ClutterUnits *      dax_element_circle_get_r     (const DaxElementCircle *circle);
+ClutterUnits *      dax_element_circle_get_cx    (DaxElementCircle *circle);
+ClutterUnits *      dax_element_circle_get_cy    (DaxElementCircle *circle);
+ClutterUnits *      dax_element_circle_get_r     (DaxElementCircle *circle);
 
 G_END_DECLS
 
