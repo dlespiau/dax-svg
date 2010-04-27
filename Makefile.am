@@ -9,4 +9,12 @@ stats:
 	        awk '{print $$2}'` && \
 	 echo "Lines of code: $$total ($$real real)"
 
+dax-$(DAX_API_VERSION).pc : dax.pc
+	$(QUIET_GEN)cp $< $@
+
+pkgconfig_DATA = dax-$(DAX_API_VERSION).pc
+pkgconfigdir = $(libdir)/pkgconfig
+
+CLEANFILES = dax-$(DAX_API_VERSION).pc
+
 .PHONY: stats

@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+apiversion=@DAX_API_VERSION@
+requires=@DAX_REQUIRES@
+
+Name: Dax
+Description: Load and draw SVG
+Version: @VERSION@
+Libs: -L${libdir} -ldax-${apiversion}
+Cflags: -I${includedir}/dax-${apiversion}
+Requires: ${requires}

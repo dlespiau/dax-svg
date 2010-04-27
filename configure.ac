@@ -14,7 +14,7 @@ m4_define([dax_version_major], [0])
 m4_define([dax_version_minor], [1])
 m4_define([dax_version_micro], [0])
 
-m4_define([dax_api_version], [0.1])
+m4_define([dax_api_version], [0.2])
 
 m4_define([dax_version],
           [dax_version_major.dax_version_minor.dax_version_micro])
@@ -90,10 +90,11 @@ AC_C_CONST
 # Check for header files
 AC_HEADER_STDC
 
-PKG_CHECK_MODULES([DAX],
-                  [gjs-gi-1.0 gjs-1.0
-                   clutter-1.0 clutter-gst-1.0
-                   glib-2.0 >= 2.22 gobject-2.0 gio-2.0])
+DAX_REQUIRES="gjs-gi-1.0 gjs-1.0 clutter-1.0 clutter-gst-1.0 glib-2.0 >= 2.22 gobject-2.0 gio-2.0"
+AC_SUBST(DAX_REQUIRES)
+
+PKG_CHECK_MODULES([DAX], [$DAX_REQUIRES])
+
 AC_SUBST(DAX_CFLAGS)
 AC_SUBST(DAX_LIBS)
 
@@ -162,6 +163,7 @@ GOBJECT_INTROSPECTION_REQUIRE([0.6.4])
 
 AC_CONFIG_FILES([
     Makefile
+    dax.pc
     build/Makefile
     build/autotools/Makefile
     data/Makefile
