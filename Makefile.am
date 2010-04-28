@@ -1,4 +1,9 @@
-SUBDIRS = build data dax tests tools
+
+SUBDIRS = build data dax tools
+
+if BUILD_TESTS
+SUBDIRS += tests
+endif
 
 ACLOCAL_AMFLAGS = -I build/autotools
 

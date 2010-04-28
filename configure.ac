@@ -161,6 +161,18 @@ dnl === GObject-Introspection check ===========================================
 
 GOBJECT_INTROSPECTION_REQUIRE([0.6.4])
 
+dnl === Disable compilation of tests ==========================================
+
+AC_ARG_ENABLE([tests],
+              [AC_HELP_STRING([--enable-tests=@<:@no/yes@:>@],
+                              [Build tests @<:@default=yes@:>@])],
+              [build_tests=no],
+              [build_tests=yes])
+
+AM_CONDITIONAL([BUILD_TESTS], [test "x$build_tests" = xyes])
+
+dnl === File generation =======================================================
+
 AC_CONFIG_FILES([
     Makefile
     dax.pc
@@ -183,4 +195,5 @@ echo "                 prefix:   ${prefix}"
 echo "         Compiler flags: ${MAINTAINER_CFLAGS}"
 echo ""
 echo "                 debug :   ${enable_debug}"
+echo "            build tests:   ${build_tests}"
 echo ""
