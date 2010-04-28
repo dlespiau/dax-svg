@@ -72,24 +72,30 @@ struct _DaxJsContextClass
     GObjectClass parent_class;
 };
 
-GType dax_js_context_get_type (void) G_GNUC_CONST;
+GType           dax_js_context_get_type         (void) G_GNUC_CONST;
 
-DaxJsContext*    dax_js_context_new           (void);
-DaxJsContext*    dax_js_context_get_default   (void);
-gboolean            dax_js_context_eval          (DaxJsContext  *context,
-                                                     const char       *script,
-                                                     gssize            length,
-                                                     const char       *file,
-                                                     gint             *retval,
-                                                     GError          **error);
+DaxJsContext*   dax_js_context_new              (void);
+DaxJsContext*   dax_js_context_get_default      (void);
+gboolean        dax_js_context_eval             (DaxJsContext  *context,
+                                                 const char    *script,
+                                                 gssize         length,
+                                                 const char    *file,
+                                                 gint          *retval,
+                                                 GError       **error);
 
-gboolean            dax_js_context_call_function (DaxJsContext *context,
-                                                     const char      *name,
-                                                     const char      *nb_args,
-                                                     ...);
+gboolean        dax_js_context_call_function    (DaxJsContext *context,
+                                                 const char   *name,
+                                                 const char   *nb_args,
+                                                 ...);
 
-DaxJsObject*     dax_js_context_new_object_from_xml_event (DaxJsContext *context,
-                                                                 DaxXmlEvent  *xml_event);
+DaxJsObject*    dax_js_context_new_object_from_gobject   (DaxJsContext *context,
+                                                          GObject     *object);
+DaxJsObject*    dax_js_context_new_object_from_xml_event (DaxJsContext *context,
+                                                          DaxXmlEvent  *event);
+
+gboolean        dax_js_context_add_global_object    (DaxJsContext *context,
+                                                     const gchar  *name,
+                                                     DaxJsObject  *object);
 
 G_END_DECLS
 

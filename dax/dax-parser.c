@@ -21,6 +21,7 @@
 
 #include "dax-dom-private.h"
 #include "dax-debug.h"
+#include "dax-js-context.h"
 #include "dax-document.h"
 #include "dax-parser.h"
 
@@ -132,6 +133,30 @@ dax_dom_document_read_node (DaxDomDocument *document,
     }
 }
 
+static void
+dax_dom_document_parse_and_setup (DaxDomDocument *document,
+                                  ParserContext  *ctx)
+{
+    DaxJsContext *js_context;
+    DaxJsObject *js_object;
+    int ret;
+
+    ret = xmlTextReaderRead (ctx->reader);
+    while (ret == 1) {
+        dax_dom_document_read_node (document, ctx);
+        ret = xmlTextReaderRead(ctx->reader);
+    }
+    xmlFreeTextReader(ctx->reader);
+    /* FIXME: handle the error case where ret = -1 */
+
+    /* setup a few JS global objects */
+    js_context = dax_js_context_get_default ();
+
+    js_object = dax_js_context_new_object_from_gobject (js_context,
+                                                        (GObject *) document);
+    dax_js_context_add_global_object (js_context, "document", js_object);
+}
+
 /**
  * dax_dom_document_new_from_memory:
  *
@@ -147,7 +172,6 @@ dax_dom_document_new_from_memory (const gchar  *buffer,
 {
     DaxDomDocument *document;
     ParserContext ctx;
-    int ret;
 
     ctx.reader = xmlReaderForMemory(buffer, size, base_iri, NULL,
                                     XML_PARSE_XINCLUDE);
@@ -160,13 +184,7 @@ dax_dom_document_new_from_memory (const gchar  *buffer,
     /* Set up the base uri */
     dax_document_set_base_iri (DAX_DOCUMENT (document), base_iri);
 
-    ret = xmlTextReaderRead (ctx.reader);
-    while (ret == 1) {
-        dax_dom_document_read_node (document, &ctx);
-        ret = xmlTextReaderRead(ctx.reader);
-    }
-    xmlFreeTextReader(ctx.reader);
-    /* FIXME: handle the error case where ret = -1 */
+    dax_dom_document_parse_and_setup (document, &ctx);
 
     return document;
 }
@@ -183,10 +201,9 @@ dax_dom_document_new_from_file (const gchar  *filename,
                                 GError      **error)
 {
     DaxDomDocument *document;
+    GFile *file, *directory;
     ParserContext ctx;
     gchar *base_uri;
-    GFile *file, *directory;
-    int ret;
 
     ctx.reader = xmlNewTextReaderFilename(filename);
     if (ctx.reader == NULL)
@@ -204,13 +221,7 @@ dax_dom_document_new_from_file (const gchar  *filename,
     g_object_unref (file);
     g_object_unref (directory);
 
-    ret = xmlTextReaderRead(ctx.reader);
-    while (ret == 1) {
-        dax_dom_document_read_node (document, &ctx);
-        ret = xmlTextReaderRead(ctx.reader);
-    }
-    xmlFreeTextReader(ctx.reader);
-    /* FIXME: handle the error case where ret = -1 */
+    dax_dom_document_parse_and_setup (document, &ctx);
 
     return document;
 }

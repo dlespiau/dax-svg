@@ -1,7 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
@@ -28,9 +28,9 @@
 
 G_DEFINE_TYPE (DaxJsContext, dax_js_context, G_TYPE_OBJECT)
 
-#define JS_CONTEXT_PRIVATE(o)                                   \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_JS_CONTEXT,   \
+#define JS_CONTEXT_PRIVATE(o)                               \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
+                                      DAX_TYPE_JS_CONTEXT,  \
                                       DaxJsContextPrivate))
 
 struct _DaxJsContextPrivate
@@ -87,9 +87,9 @@ static JSFunctionSpec js_xml_event_proto_funcs[] = {
 
 static void
 dax_js_context_get_property (GObject    *object,
-                                guint       property_id,
-                                GValue     *value,
-                                GParamSpec *pspec)
+                             guint       property_id,
+                             GValue     *value,
+                             GParamSpec *pspec)
 {
     switch (property_id)
     {
@@ -100,9 +100,9 @@ dax_js_context_get_property (GObject    *object,
 
 static void
 dax_js_context_set_property (GObject      *object,
-                                guint         property_id,
-                                const GValue *value,
-                                GParamSpec   *pspec)
+                             guint         property_id,
+                             const GValue *value,
+                             GParamSpec   *pspec)
 {
     switch (property_id)
     {
@@ -190,11 +190,11 @@ dax_js_context_get_default (void)
 
 gboolean
 dax_js_context_eval (DaxJsContext  *context,
-                        const char       *script,
-                        gssize            length,
-                        const char       *file,
-                        gint             *retval,
-                        GError          **error)
+                     const char    *script,
+                     gssize         length,
+                     const char    *file,
+                     gint          *retval,
+                     GError       **error)
 {
     DaxJsContextPrivate *priv;
 
@@ -209,9 +209,18 @@ dax_js_context_eval (DaxJsContext  *context,
                              error);
 }
 
+DaxJsObject*
+dax_js_context_new_object_from_gobject (DaxJsContext *context,
+                                        GObject      *object)
+{
+    g_return_val_if_fail (DAX_IS_JS_CONTEXT (context), NULL);
+
+    return gjs_object_from_g_object (context->priv->js_context, object);
+}
+
 DaxJsObject *
 dax_js_context_new_object_from_xml_event (DaxJsContext *context,
-                                             DaxXmlEvent  *xml_event)
+                                          DaxXmlEvent  *xml_event)
 {
     DaxJsContextPrivate *priv;
     JSObject *event;
@@ -249,9 +258,9 @@ dax_js_context_new_object_from_xml_event (DaxJsContext *context,
 
 gboolean
 dax_js_context_call_function (DaxJsContext *context,
-                                 const char      *name,
-                                 const char      *format,
-                                 ...)
+                              const char   *name,
+                              const char   *format,
+                              ...)
 {
     DaxJsContextPrivate *priv;
     va_list args;
@@ -286,4 +295,24 @@ dax_js_context_call_function (DaxJsContext *context,
     va_end (args);
 
     return ok;
+}
+
+gboolean
+dax_js_context_add_global_object (DaxJsContext *context,
+                                  const char   *name,
+                                  DaxJsObject  *object)
+{
+    DaxJsContextPrivate *priv;
+    JSObject *js_object = (JSObject *) object;
+    jsval js_val;
+
+    g_return_val_if_fail (DAX_IS_JS_CONTEXT (context), FALSE);
+
+    priv = context->priv;
+    js_val = OBJECT_TO_JSVAL (js_object);
+
+    return JS_SetProperty (priv->js_context,
+                           JS_GetGlobalObject (priv->js_context),
+                           name,
+                           &js_val);
 }
