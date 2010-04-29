@@ -164,6 +164,7 @@ dax_element_handle_event (DaxXmlEventListener *listener,
 
     case DAX_XML_EVENT_TYPE_NONE:
     case DAX_XML_EVENT_TYPE_CLICK:
+    case DAX_XML_EVENT_TYPE_SVG_TIMER:
     default:
         g_warning ("Unhandled event %d", xml_event->type);
         return;

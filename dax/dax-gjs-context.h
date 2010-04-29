@@ -27,21 +27,19 @@
 
 #include <glib-object.h>
 
+#include "dax-dom.h"
+
 #include "dax-xml-event.h"
 
 G_BEGIN_DECLS
 
 #define DAX_TYPE_JS_CONTEXT dax_js_context_get_type()
 
-#define DAX_JS_CONTEXT(obj)                              \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
-                                 DAX_TYPE_JS_CONTEXT,    \
-                                 DaxJsContext))
+#define DAX_JS_CONTEXT(obj) \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj), DAX_TYPE_JS_CONTEXT, DaxJsContext))
 
-#define DAX_JS_CONTEXT_CLASS(klass)                  \
-    (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
-                              DAX_TYPE_JS_CONTEXT,   \
-                              DaxJsContextClass))
+#define DAX_JS_CONTEXT_CLASS(klass) \
+    (G_TYPE_CHECK_CLASS_CAST ((klass), DAX_TYPE_JS_CONTEXT, DaxJsContextClass))
 
 #define DAX_IS_JS_CONTEXT(obj) \
     (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DAX_TYPE_JS_CONTEXT))
@@ -49,10 +47,8 @@ G_BEGIN_DECLS
 #define DAX_IS_JS_CONTEXT_CLASS(klass) \
     (G_TYPE_CHECK_CLASS_TYPE ((klass), DAX_TYPE_JS_CONTEXT))
 
-#define DAX_JS_CONTEXT_GET_CLASS(obj)                \
-    (G_TYPE_INSTANCE_GET_CLASS ((obj),                  \
-                                DAX_TYPE_JS_CONTEXT, \
-                                DaxJsContextClass))
+#define DAX_JS_CONTEXT_GET_CLASS(obj) \
+    (G_TYPE_INSTANCE_GET_CLASS ((obj), DAX_TYPE_JS_CONTEXT, DaxJsContextClass))
 
 typedef struct _DaxJsContext DaxJsContext;
 typedef struct _DaxJsContextClass DaxJsContextClass;
@@ -96,6 +92,8 @@ DaxJsObject*    dax_js_context_new_object_from_xml_event (DaxJsContext *context,
 gboolean        dax_js_context_add_global_object    (DaxJsContext *context,
                                                      const gchar  *name,
                                                      DaxJsObject  *object);
+gboolean        dax_js_context_setup_document       (DaxJsContext   *context,
+                                                     DaxDomDocument *document);
 
 G_END_DECLS
 

@@ -106,20 +106,20 @@ struct _DaxRepeatCount
     gfloat value;
 };
 
-GType               dax_repeat_count_get_type        (void) G_GNUC_CONST;
+GType               dax_repeat_count_get_type       (void) G_GNUC_CONST;
 
-DaxRepeatCount * dax_repeat_count_copy            (const DaxRepeatCount *count);
-void                dax_repeat_count_free            (DaxRepeatCount *count);
+DaxRepeatCount *    dax_repeat_count_copy           (const DaxRepeatCount *count);
+void                dax_repeat_count_free           (DaxRepeatCount *count);
 
-void                dax_repeat_count_from_number     (DaxRepeatCount *count,
-                                                         gfloat             ms);
+void                dax_repeat_count_from_number    (DaxRepeatCount *count,
+                                                     gfloat          ms);
 
-gboolean            dax_repeat_count_is_indefinite   (const DaxRepeatCount *count);
-gfloat              dax_repeat_count_get_value       (const DaxRepeatCount *count);
+gboolean            dax_repeat_count_is_indefinite  (const DaxRepeatCount *count);
+gfloat              dax_repeat_count_get_value      (const DaxRepeatCount *count);
 
-gboolean            dax_repeat_count_from_string     (DaxRepeatCount *count,
-                                                         const gchar       *string);
-gchar *             dax_repeat_count_to_string       (const DaxRepeatCount *count);
+gboolean            dax_repeat_count_from_string    (DaxRepeatCount *count,
+                                                     const gchar    *string);
+gchar *             dax_repeat_count_to_string      (const DaxRepeatCount *count);
 
 G_END_DECLS
 

@@ -138,7 +138,6 @@ dax_dom_document_parse_and_setup (DaxDomDocument *document,
                                   ParserContext  *ctx)
 {
     DaxJsContext *js_context;
-    DaxJsObject *js_object;
     int ret;
 
     ret = xmlTextReaderRead (ctx->reader);
@@ -151,10 +150,7 @@ dax_dom_document_parse_and_setup (DaxDomDocument *document,
 
     /* setup a few JS global objects */
     js_context = dax_js_context_get_default ();
-
-    js_object = dax_js_context_new_object_from_gobject (js_context,
-                                                        (GObject *) document);
-    dax_js_context_add_global_object (js_context, "document", js_object);
+    dax_js_context_setup_document (js_context, document);
 }
 
 /**

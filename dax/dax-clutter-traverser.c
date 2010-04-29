@@ -494,6 +494,8 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
                               G_CALLBACK (on_load_event), NULL);
         }
         break;
+
+    case DAX_XML_EVENT_TYPE_SVG_TIMER:
     case DAX_XML_EVENT_TYPE_NONE:
     default:
         g_warning (G_STRLOC ": Unkown event %d", event_type);

@@ -58,6 +58,7 @@ source_c =				\
 	dax-svg-exception.c		\
 	dax-traverser.c			\
 	dax-types.c			\
+	dax-udom-svg-timer.c		\
 	dax-utils.c			\
 	dax-xml-event.c			\
 	dax-xml-event-target.c		\
@@ -102,6 +103,7 @@ source_h =				\
 	dax-svg-exception.h		\
 	dax-traverser.h			\
 	dax-types.h			\
+	dax-udom-svg-timer.h		\
 	dax-xml-event.h			\
 	dax-xml-event-target.h		\
 	dax-xml-event-listener.h	\
