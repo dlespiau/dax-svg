@@ -40,14 +40,6 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (DaxDomElement,
                                       DAX_TYPE_DOM_ELEMENT, \
                                       DaxDomElementPrivate))
 
-typedef struct _EventListener EventListener;
-
-struct _EventListener
-{
-    DaxXmlEventListener *listener;
-    gboolean use_capture;
-};
-
 enum
 {
     PROP_0,
@@ -67,8 +59,6 @@ static guint signals[LAST_SIGNAL];
 
 struct _DaxDomElementPrivate
 {
-    GPtrArray *param_pools;
-    GHashTable *listeners;          /* event => list of <EventListener>s */
     gchar *id;
     guint to_load;                  /* number of children not yet "loaded" */
 };
@@ -181,63 +171,13 @@ _dax_dom_element_signal_parsed (DaxDomElement *element)
 }
 
 /*
- * DaxXmlEventTarget implementation
+ * DaxXmlEventTarget "implementation"
  */
-
-static void
-event_listener_free (gpointer data)
-{
-    EventListener *el = data;
-
-    g_object_unref (el->listener);
-    g_slice_free (EventListener, el);
-}
-
-static void
-dax_dom_element_add_event_listener (DaxXmlEventTarget   *target,
-                                    const gchar         *type,
-                                    DaxXmlEventListener *listener,
-                                    gboolean             use_capture)
-{
-    DaxDomElement *self = DAX_DOM_ELEMENT (target);
-    DaxDomElementPrivate *priv = self->priv;
-    EventListener *new_el;
-    GSList *listeners_list;
-
-    DAX_NOTE (EVENT, "add listener (%s) on %s for event \"%s\"",
-              G_OBJECT_TYPE_NAME (listener), G_OBJECT_TYPE_NAME (target), type);
-
-    if (priv->listeners == NULL) {
-        priv->listeners = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                                 g_free,
-                                                 event_listener_free);
-    }
-
-    new_el = g_slice_new (EventListener);
-    new_el->listener = g_object_ref (listener);
-    new_el->use_capture = use_capture;
-
-    listeners_list = g_hash_table_lookup (priv->listeners, type);
-
-    /* FIXME no need to g_strdup an existing key */
-    listeners_list = g_slist_append (listeners_list, new_el);
-    g_hash_table_insert (priv->listeners, g_strdup (type), listeners_list);
-}
-
-static void
-dax_dom_element_remove_event_listener (DaxXmlEventTarget   *target,
-                                       const gchar         *type,
-                                       DaxXmlEventListener *listener,
-                                       gboolean             use_capture)
-{
-    /* FIXME */
-}
 
 static void
 dax_xml_event_target_init (DaxXmlEventTargetIface *iface)
 {
-    iface->add_event_listener = dax_dom_element_add_event_listener;
-    iface->remove_event_listener = dax_dom_element_remove_event_listener;
+    /* we use the default implementation of XmlEventTarget */
 }
 
 /*
@@ -313,9 +253,6 @@ dax_dom_element_finalize (GObject *object)
     DaxDomElement *element = DAX_DOM_ELEMENT (object);
     DaxDomElementPrivate *priv = element->priv;
 
-    if (priv->listeners)
-        g_hash_table_destroy (priv->listeners);
-
     if (priv->id) {
         DaxDomDocument *document = ((DaxDomNode *) element)->owner_document;
 
@@ -375,15 +312,8 @@ static void
 dax_dom_element_init (DaxDomElement *self)
 {
     DaxDomElementPrivate *priv;
-    GParamSpecPool *pool;
 
     self->priv = priv = DOM_ELEMENT_PRIVATE (self);
-
-    priv->param_pools = g_ptr_array_sized_new (5);
-
-    /* xml */
-    pool = g_param_spec_pool_new (FALSE);
-    g_ptr_array_add (priv->param_pools, pool);
 
     priv->to_load = 1;      /* we need at least to load this element */
 }
@@ -466,35 +396,6 @@ dax_dom_element_get_loaded (DaxDomElement *element)
 /*
  * Methods
  */
-
-void
-dax_dom_element_handle_event (DaxDomElement *element,
-                              DaxXmlEvent   *event)
-{
-    DaxDomElementPrivate *priv = element->priv;
-    const gchar *event_name;
-    GSList *listeners_list, *iter;
-
-    event_name = dax_enum_to_string (DAX_TYPE_XML_EVENT_TYPE, event->type);
-
-    listeners_list = g_hash_table_lookup (priv->listeners, event_name);
-    if (listeners_list == NULL) {
-        g_warning (G_STRLOC ": Received event %s (%d) on %s, but no listeners "
-                   "registered", event_name, event->type,
-                   G_OBJECT_TYPE_NAME (element));
-        return;
-    }
-
-    for (iter = listeners_list; iter; iter = g_slist_next (iter)) {
-        EventListener *el = iter->data;
-
-        DAX_NOTE (EVENT, "%s fires the \"%s\" event on %s",
-                  G_OBJECT_TYPE_NAME (element), event_name,
-                  G_OBJECT_TYPE_NAME(el->listener));
-
-        dax_xml_event_listener_handle_event (el->listener, event);
-    }
-}
 
 const gchar *
 dax_dom_element_getAttributeNS (DaxDomElement  *self,

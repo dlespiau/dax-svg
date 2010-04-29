@@ -96,14 +96,13 @@ on_load_event (DaxElement *element,
                gboolean    loaded,
                gpointer    user_data)
 {
-    DaxDomElement *dom_element = (DaxDomElement *) element;
     DaxXmlEventTarget *target = DAX_XML_EVENT_TARGET (element);
     DaxXmlEvent load_event;
 
     dax_xml_event_from_type (&load_event, DAX_XML_EVENT_TYPE_LOAD, target);
 
-    dax_dom_element_handle_event (dom_element,
-                                  dax_xml_event_copy (&load_event));
+    dax_xml_event_target_handle_event (target,
+                                       dax_xml_event_copy (&load_event));
 }
 
 static void
@@ -213,7 +212,7 @@ dax_element_set_attribute (DaxDomElement  *self,
     pspec = g_object_class_find_property (object_class, name);
     if (pspec == NULL) {
         /* FIXME exception */
-        g_message ("Unsupported attribute %s for %s",
+        g_warning ("Unsupported attribute %s for %s",
                    name,
                    G_OBJECT_CLASS_NAME (object_class));
         return;
@@ -546,20 +545,22 @@ dax_element_getFloatTrait (DaxElement *element,
     pspec = g_object_class_find_property (object_class, name);
     if (pspec == NULL) {
         /* FIXME exception */
-        g_message ("Unsupported attribute %s for %s",
+        g_warning (G_STRLOC ": unsupported attribute %s for %s",
                    name,
                    G_OBJECT_CLASS_NAME (object_class));
         return 0.0f;
     }
 
-    if (G_PARAM_SPEC_TYPE (pspec) == G_TYPE_PARAM_FLOAT) {
+    if (pspec->value_type == G_TYPE_FLOAT) {
         g_object_get (element, name, &value, NULL);
-    } else if ((G_PARAM_SPEC_TYPE (pspec) == CLUTTER_TYPE_PARAM_UNITS) ||
-               (G_PARAM_SPEC_TYPE (pspec) == G_TYPE_PARAM_BOXED)) {
+    } else if (pspec->value_type == CLUTTER_TYPE_UNITS) {
         ClutterUnits *units;
 
         g_object_get (element, name, &units, NULL);
         value = clutter_units_to_pixels (units);
+    } else {
+        g_warning (G_STRLOC ": unsupported type %s",
+                   g_type_name (pspec->value_type));
     }
 
     return value;
@@ -577,19 +578,21 @@ dax_element_setFloatTrait (DaxElement *element,
     pspec = g_object_class_find_property (object_class, name);
     if (pspec == NULL) {
         /* FIXME exception */
-        g_message ("Unsupported attribute %s for %s",
+        g_warning ("Unsupported attribute %s for %s",
                    name,
                    G_OBJECT_CLASS_NAME (object_class));
         return;
     }
 
-    if (G_PARAM_SPEC_TYPE (pspec) == G_TYPE_PARAM_FLOAT) {
+    if (pspec->value_type == G_TYPE_FLOAT) {
         g_object_set (element, name, value, NULL);
-    } else if ((G_PARAM_SPEC_TYPE (pspec) == CLUTTER_TYPE_PARAM_UNITS) ||
-               (G_PARAM_SPEC_TYPE (pspec) == G_TYPE_PARAM_BOXED)) {
+    } else if (pspec->value_type == CLUTTER_TYPE_UNITS) {
         ClutterUnits units;
 
         clutter_units_from_pixels (&units, value);
         g_object_set (element, name, &units, NULL);
+    } else {
+        g_warning (G_STRLOC ": unsupported type %s",
+                   g_type_name (pspec->value_type));
     }
 }

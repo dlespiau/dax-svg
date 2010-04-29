@@ -346,7 +346,7 @@ _animation_setup_property (ClutterAnimation *animation,
 
     pspec = g_object_class_find_property (object_class, property);
     if (pspec == NULL) {
-        g_message ("Cannot animate property %s: %s has no '%s' attribute",
+        g_warning ("Cannot animate property %s: %s has no '%s' attribute",
                    property,
                    G_OBJECT_CLASS_NAME (object_class),
                    property);
@@ -359,7 +359,7 @@ _animation_setup_property (ClutterAnimation *animation,
     g_value_init (&to_value, pspec->value_type);
     _string_to_value (to, &to_value);
 
-    g_message ("setting up interval from %s to %s", from, to);
+    g_warning ("setting up interval from %s to %s", from, to);
     interval = clutter_interval_new_with_values (pspec->value_type,
                                                  &from_value,
                                                  &to_value);
@@ -413,13 +413,12 @@ on_button_release_event (ClutterActor *actor,
                          gpointer      user_data)
 {
     DaxXmlEvent xml_event;
-    DaxDomElement *target_element = DAX_DOM_ELEMENT (user_data);
     DaxXmlEventTarget *target = DAX_XML_EVENT_TARGET (user_data);
 
     xml_event_from_clutter_event (&xml_event, event, target);
 
-    dax_dom_element_handle_event (target_element,
-                                  dax_xml_event_copy (&xml_event));
+    dax_xml_event_target_handle_event (target, dax_xml_event_copy (&xml_event));
+
     return TRUE;
 }
 
@@ -433,12 +432,14 @@ on_load_event (DaxDomElement *element,
 
     dax_xml_event_from_type (&load_event, DAX_XML_EVENT_TYPE_LOAD, target);
 
-    dax_dom_element_handle_event (element, dax_xml_event_copy (&load_event));
+    dax_xml_event_target_handle_event (target,
+                                       dax_xml_event_copy (&load_event));
 }
 
 static gboolean event_needs_reactive (DaxXmlEventType type)
 {
-    return type < DAX_XML_EVENT_TYPE_FIRST_MOUSE_EVENT;
+    return type >= DAX_XML_EVENT_TYPE_FIRST_MOUSE_EVENT &&
+           type <= DAX_XML_EVENT_TYPE_LAST_MOUSE_EVENT; 
 }
 
 static void

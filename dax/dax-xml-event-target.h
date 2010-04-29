@@ -30,17 +30,17 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_XML_EVENT_TARGET (dax_xml_event_target_get_type ())
 
-#define DAX_XML_EVENT_TARGET(obj)                            \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                         \
-                                 DAX_TYPE_XML_EVENT_TARGET,  \
+#define DAX_XML_EVENT_TARGET(obj)                           \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
+                                 DAX_TYPE_XML_EVENT_TARGET, \
                                  DaxXmlEventTarget))
 
 #define DAX_IS_XML_EVENT_TARGET(obj) \
     (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DAX_TYPE_XML_EVENT_TARGET))
 
-#define DAX_XML_EVENT_TARGET_GET_IFACE(obj)                      \
-    (G_TYPE_INSTANCE_GET_INTERFACE ((obj),                          \
-                                    DAX_TYPE_XML_EVENT_TARGET,   \
+#define DAX_XML_EVENT_TARGET_GET_IFACE(obj)                     \
+    (G_TYPE_INSTANCE_GET_INTERFACE ((obj),                      \
+                                    DAX_TYPE_XML_EVENT_TARGET,  \
                                     DaxXmlEventTargetIface))
 
 typedef struct _DaxXmlEventTargetIface DaxXmlEventTargetIface;
@@ -56,29 +56,34 @@ struct _DaxXmlEventTargetIface
     GTypeInterface parent_iface;
 
     /*< public >*/
-    void (*add_event_listener) (DaxXmlEventTarget   *event_target,
-                                const gchar            *type,
-                                DaxXmlEventListener *listener,
-                                gboolean                use_capture);
+    void (*add_event_listener)      (DaxXmlEventTarget   *event_target,
+                                     const gchar         *type,
+                                     DaxXmlEventListener *listener,
+                                     gboolean             use_capture);
 
-    void (*remove_event_listener) (DaxXmlEventTarget   *event_target,
-                                   const gchar            *type,
-                                   DaxXmlEventListener *listener,
-                                   gboolean                use_capture);
+    void (*remove_event_listener)   (DaxXmlEventTarget   *event_target,
+                                     const gchar         *type,
+                                     DaxXmlEventListener *listener,
+                                     gboolean             use_capture);
+
+    void (*handle_event)            (DaxXmlEventTarget *event_target,
+                                     DaxXmlEvent       *event);
 };
 
-GType   dax_xml_event_target_get_type                (void) G_GNUC_CONST;
+GType   dax_xml_event_target_get_type               (void) G_GNUC_CONST;
 
-void    dax_xml_event_target_add_event_listener      (DaxXmlEventTarget   *target,
-                                                         const gchar            *type,
-                                                         DaxXmlEventListener *listener,
-                                                         gboolean                use_capture);
+void    dax_xml_event_target_add_event_listener     (DaxXmlEventTarget   *target,
+                                                     const gchar         *type,
+                                                     DaxXmlEventListener *listener,
+                                                     gboolean             use_capture);
 
-void    dax_xml_event_target_remove_event_listener   (DaxXmlEventTarget   *target,
-                                                         const gchar            *type,
-                                                         DaxXmlEventListener *listener,
-                                                         gboolean                use_capture);
+void    dax_xml_event_target_remove_event_listener  (DaxXmlEventTarget   *target,
+                                                     const gchar         *type,
+                                                     DaxXmlEventListener *listener,
+                                                     gboolean             use_capture);
 
+void    dax_xml_event_target_handle_event           (DaxXmlEventTarget *target,
+                                                     DaxXmlEvent       *event);
 G_END_DECLS
 
 #endif /* __DAX_XML_EVENT_TARGET__ */
