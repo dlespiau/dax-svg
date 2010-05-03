@@ -55,6 +55,7 @@ typedef struct _DaxJsContextClass DaxJsContextClass;
 typedef struct _DaxJsContextPrivate DaxJsContextPrivate;
 
 typedef void DaxJsObject;
+typedef void DaxJsFunction;
 
 struct _DaxJsContext
 {
@@ -68,16 +69,18 @@ struct _DaxJsContextClass
     GObjectClass parent_class;
 };
 
-GType           dax_js_context_get_type         (void) G_GNUC_CONST;
+GType           dax_js_context_get_type             (void) G_GNUC_CONST;
 
-DaxJsContext*   dax_js_context_new              (void);
-DaxJsContext*   dax_js_context_get_default      (void);
-gboolean        dax_js_context_eval             (DaxJsContext  *context,
-                                                 const char    *script,
-                                                 gssize         length,
-                                                 const char    *file,
-                                                 gint          *retval,
-                                                 GError       **error);
+DaxJsContext*   dax_js_context_new                  (void);
+DaxJsContext*   dax_js_context_get_default          (void);
+void *          dax_js_context_get_gjs_context      (DaxJsContext *context);
+void *          dax_js_context_get_native_context   (DaxJsContext *context);
+gboolean        dax_js_context_eval                 (DaxJsContext  *context,
+                                                     const char    *script,
+                                                     gssize         length,
+                                                     const char    *file,
+                                                     gint          *retval,
+                                                     GError       **error);
 
 gboolean        dax_js_context_call_function    (DaxJsContext *context,
                                                  const char   *name,
@@ -92,8 +95,6 @@ DaxJsObject*    dax_js_context_new_object_from_xml_event (DaxJsContext *context,
 gboolean        dax_js_context_add_global_object    (DaxJsContext *context,
                                                      const gchar  *name,
                                                      DaxJsObject  *object);
-gboolean        dax_js_context_setup_document       (DaxJsContext   *context,
-                                                     DaxDomDocument *document);
 
 G_END_DECLS
 

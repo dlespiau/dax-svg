@@ -19,6 +19,7 @@
 #include "dax-dom.h"
 
 #include "dax-internals.h"
+#include "dax-debug.h"
 
 #include "dax-udom-svg-timer.h"
 
@@ -46,7 +47,6 @@ enum
 
 struct _DaxSvgTimerPrivate
 {
-    glong initial_delay;
     glong repeat_interval;
     gboolean running;
 
@@ -65,6 +65,20 @@ elapsed_ms (GTimer *timer)
     return (gulong)(seconds * 1e3);
 }
 
+/* priv->delay is the delay till the next wake up */
+static gboolean dax_svg_timer_fire (gpointer data);
+static void
+schedule_next_wake_up (DaxSvgTimer *timer)
+{
+    DaxSvgTimerPrivate *priv = timer->priv;
+
+    DAX_NOTE (SCRIPT, "[TIMER] next wake up in %ld ms", priv->delay);
+    g_timer_start (priv->elapsed);
+    priv->timeout_id = g_timeout_add (priv->delay,
+                                      dax_svg_timer_fire,
+                                      timer);
+}
+
 static gboolean
 dax_svg_timer_fire (gpointer data)
 {
@@ -80,10 +94,8 @@ dax_svg_timer_fire (gpointer data)
                                        dax_xml_event_copy (&timer_event));
 
     if (priv->repeat_interval > 0) {
-        g_timer_start (priv->elapsed);
-        priv->timeout_id = g_timeout_add (priv->delay,
-                                          dax_svg_timer_fire,
-                                          timer);
+        priv->delay = priv->repeat_interval;
+        schedule_next_wake_up (timer);
     }
 
     return FALSE;
@@ -94,6 +106,8 @@ dax_svg_timer_set_delay (DaxSvgTimer *timer,
                          glong        delay)
 {
     DaxSvgTimerPrivate *priv = timer->priv;
+
+    DAX_NOTE (SCRIPT, "[TIMER] delay is now %ld ms", delay);
 
     if (!priv->running) {
         /* initial delay that will be used by start() */
@@ -114,8 +128,7 @@ dax_svg_timer_set_delay (DaxSvgTimer *timer,
 
         /* ...and schedule the next one */
         priv->delay = delay;
-        g_timer_start (priv->elapsed);
-        priv->timeout_id = g_timeout_add (delay, dax_svg_timer_fire, timer);
+        schedule_next_wake_up (timer);
     }
 }
 
@@ -130,6 +143,8 @@ dax_svg_timer_get_delay (DaxSvgTimer *timer)
     if (remaining < 0)
         remaining = 0;
 
+    DAX_NOTE (SCRIPT, "[TIMER] delay is %ld ms", remaining);
+
     return remaining;
 }
 
@@ -137,14 +152,21 @@ static void
 dax_svg_timer_set_repeat_interval (DaxSvgTimer *timer,
                                    glong        repeat_interval)
 {
+    DAX_NOTE (SCRIPT, "[TIMER] repeat interval is now %ld ms",
+              repeat_interval);
+
     timer->priv->repeat_interval = repeat_interval;
 }
 
 static glong
 dax_svg_timer_get_repeat_interval (DaxSvgTimer *timer)
 {
+    DaxSvgTimerPrivate *priv = timer->priv;
 
-    return timer->priv->repeat_interval;
+    DAX_NOTE (SCRIPT, "[TIMER] repeat interval is now %ld",
+              priv->repeat_interval);
+
+    return priv->repeat_interval;
 }
 
 /*
@@ -277,6 +299,8 @@ dax_svg_timer_start (DaxSvgTimer *timer)
 
     g_return_if_fail (DAX_IS_SVG_TIMER (timer));
 
+    DAX_NOTE (SCRIPT, "[TIMER] start on %p ms", timer);
+
     priv = timer->priv;
 
     if (priv->running)
@@ -286,8 +310,7 @@ dax_svg_timer_start (DaxSvgTimer *timer)
         priv->delay = priv->repeat_interval;
 
     priv->running = TRUE;
-    g_timer_start (priv->elapsed);
-    priv->timeout_id = g_timeout_add (priv->delay, dax_svg_timer_fire, timer);
+    schedule_next_wake_up (timer);
 }
 
 void
@@ -296,6 +319,8 @@ dax_svg_timer_stop (DaxSvgTimer *timer)
     DaxSvgTimerPrivate *priv;
 
     g_return_if_fail (DAX_IS_SVG_TIMER (timer));
+
+    DAX_NOTE (SCRIPT, "[TIMER] stop on %p ms", timer);
 
     priv = timer->priv;
 

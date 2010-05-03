@@ -22,17 +22,20 @@
  * Proxy the actual JS backend
  */
 
-#ifndef __DAX_JS_CONTEXT_H__
-#define __DAX_JS_CONTEXT_H__
+#ifndef __DAX_JS_UDOM_H__
+#define __DAX_JS_UDOM_H__
 
 #include <glib-object.h>
 
+#include "dax-dom.h"
+
 G_BEGIN_DECLS
 
-#include "dax-gjs-context.h"
-#include "dax-gjs-function-listener.h"
-#include "dax-gjs-udom.h"
+gboolean    _dax_js_udom_setup_document     (DaxJsContext   *context,
+                                             DaxDomDocument *document);
+gboolean    _dax_js_udom_setup_element      (DaxJsContext   *context,
+                                             DaxDomElement  *element);
 
 G_END_DECLS
 
-#endif /* __DAX_JS_CONTEXT_H__ */
+#endif /* __DAX_JS_UDOM_H__ */

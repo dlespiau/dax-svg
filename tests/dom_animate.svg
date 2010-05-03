@@ -10,7 +10,8 @@
     var maxTime = 5000;
     var textElement;
     var svgRoot;
-    var mytimer;
+    var someTimer;
+
     // A listener for the timer
     function someListener(evt) {
        showAndGrowElement();
@@ -32,7 +33,7 @@
     function showAndGrowElement() {
        timeValue += timerIncrement;
        // Scale the text string gradually until it is 20 times larger
-       scalefactor = (timeValue * 20) / maxTime;
+       var scalefactor = (timeValue * 20) / maxTime;
        var matrix = svgRoot.createSVGMatrixComponents(scalefactor, 0, 0, scalefactor, 0, 0);
        textElement.setMatrixTrait("transform", matrix);
        // Make the string more opaque

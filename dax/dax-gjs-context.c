@@ -24,8 +24,6 @@
 #include <gjs/gjs.h>
 #include <gjs/gi/object.h>
 
-#include "dax-udom-svg-timer.h"
-
 #include "dax-js-context.h"
 
 G_DEFINE_TYPE (DaxJsContext, dax_js_context, G_TYPE_OBJECT)
@@ -47,7 +45,7 @@ static void
 js_xml_event_finalize (JSContext *context,
                        JSObject  *obj)
 {
-    g_message (G_STRLOC ": not implemented");
+    //g_message (G_STRLOC ": not implemented");
 }
 
 static struct JSClass js_xml_event_class = {
@@ -190,6 +188,22 @@ dax_js_context_get_default (void)
     return context;
 }
 
+void *
+dax_js_context_get_gjs_context (DaxJsContext *context)
+{
+    g_return_val_if_fail (DAX_IS_JS_CONTEXT (context), NULL);
+
+    return context->priv->gjs_context;
+}
+
+void *
+dax_js_context_get_native_context (DaxJsContext *context)
+{
+    g_return_val_if_fail (DAX_IS_JS_CONTEXT (context), NULL);
+
+    return context->priv->js_context;
+}
+
 gboolean
 dax_js_context_eval (DaxJsContext  *context,
                      const char    *script,
@@ -317,57 +331,4 @@ dax_js_context_add_global_object (DaxJsContext *context,
                            JS_GetGlobalObject (priv->js_context),
                            name,
                            &js_val);
-}
-
-static JSBool
-create_timer (JSContext *cx,
-              JSObject  *obj,
-              uintN      argc,
-              jsval     *argv,
-              jsval     *rval)
-{
-    int32 initial_interval, repeat_interval;
-    DaxSvgTimer *timer;
-    JSObject *js_timer;
-
-    if (!JS_ConvertArguments (cx, argc, argv,
-                              "ii", &initial_interval, &repeat_interval))
-        {
-            return JS_FALSE;
-        }
-
-    timer = dax_svg_timer_new (initial_interval, repeat_interval);
-    js_timer = gjs_object_from_g_object (cx, (GObject *) timer);
-    *rval = OBJECT_TO_JSVAL (js_timer);
-
-    return JS_TRUE;
-}
-
-static JSFunctionSpec svg_global_functions[] = {
-    JS_FS ("createTimer", create_timer, 1, 0, 0),
-    JS_FS_END
-};
-
-gboolean
-dax_js_context_setup_document (DaxJsContext   *context,
-                               DaxDomDocument *document)
-{
-    DaxJsContextPrivate *priv;
-    DaxJsObject *js_object;
-
-    g_return_val_if_fail (DAX_IS_JS_CONTEXT (context), FALSE);
-    g_return_val_if_fail (DAX_IS_DOM_DOCUMENT (document), FALSE);
-
-    priv = context->priv;
-
-    js_object = dax_js_context_new_object_from_gobject (context,
-                                                        (GObject *) document);
-    dax_js_context_add_global_object (context, "document", js_object);
-
-    if (!JS_DefineFunctions(priv->js_context,
-                            JS_GetGlobalObject (priv->js_context),
-                            svg_global_functions))
-        return FALSE;
-
-    return TRUE;
 }

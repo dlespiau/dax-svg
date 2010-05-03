@@ -33,6 +33,26 @@ struct _ParserContext {
 };
 
 static void
+dax_dom_document_end_element (ParserContext *ctx)
+{
+    DaxJsContext *js_context;
+    DaxDomElement *element;
+
+    js_context = dax_js_context_get_default ();
+    element = DAX_DOM_ELEMENT (ctx->current_node);
+
+    DAX_NOTE (PARSING, "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
+
+    /* install some udom methods on the element */
+    _dax_js_udom_setup_element (js_context, element);
+
+    /* Signal the element its children and itself have been parsed */
+    _dax_dom_element_signal_parsed (element);
+
+    ctx->current_node = ctx->current_node->parent_node;
+}
+
+static void
 dax_dom_document_read_node (DaxDomDocument *document,
                             ParserContext  *ctx)
 {
@@ -83,26 +103,14 @@ dax_dom_document_read_node (DaxDomDocument *document,
 
         /* if the element is empty a DAX_DOM_NODE_TYPE_END_ELEMENT won't
          * be emited, so update current_node here */
-        if (is_empty) {
-            DAX_NOTE (PARSING,
-                         "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
+        if (is_empty)
+            dax_dom_document_end_element (ctx);
 
-            /* Signal the element its children and itself have been parsed */
-            _dax_dom_element_signal_parsed (
-                    DAX_DOM_ELEMENT (ctx->current_node));
-
-            ctx->current_node = ctx->current_node->parent_node;
-        }
         break;
     }
 
     case DAX_DOM_NODE_TYPE_END_ELEMENT:
-        DAX_NOTE (PARSING, "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
-
-        /* Signal the element its children and itself have been parsed */
-        _dax_dom_element_signal_parsed (DAX_DOM_ELEMENT (ctx->current_node));
-
-        ctx->current_node = ctx->current_node->parent_node;
+        dax_dom_document_end_element (ctx);
         break;
 
     case DAX_DOM_NODE_TYPE_TEXT_NODE:
@@ -150,7 +158,7 @@ dax_dom_document_parse_and_setup (DaxDomDocument *document,
 
     /* setup a few JS global objects */
     js_context = dax_js_context_get_default ();
-    dax_js_context_setup_document (js_context, document);
+    _dax_js_udom_setup_document (js_context, document);
 }
 
 /**

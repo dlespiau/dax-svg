@@ -30,17 +30,17 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_XML_EVENT_LISTENER (dax_xml_event_listener_get_type ())
 
-#define DAX_XML_EVENT_LISTENER(obj)                              \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                             \
-                                 DAX_TYPE_XML_EVENT_LISTENER,    \
+#define DAX_XML_EVENT_LISTENER(obj)                             \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                         \
+                                 DAX_TYPE_XML_EVENT_LISTENER,   \
                                  DaxXmlEventListener))
 
 #define DAX_IS_XML_EVENT_LISTENER(obj) \
     (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DAX_TYPE_XML_EVENT_LISTENER))
 
-#define DAX_XML_EVENT_LISTENER_GET_IFACE(obj)                    \
+#define DAX_XML_EVENT_LISTENER_GET_IFACE(obj)                       \
     (G_TYPE_INSTANCE_GET_INTERFACE ((obj),                          \
-                                    DAX_TYPE_XML_EVENT_LISTENER, \
+                                    DAX_TYPE_XML_EVENT_LISTENER,    \
                                     DaxXmlEventListenerIface))
 
 typedef struct _DaxXmlEventListenerIface DaxXmlEventListenerIface;
@@ -63,7 +63,7 @@ struct _DaxXmlEventListenerIface
 GType   dax_xml_event_listener_get_type      (void) G_GNUC_CONST;
 
 void    dax_xml_event_listener_handle_event  (DaxXmlEventListener *listener,
-                                                 DaxXmlEvent         *event);
+                                              DaxXmlEvent         *event);
 
 G_END_DECLS
 

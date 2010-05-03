@@ -52,6 +52,8 @@ source_c =				\
 	dax-element-tspan.c		\
 	dax-enum-types.c		\
 	dax-gjs-context.c		\
+	dax-gjs-function-listener.c	\
+	dax-gjs-udom.c			\
 	dax-knot-sequence.c		\
 	dax-paramspec.c			\
 	dax-parser.c			\
@@ -98,6 +100,7 @@ source_h =				\
 	dax-element-traversal.h		\
 	dax-element-tspan.h		\
 	dax-gjs-context.h		\
+	dax-gjs-function-listener.h	\
 	dax-knot-sequence.h		\
 	dax-parser.h			\
 	dax-svg-exception.h		\
@@ -113,6 +116,7 @@ source_h =				\
 source_h_private = 		\
 	dax-debug.h		\
 	dax-dom-private.h	\
+	dax-gjs-udom.h		\
 	dax-internals.h		\
 	dax-paramspec.h		\
 	dax-private.h		\
