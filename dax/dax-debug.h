@@ -47,15 +47,15 @@ typedef enum
 
 #define DAX_NOTE(type,x,a...)                                   \
     G_STMT_START {                                              \
-        if (_dax_debug_flags & DAX_DEBUG_##type)                \
-        { g_message ("[" #type "] " G_STRLOC ": " x, ##a); }    \
+        if (G_UNLIKELY (_dax_debug_flags & DAX_DEBUG_##type))   \
+          g_message ("[" #type "] " G_STRLOC ": " x, ##a);      \
     } G_STMT_END
 
 #define DAX_TIMESTAMP(type,x,a...)                              \
     G_STMT_START {                                              \
-        if (_dax_debug_flags & DAX_DEBUG_##type)                \
-        { g_message ("[" #type "]" " %li:"  G_STRLOC ": "       \
-                     x, _dax_get_timestamp(), ##a); }           \
+        if (G_UNLIKELY (_dax_debug_flags & DAX_DEBUG_##type))   \
+          g_message ("[" #type "]" " %li:"  G_STRLOC ": "       \
+                     x, _dax_get_timestamp(), ##a);             \
     } G_STMT_END
 
 #else /* !__GNUC__ */
@@ -66,7 +66,7 @@ typedef enum
  */
 #define DAX_NOTE(type,...)                                      \
     G_STMT_START {                                              \
-        if (_dax_debug_flags & DAX_DEBUG_##type)                \
+        if (G_UNLIKELY (_dax_debug_flags & DAX_DEBUG_##type))   \
         {                                                       \
             gchar * _fmt = g_strdup_printf (__VA_ARGS__);       \
             g_message ("[" #type "] " G_STRLOC ": %s",_fmt);    \
@@ -76,7 +76,7 @@ typedef enum
 
 #define DAX_TIMESTAMP(type,...)                                 \
     G_STMT_START {                                              \
-        if (_dax_debug_flags & DAX_DEBUG_##type)                \
+        if (G_UNLIKELY (_dax_debug_flags & DAX_DEBUG_##type))   \
         {                                                       \
             gchar * _fmt = g_strdup_printf (__VA_ARGS__);       \
             g_message ("[" #type "]" " %li:"  G_STRLOC ": %s",  \
