@@ -31,5 +31,5 @@ test_dom_SOURCES     = test-dom.c test-common.h
 test_dom_LDADD       = $(progs_ldadd)
 
 TEST_PROGS          += test-parser
-test_parser_SOURCES  = test-parser.c text-common.h
+test_parser_SOURCES  = test-parser.c test-common.h
 test_parser_LDADD    = $(progs_ldadd)
