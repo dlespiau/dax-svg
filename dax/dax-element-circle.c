@@ -147,6 +147,13 @@ dax_element_circle_dispose (GObject *object)
 static void
 dax_element_circle_finalize (GObject *object)
 {
+    DaxElementCircle *cicle = (DaxElementCircle *) object;
+    DaxElementCirclePrivate *priv = cicle->priv;
+
+    clutter_units_free (priv->cx);
+    clutter_units_free (priv->cy);
+    clutter_units_free (priv->radius);
+
     G_OBJECT_CLASS (dax_element_circle_parent_class)->finalize (object);
 }
 
