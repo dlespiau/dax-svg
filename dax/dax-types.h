@@ -121,6 +121,61 @@ gboolean            dax_repeat_count_from_string    (DaxRepeatCount *count,
                                                      const gchar    *string);
 gchar *             dax_repeat_count_to_string      (const DaxRepeatCount *count);
 
+/*
+ * DaxPreserveAspectRatio
+ */
+
+#define DAX_TYPE_PRESERVE_ASPECT_RATIO  (dax_preserve_aspect_ratio_get_type ())
+#define DAX_VALUE_HOLDS_PRESERVE_ASPECT_RATIO \
+    (G_VALUE_HOLDS ((x), DAX_TYPE_PRESERVE_ASPECT_RATIO))
+
+#define DAX_PRESERVE_ASPECT_RATIO_ALIGN_DEFAULT \
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MID_Y_MID
+#define DAX_PRESERVE_ASPECT_RATIO_ALIGN_CASE_SENSITIVE  1
+
+typedef enum
+{
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_NONE,
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MIN_Y_MIN,    /*< nick=xMinYMin >*/
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MID_Y_MIN,    /*< nick=xMidYMin >*/
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MAX_Y_MIN,    /*< nick=xMaxYMin >*/
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MIN_Y_MID,    /*< nick=xMinYMid >*/
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MID_Y_MID,    /*< nick=xMidYMid >*/
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MAX_Y_MID,    /*< nick=xMaxYMid >*/
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MIN_Y_MAX,    /*< nick=xMinYMax >*/
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MID_Y_MAX,    /*< nick=xMidYMax >*/
+    DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MAX_Y_MAX,    /*< nick=xMaxYMax >*/
+} DaxPreserveAspectRatioAlign;
+
+typedef struct _DaxPreserveAspectRatio DaxPreserveAspectRatio;
+
+#define DAX_PRESERVE_ASPECT_RATIO_FLAG_DEFER    1 << 0
+#define DAX_PRESERVE_ASPECT_RATIO_FLAG_MEET     1 << 1
+struct _DaxPreserveAspectRatio
+{
+    guint flags;
+    DaxPreserveAspectRatioAlign align;
+};
+
+GType
+dax_preserve_aspect_ratio_get_type (void) G_GNUC_CONST;
+
+DaxPreserveAspectRatio *
+dax_preserve_aspect_ratio_copy (DaxPreserveAspectRatio *ar);
+void
+dax_preserve_aspect_ratio_free (DaxPreserveAspectRatio *ar);
+
+gboolean
+dax_preserve_aspect_ratio_has_defer (DaxPreserveAspectRatio *ar);
+gboolean
+dax_preserve_aspect_ratio_has_meet (DaxPreserveAspectRatio *ar);
+
+gboolean
+dax_preserve_aspect_ratio_from_string (DaxPreserveAspectRatio *ar,
+                                       const gchar            *string);
+gchar *
+dax_preserve_aspect_ratio_to_string (DaxPreserveAspectRatio *ar);
+
 G_END_DECLS
 
 #endif /* __DAX_TYPES_H__ */

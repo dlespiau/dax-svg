@@ -40,6 +40,28 @@ dax_enum_to_string (GType type,
     return val;
 }
 
+gboolean
+dax_string_to_enum (GType        type,
+                    const gchar *nick,
+                    gint        *value)
+{
+    GEnumClass *enum_class;
+    GEnumValue *enum_value;
+    gboolean ret = FALSE;
+
+    enum_class = g_type_class_ref (type);
+    enum_value = g_enum_get_value_by_nick (enum_class, nick);
+    if (enum_value) {
+        if (value)
+            *value = enum_value->value;
+        ret = TRUE;
+    }
+
+    g_type_class_unref (enum_class);
+
+    return ret;
+}
+
 /*** END file-header ***/
 
 /*** BEGIN file-production ***/

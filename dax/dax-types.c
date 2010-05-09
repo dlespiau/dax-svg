@@ -20,8 +20,10 @@
 
 #include <string.h>
 
+#include "dax-enum-types.h"
 #include "dax-internals.h"
 #include "dax-utils.h"
+
 #include "dax-types.h"
 
 /*
@@ -64,7 +66,7 @@ dax_duration_free (DaxDuration *dur)
 
 void
 dax_duration_from_s (DaxDuration *dur,
-                        gfloat          seconds)
+                     gfloat       seconds)
 {
     g_return_if_fail (dur != NULL);
 
@@ -76,7 +78,7 @@ dax_duration_from_s (DaxDuration *dur,
 
 void
 dax_duration_from_ms (DaxDuration *dur,
-                         gfloat          ms)
+                      gfloat       ms)
 {
     g_return_if_fail (dur != NULL);
 
@@ -112,7 +114,7 @@ dax_duration_to_ms (DaxDuration *dur)
 
 gboolean
 dax_duration_from_string (DaxDuration *dur,
-                             const gchar    *string)
+                          const gchar *string)
 {
     DaxDurationType unit_type;
     gfloat value;
@@ -245,7 +247,7 @@ dax_repeat_count_free (DaxRepeatCount *count)
 
 void
 dax_repeat_count_from_number (DaxRepeatCount *count,
-                                 gfloat             nb)
+                              gfloat          nb)
 {
     g_return_if_fail (count != NULL);
 
@@ -270,7 +272,7 @@ dax_repeat_count_get_value (const DaxRepeatCount *count)
 
 gboolean
 dax_repeat_count_from_string (DaxRepeatCount *count,
-                                 const gchar       *string)
+                              const gchar    *string)
 {
     gfloat value;
     gchar *str = (gchar *)string;
@@ -355,4 +357,158 @@ dax_repeat_count_get_type (void)
     }
 
     return dax_repeat_count_type__volatile;
+}
+
+/*
+ * DaxPreserveAspectRatio
+ */
+
+DaxPreserveAspectRatio *
+dax_preserve_aspect_ratio_copy (DaxPreserveAspectRatio *ar)
+{
+    if (ar == NULL)
+        return NULL;
+
+    return g_slice_dup (DaxPreserveAspectRatio, ar);
+}
+
+void
+dax_preserve_aspect_ratio_free (DaxPreserveAspectRatio *ar)
+{
+    if (ar == NULL)
+        return;
+
+    g_slice_free (DaxPreserveAspectRatio, ar);
+}
+
+gboolean
+dax_preserve_aspect_ratio_from_string (DaxPreserveAspectRatio *ar,
+                                       const gchar            *string)
+{
+    gchar old_char, *str, *string_start = g_strdup (string);
+    gchar *enum_start;
+    gboolean ret = TRUE;
+
+    g_return_val_if_fail (ar != NULL, FALSE);
+    g_return_val_if_fail (string != NULL, FALSE);
+
+    str = string_start;
+    ar->flags = 0;
+
+    while (g_ascii_isspace (*str))
+        str++;
+
+    if (g_str_has_prefix (str, "defer")) {
+        ar->flags |= DAX_PRESERVE_ASPECT_RATIO_FLAG_DEFER;
+        str += 5;
+        while (g_ascii_isspace (*str))
+            str++;
+    }
+
+    enum_start = str;
+    while (*str && !g_ascii_isspace (*str))
+        str++;
+    old_char = *str;
+    *str = '\0';
+    if (!dax_string_to_enum (DAX_TYPE_PRESERVE_ASPECT_RATIO_ALIGN,
+                             enum_start,
+                             (gint *)&ar->align))
+    {
+        g_warning (G_STRLOC ": could not parse align value \"%s\", using "
+                   "default", enum_start);
+        ar->align = DAX_PRESERVE_ASPECT_RATIO_ALIGN_DEFAULT;
+    }
+    *str = old_char;
+
+    while (g_ascii_isspace (*str))
+        str++;
+
+    if (g_str_has_prefix (str, "meet")) {
+        ar->flags |= DAX_PRESERVE_ASPECT_RATIO_FLAG_MEET;
+        str += 4;
+        while (g_ascii_isspace (*str))
+            str++;
+    }
+
+    /* trailing spaces are OK, but not extra characters */
+    if (*str != '\0')
+        ret = FALSE;
+
+    g_free (string_start);
+
+    return ret;
+}
+
+gchar *
+dax_preserve_aspect_ratio_to_string (DaxPreserveAspectRatio *ar)
+{
+    GString *str;
+
+    str = g_string_new (NULL);
+    if (ar->flags & DAX_PRESERVE_ASPECT_RATIO_FLAG_DEFER)
+        g_string_append (str, "defer ");
+    g_string_append (str,
+                     dax_enum_to_string (DAX_TYPE_PRESERVE_ASPECT_RATIO_ALIGN,
+                                         ar->align));
+    if (ar->flags & DAX_PRESERVE_ASPECT_RATIO_FLAG_MEET)
+        g_string_append (str, " meet");
+
+    return g_string_free (str, FALSE);
+}
+
+static void
+_transform_preserve_ar_string (const GValue *src,
+                               GValue       *dest)
+{
+    gchar *string =
+        dax_preserve_aspect_ratio_to_string (src->data[0].v_pointer);
+
+    g_value_take_string (dest, string);
+}
+
+static void
+_transform_string_preserve_ar(const GValue *src,
+                               GValue       *dest)
+{
+    DaxPreserveAspectRatio ar = { 0, 0.0f };
+
+    dax_preserve_aspect_ratio_from_string (&ar, g_value_get_string (src));
+
+    dest->data[0].v_pointer = dax_preserve_aspect_ratio_copy (&ar);
+}
+
+GType
+dax_preserve_aspect_ratio_get_type (void)
+{
+    static volatile gsize dax_preserve_ar_type__volatile = 0;
+
+    if (g_once_init_enter (&dax_preserve_ar_type__volatile)) {
+        GType dax_preserve_ar_type =
+            g_boxed_type_register_static (I_("DaxPreserveAspectRatio"),
+                                          (GBoxedCopyFunc)dax_preserve_aspect_ratio_copy,
+                                          (GBoxedFreeFunc)dax_preserve_aspect_ratio_free);
+
+        g_value_register_transform_func (dax_preserve_ar_type,
+                                         G_TYPE_STRING,
+                                         _transform_preserve_ar_string);
+        g_value_register_transform_func (G_TYPE_STRING,
+                                         dax_preserve_ar_type,
+                                         _transform_string_preserve_ar);
+        g_once_init_leave (&dax_preserve_ar_type__volatile,
+                           dax_preserve_ar_type);
+    }
+
+    return dax_preserve_ar_type__volatile;
+}
+
+gboolean
+dax_preserve_aspect_ratio_has_defer (DaxPreserveAspectRatio *ar)
+{
+    return ar->flags & DAX_PRESERVE_ASPECT_RATIO_FLAG_DEFER;
+}
+
+gboolean
+dax_preserve_aspect_ratio_has_meet (DaxPreserveAspectRatio *ar)
+{
+    return ar->flags & DAX_PRESERVE_ASPECT_RATIO_FLAG_MEET;
 }

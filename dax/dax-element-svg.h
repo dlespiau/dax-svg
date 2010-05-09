@@ -31,27 +31,23 @@ G_BEGIN_DECLS
 
 #define DAX_TYPE_ELEMENT_SVG dax_element_svg_get_type()
 
-#define DAX_ELEMENT_SVG(obj)                             \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
-                                 DAX_TYPE_ELEMENT_SVG,   \
-                                 DaxElementSvg))
+#define DAX_ELEMENT_SVG(obj) \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj), DAX_TYPE_ELEMENT_SVG, DaxElementSvg))
 
-#define DAX_ELEMENT_SVG_CLASS(klass)                 \
-    (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
-                              DAX_TYPE_ELEMENT_SVG,  \
+#define DAX_ELEMENT_SVG_CLASS(klass)                \
+    (G_TYPE_CHECK_CLASS_CAST ((klass),              \
+                              DAX_TYPE_ELEMENT_SVG, \
                               DaxElementSvgClass))
 
-#define DAX_IS_ELEMENT_SVG(obj)      \
-    (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
-                                 DAX_TYPE_ELEMENT_SVG))
+#define DAX_IS_ELEMENT_SVG(obj) \
+    (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DAX_TYPE_ELEMENT_SVG))
 
-#define DAX_IS_ELEMENT_SVG_CLASS(klass)  \
-    (G_TYPE_CHECK_CLASS_TYPE ((klass),      \
-                              DAX_TYPE_ELEMENT_SVG))
+#define DAX_IS_ELEMENT_SVG_CLASS(klass) \
+    (G_TYPE_CHECK_CLASS_TYPE ((klass), DAX_TYPE_ELEMENT_SVG))
 
-#define DAX_ELEMENT_SVG_GET_CLASS(obj)                   \
-    (G_TYPE_INSTANCE_GET_CLASS ((obj),                      \
-                                DAX_TYPE_ELEMENT_SVG,    \
+#define DAX_ELEMENT_SVG_GET_CLASS(obj)                  \
+    (G_TYPE_INSTANCE_GET_CLASS ((obj),                  \
+                                DAX_TYPE_ELEMENT_SVG,   \
                                 DaxElementSvgClass))
 
 typedef struct _DaxElementSvg DaxElementSvg;

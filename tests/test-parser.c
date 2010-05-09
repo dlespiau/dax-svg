@@ -467,6 +467,57 @@ test_base_id (void)
                      "bar");
 }
 
+static struct {
+    gchar *str;
+    DaxPreserveAspectRatioAlign align;
+} test_par [10] = {
+    { "none", DAX_PRESERVE_ASPECT_RATIO_ALIGN_NONE },
+    { "xMinYMin", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MIN_Y_MIN },
+    { "xMidYMin", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MID_Y_MIN },
+    { "xMaxYMin", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MAX_Y_MIN },
+    { "xMinYMid", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MIN_Y_MID },
+    { "xMidYMid", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MID_Y_MID },
+    { "xMaxYMid", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MAX_Y_MID },
+    { "xMinYMax", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MIN_Y_MAX },
+    { "xMidYMax", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MID_Y_MAX },
+    { "xMaxYMax", DAX_PRESERVE_ASPECT_RATIO_ALIGN_X_MAX_Y_MAX }
+};
+
+static void
+test_preserve_ar (void)
+{
+    DaxPreserveAspectRatio par;
+    gboolean ret;
+    GString *str;
+    guint i;
+
+    for (i = i; i < G_N_ELEMENTS (test_par); i++) {
+        ret = dax_preserve_aspect_ratio_from_string (&par, test_par[i].str);
+        g_assert (ret);
+        g_assert_cmpint (par.align, ==, test_par[i].align);
+        g_assert (!dax_preserve_aspect_ratio_has_defer (&par));
+        g_assert (!dax_preserve_aspect_ratio_has_meet (&par));
+    }
+
+    str = g_string_new (NULL);
+    g_string_append_printf (str, "defer    %s", test_par[7].str);
+    ret = dax_preserve_aspect_ratio_from_string (&par, str->str);
+    g_assert (ret);
+    g_assert_cmpint (par.align, ==, test_par[7].align);
+    g_assert (dax_preserve_aspect_ratio_has_defer (&par));
+    g_assert (!dax_preserve_aspect_ratio_has_meet (&par));
+    g_string_free (str, TRUE);
+
+    str = g_string_new (NULL);
+    g_string_append_printf (str, " %s  meet", test_par[8].str);
+    ret = dax_preserve_aspect_ratio_from_string (&par, str->str);
+    g_assert (ret);
+    g_assert_cmpint (par.align, ==, test_par[8].align);
+    g_assert (!dax_preserve_aspect_ratio_has_defer (&par));
+    g_assert (dax_preserve_aspect_ratio_has_meet (&par));
+    g_string_free (str, TRUE);
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -487,6 +538,7 @@ main (int   argc,
     g_test_add_func ("/parser/line", test_line);
     g_test_add_func ("/parser/text", test_text);
     g_test_add_func ("/parser/xml-base-id", test_base_id);
+    g_test_add_func ("/parser/preserve-aspect-ratio", test_preserve_ar);
 
     return g_test_run ();
 }

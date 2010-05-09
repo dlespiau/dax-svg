@@ -25,7 +25,11 @@
 
 G_BEGIN_DECLS
 
-const gchar *dax_enum_to_string (GType type, gint value);
+const gchar *   dax_enum_to_string      (GType type,
+                                         gint  value);
+gboolean        dax_string_to_enum      (GType        type,
+                                         const gchar *nick,
+                                         gint        *value);
 
 /*** END file-header ***/
 

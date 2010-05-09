@@ -213,7 +213,7 @@ dax_element_set_attribute (DaxDomElement  *self,
     pspec = g_object_class_find_property (object_class, name);
     if (pspec == NULL) {
         /* FIXME exception */
-        g_warning ("Unsupported attribute %s for %s",
+        g_message ("Unsupported attribute %s for %s",
                    name,
                    G_OBJECT_CLASS_NAME (object_class));
         return;
