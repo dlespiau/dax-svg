@@ -215,7 +215,6 @@ dax_element_script_get_property (GObject    *object,
         g_value_set_enum (value, priv->type);
         break;
     case PROP_HREF:
-        invalid_resolved_href (script);     /* remove cached href */
         g_value_set_string (value, priv->href);
         break;
     default:
@@ -229,8 +228,8 @@ dax_element_script_set_property (GObject      *object,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-    DaxElementScript *self = DAX_ELEMENT_SCRIPT (object);
-    DaxElementScriptPrivate *priv = self->priv;
+    DaxElementScript *script = DAX_ELEMENT_SCRIPT (object);
+    DaxElementScriptPrivate *priv = script->priv;
 
     switch (property_id)
     {
@@ -238,6 +237,8 @@ dax_element_script_set_property (GObject      *object,
         priv->type = g_value_get_enum (value);
         break;
     case PROP_HREF:
+        invalid_resolved_href (script);     /* remove cached href */
+        g_free (priv->href);
         priv->href = g_value_dup_string (value);
         break;
     default:
