@@ -22,7 +22,6 @@
 #define __DAX_H_INSIDE__
 
 #include "dax-actor.h"
-#include "dax-clutter-traverser.h"
 #include "dax-core.h"
 #include "dax-dom-forward.h"
 #include "dax-dom-character-data.h"
@@ -51,6 +50,7 @@
 #include "dax-knot-sequence.h"
 #include "dax-parser.h"
 #include "dax-traverser.h"
+#include "dax-traverser-clutter.h"
 #include "dax-types.h"
 #include "dax-xml-forward.h"
 #include "dax-xml-event.h"

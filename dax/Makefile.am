@@ -25,7 +25,6 @@ source_c =				\
 	dax-actor.c			\
 	dax-cache.c			\
 	dax-cache-entry.c		\
-	dax-clutter-traverser.c		\
 	dax-core.c			\
 	dax-debug.c			\
 	dax-dom-character-data.c	\
@@ -62,6 +61,7 @@ source_c =				\
 	dax-parser.c			\
 	dax-svg-exception.c		\
 	dax-traverser.c			\
+	dax-traverser-clutter.c		\
 	dax-types.c			\
 	dax-udom-svg-timer.c		\
 	dax-utils.c			\
@@ -74,7 +74,6 @@ source_c =				\
 source_h =				\
 	dax.h				\
 	dax-actor.h			\
-	dax-clutter-traverser.h		\
 	dax-core.h			\
 	dax-dom.h			\
 	dax-dom-character-data.h	\
@@ -109,6 +108,7 @@ source_h =				\
 	dax-parser.h			\
 	dax-svg-exception.h		\
 	dax-traverser.h			\
+	dax-traverser-clutter.h		\
 	dax-types.h			\
 	dax-udom-svg-timer.h		\
 	dax-xml-event.h			\

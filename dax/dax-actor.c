@@ -16,7 +16,7 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dax-clutter-traverser.h"
+#include "dax-traverser-clutter.h"
 #include "dax-parser.h"
 #include "dax-actor.h"
 
@@ -47,17 +47,17 @@ dax_actor_rebuild_scene_graph (DaxActor *self)
 {
     DaxActorPrivate *priv = self->priv;
     DaxTraverser *traverser;
-    DaxClutterTraverser *clutter_traverser;
+    DaxTraverserClutter *traverser_clutter;
 
     /* start by removing everyone */
     clutter_container_foreach (CLUTTER_CONTAINER (self), remove_actor, self);
 
-    traverser = dax_clutter_traverser_new (DAX_DOM_NODE (priv->document),
+    traverser = dax_traverser_clutter_new (DAX_DOM_NODE (priv->document),
                                             CLUTTER_CONTAINER (self));
     dax_traverser_apply (traverser);
 
-    clutter_traverser = DAX_CLUTTER_TRAVERSER (traverser);
-    priv->score = g_object_ref (dax_clutter_traverser_get_score (clutter_traverser));
+    traverser_clutter = DAX_TRAVERSER_CLUTTER (traverser);
+    priv->score = g_object_ref (dax_traverser_clutter_get_score (traverser_clutter));
 
     g_object_unref (traverser);
 }
