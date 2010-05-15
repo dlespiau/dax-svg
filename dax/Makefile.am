@@ -23,6 +23,8 @@ BUILT_SOURCES = $(ENUMFILES)
 
 source_c =				\
 	dax-actor.c			\
+	dax-cache.c			\
+	dax-cache-entry.c		\
 	dax-clutter-traverser.c		\
 	dax-core.c			\
 	dax-debug.c			\
@@ -40,6 +42,7 @@ source_c =				\
 	dax-element-desc.c		\
 	dax-element-g.c			\
 	dax-element-handler.c		\
+	dax-element-image.c		\
 	dax-element-line.c		\
 	dax-element-path.c		\
 	dax-element-polyline.c		\
@@ -89,6 +92,7 @@ source_h =				\
 	dax-element-desc.h		\
 	dax-element-g.h			\
 	dax-element-handler.h		\
+	dax-element-image.h		\
 	dax-element-line.h		\
 	dax-element-path.h		\
 	dax-element-polyline.h		\
@@ -114,6 +118,8 @@ source_h =				\
 	$(NULL)
 
 source_h_private = 		\
+	dax-cache.h		\
+	dax-cache-entry.h	\
 	dax-debug.h		\
 	dax-dom-private.h	\
 	dax-gjs-udom.h		\

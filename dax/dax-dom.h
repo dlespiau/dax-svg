@@ -23,6 +23,8 @@
 
 G_BEGIN_DECLS
 
+#include "dax-cache.h"
+#include "dax-cache-entry.h"
 #include "dax-dom-character-data.h"
 #include "dax-dom-core.h"
 #include "dax-dom-forward.h"

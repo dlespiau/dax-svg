@@ -27,6 +27,7 @@
 #include "dax-element-circle.h"
 #include "dax-element-g.h"
 #include "dax-element-handler.h"
+#include "dax-element-image.h"
 #include "dax-element-line.h"
 #include "dax-element-path.h"
 #include "dax-element-polyline.h"
@@ -91,6 +92,8 @@ struct _DaxTraverserClass
                                  DaxElementLine *node);
     void (*traverse_text)       (DaxTraverser   *traverser,
                                  DaxElementText *node);
+    void (*traverse_image)      (DaxTraverser    *traverser,
+                                 DaxElementImage *node);
 };
 
 GType           dax_traverser_get_type          (void) G_GNUC_CONST;
@@ -122,6 +125,8 @@ void            dax_traverser_traverse_line     (DaxTraverser   *self,
                                                  DaxElementLine *node);
 void            dax_traverser_traverse_text     (DaxTraverser   *self,
                                                  DaxElementText *node);
+void            dax_traverser_traverse_image    (DaxTraverser    *self,
+                                                 DaxElementImage *image);
 G_END_DECLS
 
 #endif /* __DAX_TRAVERSER_H__ */

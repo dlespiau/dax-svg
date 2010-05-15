@@ -161,9 +161,12 @@ GType
 dax_preserve_aspect_ratio_get_type (void) G_GNUC_CONST;
 
 DaxPreserveAspectRatio *
-dax_preserve_aspect_ratio_copy (DaxPreserveAspectRatio *ar);
+dax_preserve_aspect_ratio_copy (const DaxPreserveAspectRatio *ar);
 void
 dax_preserve_aspect_ratio_free (DaxPreserveAspectRatio *ar);
+
+void
+dax_preserve_aspect_ratio_set_default (DaxPreserveAspectRatio *par);
 
 gboolean
 dax_preserve_aspect_ratio_has_defer (DaxPreserveAspectRatio *ar);

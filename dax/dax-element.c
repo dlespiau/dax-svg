@@ -130,7 +130,7 @@ dax_element_set_onload_handler (DaxElement  *element,
                                             "}",
                                             script);
 
-    if (dax_dom_element_get_loaded ((DaxDomElement *) element)) {
+    if (dax_dom_element_is_loaded ((DaxDomElement *) element)) {
         on_load_event (element, TRUE, NULL);
     } else  {
         g_signal_connect (element, "loaded",

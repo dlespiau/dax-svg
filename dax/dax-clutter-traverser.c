@@ -18,13 +18,13 @@
 
 #include <string.h>
 
-#include "dax-enum-types.h"
-#include "dax-debug.h"
-#include "dax-xml-event.h"
-#include "dax-xml-event-target.h"
-#include "dax-dom-private.h"
-#include "dax-knot-sequence.h"
+#include "dax-dom.h"
+
 #include "clutter-shape.h"
+#include "dax-debug.h"
+#include "dax-enum-types.h"
+#include "dax-knot-sequence.h"
+
 #include "dax-clutter-traverser.h"
 
 G_DEFINE_TYPE (DaxClutterTraverser,
@@ -487,7 +487,7 @@ dax_clutter_traverser_traverse_handler (DaxTraverser      *traverser,
                           G_CALLBACK (on_button_release_event), target);
         break;
     case DAX_XML_EVENT_TYPE_LOAD:
-        if (dax_dom_element_get_loaded (target)) {
+        if (dax_dom_element_is_loaded (target)) {
             on_load_event (target, TRUE, NULL);
         } else  {
             g_signal_connect (target, "loaded",
@@ -591,8 +591,66 @@ dax_clutter_traverser_traverse_text (DaxTraverser   *traverser,
     clutter_container_add_actor (priv->container, text);
 }
 
+static ClutterActor *
+clutter_texture_new_from_dax_image (DaxElementImage *image)
+{
+    ClutterActor *actor;
+    ClutterUnits *x_u, *y_u, *width_u, *height_u;
+    gfloat x, y, width, height;
+    const DaxCacheEntry *entry;
+    gchar *path;
+
+    x_u = dax_element_image_get_x (image);
+    y_u = dax_element_image_get_y (image);
+    width_u = dax_element_image_get_width (image);
+    height_u = dax_element_image_get_height (image);
+
+    x = clutter_units_to_pixels (x_u);
+    y = clutter_units_to_pixels (y_u);
+    width = clutter_units_to_pixels (width_u);
+    height = clutter_units_to_pixels (height_u);
+
+    entry = dax_element_image_get_cache_entry (image);
+    path = dax_cache_entry_get_local_path (entry);
+
+    /* FIXME: should be async */
+    actor = clutter_texture_new_from_file (path, NULL);
+    clutter_actor_set_x (actor, x);
+    clutter_actor_set_y (actor, x);
+    clutter_actor_set_width (actor, width);
+    clutter_actor_set_height (actor, height);
+
+    return actor;
+}
+
+static void
+on_image_loaded (DaxElementImage     *image,
+                 gboolean             loaded,
+                 DaxClutterTraverser *traverver)
+{
+    DaxClutterTraverserPrivate *priv = traverver->priv;
+    ClutterActor *actor;
+
+    if (loaded == FALSE)
+        return;
+
+    actor = clutter_texture_new_from_dax_image (image);
+    clutter_container_add_actor (priv->container, actor);
+}
+
+static void
+dax_clutter_traverser_traverse_image (DaxTraverser    *traverser,
+                                      DaxElementImage *node)
+{
+    DaxClutterTraverser *build = DAX_CLUTTER_TRAVERSER (traverser);
+
+    if (dax_dom_element_is_loaded ((DaxDomElement *) node))
+        on_image_loaded (node, TRUE, build);
+    g_signal_connect (node, "loaded", G_CALLBACK (on_image_loaded), build);
+}
+
 /*
- * GObject overloading
+ * GObject implementation
  */
 
 static void
@@ -663,6 +721,7 @@ dax_clutter_traverser_class_init (DaxClutterTraverserClass *klass)
     traverser_class->traverse_handler = dax_clutter_traverser_traverse_handler;
     traverser_class->traverse_line = dax_clutter_traverser_traverse_line;
     traverser_class->traverse_text = dax_clutter_traverser_traverse_text;
+    traverser_class->traverse_image = dax_clutter_traverser_traverse_image;
 }
 
 static void

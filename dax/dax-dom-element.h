@@ -128,7 +128,7 @@ void            dax_dom_element_set_id          (DaxDomElement *element,
                                                  const gchar   *id);
 void            dax_dom_element_set_loaded      (DaxDomElement *element,
                                                  gboolean       loaded);
-gboolean        dax_dom_element_get_loaded      (DaxDomElement *element);
+gboolean        dax_dom_element_is_loaded       (DaxDomElement *element);
 
 G_END_DECLS
 

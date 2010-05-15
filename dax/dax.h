@@ -37,6 +37,7 @@
 #include "dax-element-desc.h"
 #include "dax-element-g.h"
 #include "dax-element-handler.h"
+#include "dax-element-image.h"
 #include "dax-element-line.h"
 #include "dax-element-path.h"
 #include "dax-element-polyline.h"

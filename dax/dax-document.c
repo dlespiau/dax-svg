@@ -25,6 +25,7 @@
 #include "dax-element-desc.h"
 #include "dax-element-g.h"
 #include "dax-element-handler.h"
+#include "dax-element-image.h"
 #include "dax-element-line.h"
 #include "dax-element-path.h"
 #include "dax-element-polyline.h"
@@ -84,6 +85,8 @@ dax_document_create_element(DaxDomDocument  *self,
         return dax_element_animate_new ();
     if (strcmp (tag_name, "polyline") == 0)
         return dax_element_polyline_new ();
+    if (strcmp (tag_name, "image") == 0)
+        return dax_element_image_new ();
     if (strcmp (tag_name, "circle") == 0)
         return dax_element_circle_new ();
     if (strcmp (tag_name, "handler") == 0)

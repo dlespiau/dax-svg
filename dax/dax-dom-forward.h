@@ -1,7 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -27,9 +27,13 @@ G_BEGIN_DECLS
  * There is a circular dependencies between DOM Classes, so let's just
  * declare a few here first.
  */
-typedef struct _DaxDomNode            DaxDomNode;
-typedef struct _DaxDomElement         DaxDomElement;
-typedef struct _DaxDomDocument        DaxDomDocument;
+typedef struct _DaxDomNode          DaxDomNode;
+typedef struct _DaxDomElement       DaxDomElement;
+typedef struct _DaxDomDocument      DaxDomDocument;
+
+/* Same with DaxCache/DaxCacheEntry */
+typedef struct _DaxCache            DaxCache;
+typedef struct _DaxCacheEntry       DaxCacheEntry;
 
 G_END_DECLS
 

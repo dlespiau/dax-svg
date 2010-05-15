@@ -21,9 +21,9 @@
 
 G_DEFINE_TYPE (DaxTraverser, dax_traverser, G_TYPE_OBJECT)
 
-#define TRAVERSER_PRIVATE(o)                                    \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_TRAVERSER,    \
+#define TRAVERSER_PRIVATE(o)                                \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
+                                      DAX_TYPE_TRAVERSER,   \
                                       DaxTraverserPrivate))
 
 struct _DaxTraverserPrivate
@@ -97,6 +97,12 @@ dax_traverser_traverse_text_real (DaxTraverser   *self,
 {
 }
 
+static void
+dax_traverser_traverse_image_real (DaxTraverser    *self,
+                                   DaxElementImage *node)
+{
+}
+
 /*
  * GObject overloading
  */
@@ -162,6 +168,7 @@ dax_traverser_class_init (DaxTraverserClass *klass)
     klass->traverse_handler = dax_traverser_traverse_handler_real;
     klass->traverse_line = dax_traverser_traverse_line_real;
     klass->traverse_text = dax_traverser_traverse_text_real;
+    klass->traverse_image = dax_traverser_traverse_image_real;
 }
 
 static void
@@ -216,6 +223,8 @@ dax_traverse_node (DaxTraverser *traverser,
         dax_traverser_traverse_polyline (traverser, (DaxElementPolyline *)node);
     else if (DAX_IS_ELEMENT_ANIMATE (node))
         dax_traverser_traverse_animate (traverser, (DaxElementAnimate *)node);
+    else if (DAX_IS_ELEMENT_IMAGE (node))
+        dax_traverser_traverse_image (traverser, (DaxElementImage *)node);
     else if (DAX_IS_ELEMENT_CIRCLE (node))
         dax_traverser_traverse_circle (traverser, (DaxElementCircle *)node);
     else if (DAX_IS_ELEMENT_SCRIPT (node))
@@ -347,4 +356,13 @@ dax_traverser_traverse_text (DaxTraverser   *self,
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
     klass->traverse_text (self, node);
+}
+
+void
+dax_traverser_traverse_image (DaxTraverser    *self,
+                              DaxElementImage *node)
+{
+    DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_image (self, node);
 }

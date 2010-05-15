@@ -364,7 +364,7 @@ dax_repeat_count_get_type (void)
  */
 
 DaxPreserveAspectRatio *
-dax_preserve_aspect_ratio_copy (DaxPreserveAspectRatio *ar)
+dax_preserve_aspect_ratio_copy (const DaxPreserveAspectRatio *ar)
 {
     if (ar == NULL)
         return NULL;
@@ -499,6 +499,15 @@ dax_preserve_aspect_ratio_get_type (void)
     }
 
     return dax_preserve_ar_type__volatile;
+}
+
+void
+dax_preserve_aspect_ratio_set_default (DaxPreserveAspectRatio *par)
+{
+    g_return_if_fail (par);
+
+    par->flags = 0;
+    par->align = DAX_PRESERVE_ASPECT_RATIO_ALIGN_DEFAULT;
 }
 
 gboolean

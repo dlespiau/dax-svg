@@ -423,7 +423,46 @@ test_text (void)
 }
 
 static void
-test_base_id (void)
+test_image (void)
+{
+    DaxDomDocument *document;
+    DaxDomNode *svg, *desc, *image_node;
+    DaxElementImage *image;
+    ClutterUnits *units;
+    gfloat value;
+
+    document = dax_dom_document_new_from_file ("05_21.svg", NULL);
+    g_assert (DAX_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
+
+    /* <desc> */
+    desc = dax_dom_node_get_first_child (svg);
+    g_assert (DAX_IS_ELEMENT_DESC (desc));
+
+    /* <image> */
+    image_node = dax_dom_node_get_next_sibling (desc);
+    g_assert (DAX_IS_ELEMENT_IMAGE (image_node));
+    image = DAX_ELEMENT_IMAGE (image_node);
+
+    units = dax_element_image_get_x (image);
+    value = clutter_units_to_pixels (units);
+    g_assert_cmpfloat (value, ==, 200.0f);
+    units = dax_element_image_get_y (image);
+    value = clutter_units_to_pixels (units);
+    g_assert_cmpfloat (value, ==, 200.0f);
+    units = dax_element_image_get_width (image);
+    value = clutter_units_to_pixels (units);
+    g_assert_cmpfloat (value, ==, 100.0f);
+    units = dax_element_image_get_height (image);
+    value = clutter_units_to_pixels (units);
+    g_assert_cmpfloat (value, ==, 100.0f);
+}
+
+static void
+test_base (void)
 {
     DaxDomDocument *document;
     DaxDomNode *svg, *g1, *g2, *g3;
@@ -528,16 +567,17 @@ main (int   argc,
 
     g_test_add_func ("/parser/simple-document-from-file",
                      test_simple_document_from_file);
-    g_test_add_func ("/parser/polyline", test_polyline);
-    g_test_add_func ("/parser/path", test_path);
-    g_test_add_func ("/parser/animate", test_animate);
-    g_test_add_func ("/parser/title-desc", test_title_desc);
-    g_test_add_func ("/parser/script", test_script);
-    g_test_add_func ("/parser/circle", test_circle);
-    g_test_add_func ("/parser/handler", test_handler);
-    g_test_add_func ("/parser/line", test_line);
-    g_test_add_func ("/parser/text", test_text);
-    g_test_add_func ("/parser/xml-base-id", test_base_id);
+    g_test_add_func ("/parser/element/polyline", test_polyline);
+    g_test_add_func ("/parser/element/path", test_path);
+    g_test_add_func ("/parser/element/animate", test_animate);
+    g_test_add_func ("/parser/element/title-desc", test_title_desc);
+    g_test_add_func ("/parser/element/script", test_script);
+    g_test_add_func ("/parser/element/circle", test_circle);
+    g_test_add_func ("/parser/element/handler", test_handler);
+    g_test_add_func ("/parser/element/line", test_line);
+    g_test_add_func ("/parser/element/text", test_text);
+    g_test_add_func ("/parser/element/image", test_image);
+    g_test_add_func ("/parser/xml-base", test_base);
     g_test_add_func ("/parser/preserve-aspect-ratio", test_preserve_ar);
 
     return g_test_run ();

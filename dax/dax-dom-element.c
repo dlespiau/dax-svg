@@ -386,7 +386,7 @@ dax_dom_element_set_loaded (DaxDomElement *element,
 }
 
 gboolean
-dax_dom_element_get_loaded (DaxDomElement *element)
+dax_dom_element_is_loaded (DaxDomElement *element)
 {
     g_return_val_if_fail (DAX_IS_DOM_ELEMENT (element), FALSE);
 
