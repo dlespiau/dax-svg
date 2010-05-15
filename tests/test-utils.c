@@ -1,5 +1,6 @@
 
 #include <glib.h>
+#include <glib-object.h>
 
 #include <dax-utils.h>
 

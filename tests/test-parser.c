@@ -29,7 +29,7 @@
 static void
 test_simple_document_from_file (void)
 {
-    DaxDomDocument *document, *temp_doc;
+    DaxDomDocument *document;
     DaxDomNode *svg, *desc, *rect, *temp;
     ClutterUnits *units;
     DaxSvgVersion version;
@@ -285,7 +285,6 @@ test_circle (void)
 {
     DaxDomDocument *document;
     DaxDomNode *svg, *circle;
-    DaxScriptType type;
     ClutterUnits *units;
 
     document = dax_dom_document_new_from_file ("09_03.svg", NULL);
@@ -507,7 +506,7 @@ test_base (void)
 }
 
 static struct {
-    gchar *str;
+    const gchar *str;
     DaxPreserveAspectRatioAlign align;
 } test_par [10] = {
     { "none", DAX_PRESERVE_ASPECT_RATIO_ALIGN_NONE },
@@ -530,7 +529,7 @@ test_preserve_ar (void)
     GString *str;
     guint i;
 
-    for (i = i; i < G_N_ELEMENTS (test_par); i++) {
+    for (i = 0; i < G_N_ELEMENTS (test_par); i++) {
         ret = dax_preserve_aspect_ratio_from_string (&par, test_par[i].str);
         g_assert (ret);
         g_assert_cmpint (par.align, ==, test_par[i].align);

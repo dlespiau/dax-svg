@@ -29,7 +29,7 @@ static const gchar svg_ns[] = "http://www.w3.org/2000/svg";
 static void
 test_dom_node (void)
 {
-    DaxDomDocument *document, *temp_doc;
+    DaxDomDocument *document;
     DaxDomNode *svg, *desc, *rect, *temp;
     const gchar *ns_uri;
 
@@ -103,7 +103,6 @@ test_document_get_element_by_id (void)
 {
     DaxDomDocument *document;
     DaxDomElement *g;
-    const gchar *iri;
 
     document = dax_dom_document_new_from_memory (image_use_base,
                                                  sizeof (image_use_base) - 1,

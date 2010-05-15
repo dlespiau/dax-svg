@@ -12,6 +12,7 @@ AM_CPPFLAGS = 			\
 	-I$(top_srcdir)		\
 	-I$(top_srcdir)/dax	\
 	$(DAX_CFLAGS)		\
+	$(MAINTAINER_CFLAGS)	\
 	$(NULL)
 
 AM_CFLAGS = -g
