@@ -476,25 +476,25 @@ test_base (void)
     /* <svg> */
     svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
     g_assert (DAX_IS_ELEMENT_SVG (svg));
-    iri = dax_element_get_base_iri (DAX_ELEMENT (svg));
+    iri = dax_dom_element_get_base_iri (DAX_DOM_ELEMENT (svg));
     g_assert_cmpstr (iri, ==, "http://www.example.com");
 
     /* <g> */
     g1 = dax_dom_node_get_first_child (svg);
     g_assert (DAX_IS_ELEMENT_G (g1));
-    iri = dax_element_get_base_iri (DAX_ELEMENT (g1));
+    iri = dax_dom_element_get_base_iri (DAX_DOM_ELEMENT (g1));
     g_assert_cmpstr (iri, ==, "http://a.example.org/aaa/");
 
     /* <g> */
     g2 = dax_dom_node_get_first_child (g1);
     g_assert (DAX_IS_ELEMENT_G (g2));
-    iri = dax_element_get_base_iri (DAX_ELEMENT (g2));
+    iri = dax_dom_element_get_base_iri (DAX_DOM_ELEMENT (g2));
     g_assert_cmpstr (iri, ==, "http://a.example.org/bbb/ccc/");
 
     /* <g> */
     g3 = dax_dom_node_get_first_child (g2);
     g_assert (DAX_IS_ELEMENT_G (g3));
-    iri = dax_element_get_base_iri (DAX_ELEMENT (g3));
+    iri = dax_dom_element_get_base_iri (DAX_DOM_ELEMENT (g3));
     /* glib <= 2.24.0 don't remove the dot segments in GDummyFile */
     g_assert (strcmp (iri, "http://a.example.org/bbb/ddd/") == 0 ||
               strcmp (iri, "http://a.example.org/bbb/ccc/../ddd/") == 0);

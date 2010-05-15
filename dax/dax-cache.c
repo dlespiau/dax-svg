@@ -19,7 +19,7 @@
 #include <gio/gio.h>
 
 #include "dax-utils.h"
-#include "dax-element.h"
+#include "dax-dom-element.h"
 
 #include "dax-cache.h"
 
@@ -155,7 +155,7 @@ dax_cache_get_entry_for_href (DaxCache      *cache,
         entry = _dax_cache_entry_new (cache, href);
         g_hash_table_insert (priv->entries, (gchar *) href, entry);
     } else {
-        base_iri = dax_element_get_base_iri ((DaxElement *) element);
+        base_iri = dax_dom_element_get_base_iri (element);
         base_file = g_file_new_for_uri (base_iri);
 
         resolved_file = g_file_resolve_relative_path (base_file, href);

@@ -70,8 +70,6 @@ const ClutterColor *    dax_element_get_fill_color      (DaxElement *element);
 const ClutterColor *    dax_element_get_stroke_color    (DaxElement *element);
 gfloat                  dax_element_get_fill_opacity    (DaxElement *element);
 
-const gchar *           dax_element_get_base_iri        (DaxElement *element);
-
 /*
  * Trait API
  */

@@ -48,10 +48,6 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (
                                       DAX_TYPE_ELEMENT,     \
                                       DaxElementPrivate))
 
-/*
- * FIXME: {get,set}_base_iri() probably belongs to DomElement
- */
-
 enum
 {
     PROP_0,
@@ -59,7 +55,6 @@ enum
     PROP_FILL,
     PROP_FILL_OPACITY,
     PROP_STROKE,
-    PROP_BASE_IRI,
 
     /* legacy event handlers */
     PROP_ONLOAD,
@@ -70,26 +65,9 @@ struct _DaxElementPrivate
     ClutterColor *fill;
     gfloat fill_opacity;
     ClutterColor *stroke;
-    gchar *base_iri;                /* xml:base value in the DOM tree */
-    gchar *resolved_base_iri;       /* cache resolved xml:base */
 
     gchar *onload_handler;
 };
-
-static void
-invalid_resolved_iri (DaxElement *element)
-{
-    DaxElementPrivate *priv = element->priv;
-
-    if (priv->resolved_base_iri == NULL)
-        return;
-
-    /* resolved_base_iri can be base_iri in the case base_iri is an [UI]RI */
-    if (priv->base_iri == priv->resolved_base_iri)
-        g_free (priv->resolved_base_iri);
-
-    priv->resolved_base_iri = NULL;
-}
 
 static void
 on_load_event (DaxElement *element,
@@ -275,9 +253,6 @@ dax_element_get_property (GObject    *object,
     case PROP_FILL_OPACITY:
         g_value_set_float (value, priv->fill_opacity);
         break;
-    case PROP_BASE_IRI:
-        g_value_set_string (value, dax_element_get_base_iri (element));
-        break;
 
     case PROP_ONLOAD:
         g_value_set_string (value, priv->onload_handler);
@@ -316,14 +291,6 @@ dax_element_set_property (GObject      *object,
     case PROP_FILL_OPACITY:
         priv->fill_opacity = g_value_get_float (value);
         break;
-    case PROP_BASE_IRI:
-        /* Remove cached base_iri if needed */
-        invalid_resolved_iri (element);
-        /* Time to get a new iri */
-        if (priv->base_iri)
-            g_free (priv->base_iri);
-        priv->base_iri = g_value_dup_string (value);
-        break;
 
     case PROP_ONLOAD:
        dax_element_set_onload_handler (element, g_value_get_string (value));
@@ -343,12 +310,6 @@ dax_element_dispose (GObject *object)
 static void
 dax_element_finalize (GObject *object)
 {
-    DaxElement *element = DAX_ELEMENT (object);
-    DaxElementPrivate *priv = element->priv;
-
-    invalid_resolved_iri (element);
-    g_free (priv->base_iri);
-
     G_OBJECT_CLASS (dax_element_parent_class)->finalize (object);
 }
 
@@ -391,16 +352,6 @@ dax_element_class_init (DaxElementClass *klass)
                                 1.0f,
                                 DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_FILL_OPACITY, pspec);
-
-    pspec = dax_param_spec_string ("base",
-                                   "Base IRI",
-                                   "base IRI other than the base IRI of the "
-                                   "document or external entity",
-                                   NULL,
-                                   DAX_GPARAM_READWRITE,
-                                   DAX_PARAM_NONE,
-                                   xml_ns);
-    g_object_class_install_property (object_class, PROP_BASE_IRI, pspec);
 
     pspec = dax_param_spec_string ("onload",
                                    "onload",
@@ -474,58 +425,6 @@ dax_element_get_fill_opacity (DaxElement *element)
     g_return_val_if_fail (DAX_IS_ELEMENT (element), 1.0f);
 
     return element->priv->fill_opacity;
-}
-
-static const char *
-get_parent_base_iri (DaxElement *element)
-{
-    DaxDomNode *parent;
-
-    parent = ((DaxDomNode *) element)->parent_node;
-    if (DAX_IS_DOCUMENT (parent))
-        return dax_document_get_base_iri ((DaxDocument *) parent);
-    else
-        return dax_element_get_base_iri ((DaxElement *) parent);
-}
-
-const gchar *
-dax_element_get_base_iri (DaxElement *element)
-{
-    DaxElementPrivate *priv;
-
-    g_return_val_if_fail (DAX_IS_ELEMENT (element), NULL);
-
-    priv = element->priv;
-
-    if (priv->resolved_base_iri)
-        return priv->resolved_base_iri;
-
-    /* If xml:base is set, it's time to do some work */
-    if (priv->base_iri) {
-
-        if (_dax_utils_is_iri (priv->base_iri)) {
-            /* the value on the attribute is an actual uri */
-            priv->resolved_base_iri = priv->base_iri;
-        } else {
-            /* relative uri to resolve */
-            const gchar *parent_base_uri;
-            GFile *resolved_file, *parent_file;
-
-            parent_base_uri = get_parent_base_iri (element);
-            parent_file = g_file_new_for_uri (parent_base_uri);
-
-            resolved_file = g_file_resolve_relative_path (parent_file,
-                                                          priv->base_iri);
-            priv->resolved_base_iri = g_file_get_uri (resolved_file);
-
-            g_object_unref (parent_file);
-            g_object_unref (resolved_file);
-        }
-
-        return priv->resolved_base_iri;
-    }
-
-    return get_parent_base_iri (element);
 }
 
 /*

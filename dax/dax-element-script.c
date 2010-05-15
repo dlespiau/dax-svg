@@ -89,7 +89,7 @@ dax_element_script_resolve_href (DaxElementScript *script)
         const gchar *base_iri;
         GFile *base_file, *resolved_file;
 
-        base_iri = dax_element_get_base_iri ((DaxElement *) script);
+        base_iri = dax_dom_element_get_base_iri ((DaxDomElement *) script);
         base_file = g_file_new_for_uri (base_iri);
 
         resolved_file = g_file_resolve_relative_path (base_file, priv->href);

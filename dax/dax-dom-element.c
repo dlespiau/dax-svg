@@ -17,6 +17,7 @@
  */
 
 #include <string.h>
+#include <gio/gio.h>
 
 #include "dax-enum-types.h"
 #include "dax-dom-core.h"
@@ -24,6 +25,7 @@
 #include "dax-dom-private.h"
 #include "dax-dom-document.h"
 #include "dax-dom-element.h"
+#include "dax-utils.h"
 
 #include "dax-paramspec.h"      /* SEPDOM: paramspecs are too high? */
 
@@ -45,6 +47,7 @@ enum
     PROP_0,
 
     PROP_ID,
+    PROP_BASE_IRI,
 };
 
 enum
@@ -59,8 +62,12 @@ static guint signals[LAST_SIGNAL];
 
 struct _DaxDomElementPrivate
 {
-    gchar *id;
     guint to_load;                  /* number of children not yet "loaded" */
+
+    /* properties */
+    gchar *id;
+    gchar *base_iri;                /* xml:base value in the DOM tree */
+    gchar *resolved_base_iri;       /* cache resolved xml:base */
 };
 
 /*
@@ -77,6 +84,21 @@ dax_dom_element_get_attribute_foreign (DaxDomElement  *self,
     return NULL;
 }
 #endif
+
+static void
+invalidate_resolved_iri (DaxDomElement *element)
+{
+    DaxDomElementPrivate *priv = element->priv;
+
+    if (priv->resolved_base_iri == NULL)
+        return;
+
+    /* resolved_base_iri can be base_iri in the case base_iri is an [UI]RI */
+    if (priv->base_iri != priv->resolved_base_iri)
+        g_free (priv->resolved_base_iri);
+
+    priv->resolved_base_iri = NULL;
+}
 
 /*
  * Fallback when we are trying to set an attribute that does not have
@@ -217,6 +239,9 @@ dax_dom_element_get_property (GObject    *object,
     case PROP_ID:
         g_value_set_string (value, priv->id);
         break;
+    case PROP_BASE_IRI:
+        g_value_set_string (value, dax_dom_element_get_base_iri (element));
+        break;
 
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -230,12 +255,21 @@ dax_dom_element_set_property (GObject      *object,
                               GParamSpec   *pspec)
 {
     DaxDomElement *element = (DaxDomElement *) object;
+    DaxDomElementPrivate *priv = element->priv;
 
     switch (property_id)
     {
     case PROP_ID:
        dax_dom_element_set_id (element, g_value_get_string (value));
        break;
+    case PROP_BASE_IRI:
+        /* Remove cached base_iri if needed */
+        invalidate_resolved_iri (element);
+        /* Time to get a new iri */
+        if (priv->base_iri)
+            g_free (priv->base_iri);
+        priv->base_iri = g_value_dup_string (value);
+        break;
 
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec); }
@@ -259,6 +293,9 @@ dax_dom_element_finalize (GObject *object)
         _dax_dom_document_unset_id (document, priv->id);
         g_free (priv->id);
     }
+
+    invalidate_resolved_iri (element);
+    g_free (priv->base_iri);
 
     G_OBJECT_CLASS (dax_dom_element_parent_class)->finalize (object);
 }
@@ -287,6 +324,16 @@ dax_dom_element_class_init (DaxDomElementClass *klass)
                                    DAX_PARAM_NONE,
                                    xml_ns);
     g_object_class_install_property (object_class, PROP_ID, pspec);
+
+    pspec = dax_param_spec_string ("base",
+                                   "Base IRI",
+                                   "base IRI other than the base IRI of the "
+                                   "document or external entity",
+                                   NULL,
+                                   DAX_GPARAM_READWRITE,
+                                   DAX_PARAM_NONE,
+                                   xml_ns);
+    g_object_class_install_property (object_class, PROP_BASE_IRI, pspec);
 
     signals[PARSED] =
         g_signal_new (I_("parsed"),
@@ -524,3 +571,56 @@ dax_dom_element_setAttribute (DaxDomElement  *self,
     if (klass->set_attribute)
         klass->set_attribute (self, name, value, err);
 }
+
+static const char *
+get_parent_base_iri (DaxDomElement *element)
+{
+    DaxDomNode *parent;
+
+    parent = ((DaxDomNode *) element)->parent_node;
+    if (DAX_IS_DOM_DOCUMENT (parent))
+        return dax_dom_document_get_base_iri ((DaxDomDocument *) parent);
+    else
+        return dax_dom_element_get_base_iri ((DaxDomElement *) parent);
+}
+
+const gchar *
+dax_dom_element_get_base_iri (DaxDomElement *element)
+{
+    DaxDomElementPrivate *priv;
+
+    g_return_val_if_fail (DAX_IS_DOM_ELEMENT (element), NULL);
+
+    priv = element->priv;
+
+    if (priv->resolved_base_iri)
+        return priv->resolved_base_iri;
+
+    /* If xml:base is set, it's time to do some work */
+    if (priv->base_iri) {
+
+        if (_dax_utils_is_iri (priv->base_iri)) {
+            /* the value on the attribute is an actual uri */
+            priv->resolved_base_iri = priv->base_iri;
+        } else {
+            /* relative uri to resolve */
+            const gchar *parent_base_uri;
+            GFile *resolved_file, *parent_file;
+
+            parent_base_uri = get_parent_base_iri (element);
+            parent_file = g_file_new_for_uri (parent_base_uri);
+
+            resolved_file = g_file_resolve_relative_path (parent_file,
+                                                          priv->base_iri);
+            priv->resolved_base_iri = g_file_get_uri (resolved_file);
+
+            g_object_unref (parent_file);
+            g_object_unref (resolved_file);
+        }
+
+        return priv->resolved_base_iri;
+    }
+
+    return get_parent_base_iri (element);
+}
+

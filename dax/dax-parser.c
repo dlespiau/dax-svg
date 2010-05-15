@@ -186,7 +186,7 @@ dax_dom_document_new_from_memory (const gchar  *buffer,
     ctx.current_node = DAX_DOM_NODE (document);
 
     /* Set up the base uri */
-    dax_document_set_base_iri (DAX_DOCUMENT (document), base_iri);
+    dax_dom_document_set_base_iri (document, base_iri);
 
     dax_dom_document_parse_and_setup (document, &ctx);
 
@@ -220,7 +220,7 @@ dax_dom_document_new_from_file (const gchar  *filename,
     file = g_file_new_for_commandline_arg (filename);
     directory = g_file_get_parent (file);
     base_uri = g_file_get_uri (directory);
-    dax_document_set_base_iri ((DaxDocument *) document, base_uri);
+    dax_dom_document_set_base_iri (document, base_uri);
     g_free (base_uri);
     g_object_unref (file);
     g_object_unref (directory);

@@ -82,24 +82,26 @@ GType           dax_dom_document_get_type             (void) G_GNUC_CONST;
 
 DaxDomDocument *dax_dom_document_new                  (void);
 
-DaxDomElement  *dax_dom_document_get_document_element (DaxDomDocument *self);
+const gchar *   dax_dom_document_get_base_iri         (DaxDomDocument *document);
+void            dax_dom_document_set_base_iri         (DaxDomDocument *document,
+                                                       const char  *base_iri);
+DaxDomElement * dax_dom_document_get_document_element (DaxDomDocument *self);
 
-DaxDomElement  *dax_dom_document_create_element       (DaxDomDocument  *self,
+DaxDomElement * dax_dom_document_create_element       (DaxDomDocument  *self,
                                                        const gchar     *tag_name,
                                                        GError         **err);
 
-DaxDomElement  *dax_dom_document_create_element_ns    (DaxDomDocument  *self,
+DaxDomElement * dax_dom_document_create_element_ns    (DaxDomDocument  *self,
                                                        const gchar     *namespace_uri,
                                                        const gchar     *qualified_name,
                                                        GError         **err);
 
-DaxDomText     *dax_dom_document_create_text_node     (DaxDomDocument  *self,
+DaxDomText *    dax_dom_document_create_text_node     (DaxDomDocument  *self,
                                                        const gchar     *data);
 
-#define dax_dom_document_get_element_by_id \
-    dax_dom_document_getElementById
+#define dax_dom_document_get_element_by_id  dax_dom_document_getElementById
 
-DaxDomElement  *dax_dom_document_getElementById       (DaxDomDocument *self,
+DaxDomElement * dax_dom_document_getElementById       (DaxDomDocument *self,
                                                        const gchar    *id);
 
 G_END_DECLS

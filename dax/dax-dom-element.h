@@ -126,6 +126,8 @@ void            dax_dom_element_setAttribute    (DaxDomElement  *self,
 const gchar *   dax_dom_element_get_id          (DaxDomElement *element);
 void            dax_dom_element_set_id          (DaxDomElement *element,
                                                  const gchar   *id);
+
+const gchar *   dax_dom_element_get_base_iri    (DaxDomElement *element);
 void            dax_dom_element_set_loaded      (DaxDomElement *element,
                                                  gboolean       loaded);
 gboolean        dax_dom_element_is_loaded       (DaxDomElement *element);
