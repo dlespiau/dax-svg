@@ -37,7 +37,7 @@ enum
 
 struct _DaxElementPathPrivate
 {
-    ClutterPath *path;
+    ClutterPath2D *path;
 };
 
 static void
@@ -108,7 +108,7 @@ dax_element_path_class_init (DaxElementPathClass *klass)
     pspec = g_param_spec_object ("d",
                                 "Path data",
                                 "", /* FIXME */
-                                CLUTTER_TYPE_PATH,
+                                CLUTTER_TYPE_PATH_2D,
                                 DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_PATH, pspec);
 }
@@ -125,7 +125,7 @@ dax_element_path_new (void)
     return g_object_new (DAX_TYPE_ELEMENT_PATH, NULL);
 }
 
-ClutterPath *
+ClutterPath2D *
 dax_element_path_get_path (DaxElementPath *self)
 {
     g_return_val_if_fail (DAX_IS_ELEMENT_PATH (self), NULL);

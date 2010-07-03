@@ -71,8 +71,8 @@ struct _DaxElementPathClass
 
 GType               dax_element_path_get_type    (void) G_GNUC_CONST;
 
-DaxDomElement   *dax_element_path_new         (void);
-ClutterPath        *dax_element_path_get_path    (DaxElementPath *self);
+DaxDomElement *     dax_element_path_new         (void);
+ClutterPath2D *     dax_element_path_get_path    (DaxElementPath *self);
 
 G_END_DECLS
 

@@ -24,6 +24,7 @@
 #include "dax-debug.h"
 #include "dax-enum-types.h"
 #include "dax-knot-sequence.h"
+#include "dax-utils.h"
 
 #include "dax-traverser-clutter.h"
 
@@ -86,7 +87,7 @@ dax_traverser_clutter_traverse_path (DaxTraverser   *traverser,
     DaxElement *element = DAX_ELEMENT (node);
     const ClutterColor *fill_color, *stroke_color;
     ClutterActor *shape;
-    ClutterPath *path;
+    ClutterPath2D *path;
 
     shape = clutter_shape_new ();
 
@@ -182,10 +183,10 @@ dax_traverser_clutter_traverse_rect (DaxTraverser   *traverser,
     clutter_container_add_actor (priv->container, rectangle);
 }
 
-static ClutterPath *
+static ClutterPath2D *
 clutter_path_new_from_knot_sequence (const DaxKnotSequence *seq)
 {
-    ClutterPath *path;
+    ClutterPath2D *path;
     const float *knots;
     guint nb_knots, i;
 
@@ -194,11 +195,11 @@ clutter_path_new_from_knot_sequence (const DaxKnotSequence *seq)
         return NULL;
     knots = dax_knot_sequence_get_array (seq);
 
-    path = clutter_path_new ();
-    clutter_path_add_move_to (path, knots[0], knots[1]);
+    path = clutter_path_2d_new ();
+    clutter_path_2d_add_move_to (path, knots[0], knots[1]);
 
     for (i = 1; i < nb_knots; i++)
-        clutter_path_add_line_to (path, knots[i * 2], knots[i * 2 + 1]);
+        clutter_path_2d_add_line_to (path, knots[i * 2], knots[i * 2 + 1]);
 
     return path;
 }
@@ -213,7 +214,7 @@ dax_traverser_clutter_traverse_polyline (DaxTraverser       *traverser,
     const ClutterColor *fill_color, *stroke_color;
     ClutterActor *polyline;
     const DaxKnotSequence *seq;
-    ClutterPath *path;
+    ClutterPath2D *path;
 
     polyline = clutter_shape_new ();
 
@@ -232,15 +233,15 @@ dax_traverser_clutter_traverse_polyline (DaxTraverser       *traverser,
     clutter_container_add_actor (priv->container, polyline);
 }
 
-static ClutterPath *
+static ClutterPath2D *
 build_circle_path (DaxElementCircle *circle)
 {
-    ClutterPath *path;
+    ClutterPath2D *path;
     ClutterUnits *cx_u, *cy_u, *r_u;
     gfloat cx, cy, r;
     static gfloat k = 4 * (G_SQRT2 - 1) / 3;
 
-    /* Build the ClutterPath */
+    /* Build the ClutterPath2D */
     cx_u = dax_element_circle_get_cx (circle);
     cy_u = dax_element_circle_get_cy (circle);
     r_u  = dax_element_circle_get_r (circle);
@@ -248,26 +249,26 @@ build_circle_path (DaxElementCircle *circle)
     cy = clutter_units_to_pixels (cy_u);
     r = clutter_units_to_pixels (r_u);
 
-    path = clutter_path_new ();
+    path = clutter_path_2d_new ();
 
-    clutter_path_add_move_to (path, cx + r, cy);
-    clutter_path_add_curve_to (path,
-                               cx + r, cy + r * k,
-                               cx + r * k, cy + r,
-                               cx, cy + r);
-    clutter_path_add_curve_to (path,
-                               cx - r * k , cy + r,
-                               cx - r , cy + r * k,
-                               cx - r, cy);
-    clutter_path_add_curve_to (path,
-                               cx - r, cy - r * k,
-                               cx - r * k, cy - r,
-                               cx, cy - r);
-    clutter_path_add_curve_to (path,
-                               cx + r * k, cy - r,
-                               cx + r, cy - r * k,
-                               cx + r, cy);
-    clutter_path_add_close (path);
+    clutter_path_2d_add_move_to (path, cx + r, cy);
+    clutter_path_2d_add_curve_to (path,
+                                  cx + r, cy + r * k,
+                                  cx + r * k, cy + r,
+                                  cx, cy + r);
+    clutter_path_2d_add_curve_to (path,
+                                  cx - r * k , cy + r,
+                                  cx - r , cy + r * k,
+                                  cx - r, cy);
+    clutter_path_2d_add_curve_to (path,
+                                  cx - r, cy - r * k,
+                                  cx - r * k, cy - r,
+                                  cx, cy - r);
+    clutter_path_2d_add_curve_to (path,
+                                  cx + r * k, cy - r,
+                                  cx + r, cy - r * k,
+                                  cx + r, cy);
+    clutter_path_2d_add_close (path);
 
     return path;
 }
@@ -277,7 +278,7 @@ on_circle_changed (DaxElementCircle *circle,
                    GParamSpec       *pspec,
                    ClutterActor     *target)
 {
-    ClutterPath *path;
+    ClutterPath2D *path;
 
     path = build_circle_path (circle);
     g_object_set (target, "path", path, NULL);
@@ -292,7 +293,7 @@ dax_traverser_clutter_traverse_circle (DaxTraverser     *traverser,
     DaxElement *element = DAX_ELEMENT (node);
     const ClutterColor *fill_color, *stroke_color;
     ClutterActor *circle;
-    ClutterPath *path;
+    ClutterPath2D *path;
 
     path = build_circle_path (node);
 
@@ -504,12 +505,12 @@ dax_traverser_clutter_traverse_handler (DaxTraverser      *traverser,
 
 }
 
-static ClutterPath *
+static ClutterPath2D *
 clutter_path_new_from_line (DaxElementLine *line)
 {
     ClutterUnits *x1_u, *y1_u, *x2_u, *y2_u;
     gfloat x1, y1, x2, y2;
-    ClutterPath *path;
+    ClutterPath2D *path;
 
     x1_u = dax_element_line_get_x1 (line);
     y1_u = dax_element_line_get_y1 (line);
@@ -521,9 +522,9 @@ clutter_path_new_from_line (DaxElementLine *line)
     x2 = clutter_units_to_pixels (x2_u);
     y2 = clutter_units_to_pixels (y2_u);
 
-    path = clutter_path_new ();
-    clutter_path_add_move_to (path, x1, y1);
-    clutter_path_add_line_to (path, x2, y2);
+    path = clutter_path_2d_new ();
+    clutter_path_2d_add_move_to (path, x1, y1);
+    clutter_path_2d_add_line_to (path, x2, y2);
 
     return path;
 }
@@ -537,7 +538,7 @@ dax_traverser_clutter_traverse_line (DaxTraverser   *traverser,
     DaxElement *element = DAX_ELEMENT (node);
     const ClutterColor *stroke_color;
     ClutterActor *line;
-    ClutterPath *path;
+    ClutterPath2D *path;
 
     line = clutter_shape_new ();
     path = clutter_path_new_from_line (node);

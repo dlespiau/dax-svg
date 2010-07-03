@@ -46,14 +46,14 @@ enum
 
 struct _ClutterShapePrivate
 {
-    ClutterColor *color;            /* NULL means fill color */
-    ClutterColor *border_color;     /* NULL means stroke color */
-    ClutterPath *path;
+    ClutterColor *color;            /* NULL means no fill color */
+    ClutterColor *border_color;     /* NULL means no stroke color */
+    ClutterPath2D *path;
     CoglHandle cogl_path;
 };
 
-static void clutter_path_draw_cogl (const ClutterPathNode *node,
-                                    gpointer               user_data)
+static void clutter_path_draw_cogl (const ClutterPath2DNode *node,
+                                    gpointer                 user_data)
 {
   switch (node->type)
     {
@@ -103,7 +103,7 @@ clutter_shape_pick (ClutterActor       *self,
                                 color->green,
                                 color->blue,
                                 color->alpha);
-      clutter_path_foreach (priv->path, clutter_path_draw_cogl, NULL);
+      clutter_path_2d_foreach (priv->path, clutter_path_draw_cogl, NULL);
       cogl_path_fill();
     }
 }
@@ -127,7 +127,7 @@ clutter_shape_paint (ClutterActor *self)
   ClutterColor         tmp_col;
 
   if (priv->cogl_path == COGL_INVALID_HANDLE) {
-      clutter_path_foreach (priv->path, clutter_path_draw_cogl, NULL);
+      clutter_path_2d_foreach (priv->path, clutter_path_draw_cogl, NULL);
       priv->cogl_path = cogl_handle_ref (cogl_get_path ());
   } else {
       cogl_set_path (priv->cogl_path);
@@ -274,9 +274,9 @@ clutter_shape_class_init (ClutterShapeClass *klass)
     g_object_class_install_property (gobject_class, PROP_BORDER_COLOR, pspec);
 
     pspec = g_param_spec_object ("path",
+                                 "Path",
                                  "A path describing the shape",
-                                 "", /* FIXME */
-                                 CLUTTER_TYPE_PATH,
+                                 CLUTTER_TYPE_PATH_2D,
                                  CLUTTER_PARAM_READWRITE);
     g_object_class_install_property (gobject_class, PROP_PATH, pspec);
 }
@@ -284,13 +284,18 @@ clutter_shape_class_init (ClutterShapeClass *klass)
 static void
 clutter_shape_init (ClutterShape *self)
 {
-    self->priv = CLUTTER_SHAPE_GET_PRIVATE (self);
+    ClutterShapePrivate  *priv;
+
+    self->priv = priv = CLUTTER_SHAPE_GET_PRIVATE (self);
+
+    /* We default to displaying black bordered shapes */
+    priv->border_color = clutter_color_new (0, 0, 0, 0xff);
 }
 
 /**
  * clutter_shape_new:
  *
- * Creates a new #ClutterActor with a rectangular shape.
+ * Creates a new #ClutterActor that draws a #ClutterPath2D
  *
  * Return value: a new #ClutterActor
  */

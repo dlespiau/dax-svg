@@ -136,8 +136,8 @@ test_path (void)
 {
     DaxDomDocument *document;
     DaxDomNode *svg, *path;
-    ClutterPath *clutter_path;
-    ClutterPathNode node;
+    ClutterPath2D *clutter_path;
+    ClutterPath2DNode node;
 
     document = dax_dom_document_new_from_file ("08_01.svg", NULL);
     g_assert (DAX_IS_DOM_DOCUMENT (document));
@@ -147,20 +147,20 @@ test_path (void)
     path = dax_dom_node_get_last_child (svg);
     g_assert (DAX_IS_ELEMENT_PATH (path));
     clutter_path = dax_element_path_get_path (DAX_ELEMENT_PATH (path));
-    g_assert (clutter_path_get_n_nodes (clutter_path) == 4);
-    clutter_path_get_node (clutter_path, 0, &node);
+    g_assert (clutter_path_2d_get_n_nodes (clutter_path) == 4);
+    clutter_path_2d_get_node (clutter_path, 0, &node);
     g_assert (node.type == CLUTTER_PATH_MOVE_TO);
     g_assert_cmpint (node.points[0].x, ==, 100);
     g_assert_cmpint (node.points[0].y, ==, 100);
-    clutter_path_get_node (clutter_path, 1, &node);
+    clutter_path_2d_get_node (clutter_path, 1, &node);
     g_assert (node.type == CLUTTER_PATH_LINE_TO);
     g_assert_cmpint (node.points[0].x, ==, 300);
     g_assert_cmpint (node.points[0].y, ==, 100);
-    clutter_path_get_node (clutter_path, 2, &node);
+    clutter_path_2d_get_node (clutter_path, 2, &node);
     g_assert (node.type == CLUTTER_PATH_LINE_TO);
     g_assert_cmpint (node.points[0].x, ==, 200);
     g_assert_cmpint (node.points[0].y, ==, 300);
-    clutter_path_get_node (clutter_path, 3, &node);
+    clutter_path_2d_get_node (clutter_path, 3, &node);
     g_assert (node.type == CLUTTER_PATH_CLOSE);
 }
 
