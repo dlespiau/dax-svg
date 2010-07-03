@@ -1,7 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
@@ -207,4 +207,64 @@ _dax_utils_is_iri (const gchar *str)
 {
     return g_str_has_prefix (str, "http://") ||
            g_str_has_prefix (str, "file://");
+}
+
+static void
+dump_path2d_node (ClutterPath2DNode *node)
+{
+  switch (node->type)
+    {
+    case CLUTTER_PATH_MOVE_TO:
+      g_print ("M %.2f,%.2f %.2f,%.2f\n", node->points[0].x, node->points[0].y,
+                                          node->points[1].x, node->points[1].y);
+      break;
+    case CLUTTER_PATH_REL_MOVE_TO:
+      g_print ("m %.2f,%.2f %.2f,%.2f\n", node->points[0].x, node->points[0].y,
+                                          node->points[1].x, node->points[1].y);
+      break;
+    case CLUTTER_PATH_LINE_TO:
+      g_print ("L %.2f,%.2f %.2f,%.2f\n", node->points[0].x, node->points[0].y,
+                                          node->points[1].x, node->points[1].y);
+      break;
+    case CLUTTER_PATH_REL_LINE_TO:
+      g_print ("l %.2f,%.2f %.2f,%.2f\n", node->points[0].x, node->points[0].y,
+                                          node->points[1].x, node->points[1].y);
+      break;
+    case CLUTTER_PATH_CURVE_TO:
+      g_print ("C %.2f,%.2f %.2f,%.2f %.2f,%.2f\n",
+               node->points[0].x, node->points[0].y,
+               node->points[1].x, node->points[1].y,
+               node->points[2].x, node->points[2].y);
+      break;
+    case CLUTTER_PATH_REL_CURVE_TO:
+      g_print ("c %.2f,%.2f %.2f,%.2f %.2f,%.2f\n",
+               node->points[0].x, node->points[0].y,
+               node->points[1].x, node->points[1].y,
+               node->points[2].x, node->points[2].y);
+      break;
+    case CLUTTER_PATH_CLOSE:
+      g_print ("z\n");
+      break;
+    default:
+      g_assert_not_reached ();
+    }
+
+}
+
+void
+_dax_utils_dump_path_2d (ClutterPath2D *path)
+{
+  GSList *nodes, *e;
+
+  g_message ("path %p", path);
+
+  nodes = clutter_path_2d_get_nodes (path);
+  for (e = nodes; e; e = g_slist_next (e))
+    {
+      ClutterPath2DNode *node = e->data;
+
+      dump_path2d_node (node);
+    }
+
+  g_slist_free (nodes);
 }

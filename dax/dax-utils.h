@@ -22,6 +22,7 @@
 #define __DAX_UTILS_H__
 
 #include <glib.h>
+#include <clutter/clutter.h>
 
 G_BEGIN_DECLS
 
@@ -36,6 +37,7 @@ gboolean    _dax_utils_parse_simple_float       (gchar **string,
 gboolean    _dax_utils_parse_float              (char   **string,
                                                  gfloat  *x);
 gboolean    _dax_utils_is_iri                   (const gchar *str);
+void        _dax_utils_dump_path_2d             (ClutterPath2D *path);
 
 G_END_DECLS
 
