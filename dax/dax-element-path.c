@@ -1,7 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
@@ -19,32 +19,37 @@
  */
 
 #include "dax-internals.h"
+#include "dax-types.h"
+#include "dax-utils.h"
+
 #include "dax-element-path.h"
 
 G_DEFINE_TYPE (DaxElementPath, dax_element_path, DAX_TYPE_ELEMENT)
 
 #define ELEMENT_PATH_PRIVATE(o)                                 \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_ELEMENT_PATH, \
+                                      DAX_TYPE_ELEMENT_PATH,    \
                                       DaxElementPathPrivate))
 
 enum
 {
     PROP_0,
 
-    PROP_PATH
+    PROP_PATH,
+    PROP_TRANSFORM
 };
 
 struct _DaxElementPathPrivate
 {
     ClutterPath2D *path;
+    DaxMatrix *transform;
 };
 
 static void
 dax_element_path_get_property (GObject    *object,
-                                  guint       property_id,
-                                  GValue     *value,
-                                  GParamSpec *pspec)
+                               guint       property_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
 {
     DaxElementPath *self = DAX_ELEMENT_PATH (object);
     DaxElementPathPrivate *priv = self->priv;
@@ -54,6 +59,9 @@ dax_element_path_get_property (GObject    *object,
     case PROP_PATH:
         g_value_set_object (value, priv->path);
         break;
+    case PROP_TRANSFORM:
+        g_value_set_boxed (value, priv->transform);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -61,9 +69,9 @@ dax_element_path_get_property (GObject    *object,
 
 static void
 dax_element_path_set_property (GObject      *object,
-                                  guint         property_id,
-                                  const GValue *value,
-                                  GParamSpec   *pspec)
+                               guint         property_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
 {
     DaxElementPath *self = DAX_ELEMENT_PATH (object);
     DaxElementPathPrivate *priv = self->priv;
@@ -74,6 +82,11 @@ dax_element_path_set_property (GObject      *object,
         if (priv->path)
             g_object_unref (priv->path);
         priv->path = g_object_ref (g_value_get_object (value));
+        break;
+    case PROP_TRANSFORM:
+        if (priv->transform)
+            dax_matrix_free (priv->transform);
+        priv->transform = dax_matrix_copy (g_value_get_boxed (value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -111,6 +124,10 @@ dax_element_path_class_init (DaxElementPathClass *klass)
                                 CLUTTER_TYPE_PATH_2D,
                                 DAX_GPARAM_READWRITE);
     g_object_class_install_property (object_class, PROP_PATH, pspec);
+
+    _dax_utils_install_properties (object_class,
+                                   _DAX_PROP_TRANSFORM, PROP_TRANSFORM,
+                                   0);
 }
 
 static void

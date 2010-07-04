@@ -18,6 +18,7 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <math.h>
 #include <string.h>
 
 #include <glib.h>
@@ -556,6 +557,113 @@ test_preserve_ar (void)
     g_string_free (str, TRUE);
 }
 
+#define fill_matrix(mat, a, b, c, d, e, f)      \
+    do {                                        \
+        mat.affine[0] = a; mat.affine[1] = b;   \
+        mat.affine[2] = c; mat.affine[3] = d;   \
+        mat.affine[4] = e; mat.affine[5] = f;   \
+    } while (0)
+
+#define EPSILON 1e-6
+
+static gboolean
+_dax_affine_equal (double matrix1[6],
+                   double matrix2[6])
+{
+    return (fabs (matrix1[0] - matrix2[0]) < EPSILON &&
+            fabs (matrix1[1] - matrix2[1]) < EPSILON &&
+            fabs (matrix1[2] - matrix2[2]) < EPSILON &&
+            fabs (matrix1[3] - matrix2[3]) < EPSILON &&
+            fabs (matrix1[4] - matrix2[4]) < EPSILON &&
+            fabs (matrix1[5] - matrix2[5]) < EPSILON);
+}
+
+static void
+dax_assert_matrix_equal (DaxMatrix *m1,
+                         DaxMatrix *m2)
+{
+    gboolean res;
+
+    res = _dax_affine_equal (m1->affine, m2->affine);
+    if (res == FALSE) {
+        g_message ("[%.02lf %.02lf %.02lf %.02lf %.02lf %.02lf] != "
+                   "[%.02lf %.02lf %.02lf %.02lf %.02lf %.02lf]",
+                   m1->affine[0], m1->affine[1], m1->affine[2],
+                   m1->affine[3], m1->affine[4], m1->affine[5],
+                   m2->affine[0], m2->affine[1], m2->affine[2],
+                   m2->affine[3], m2->affine[4], m2->affine[5]);
+    }
+    g_assert (res);
+}
+
+static void
+test_transform (void)
+{
+    DaxDomDocument *document;
+    DaxDomNode *svg, *tmp, *g;
+    DaxMatrix *matrix;
+    DaxMatrix translate1, rotate1, translate2;
+    double s, c;
+
+    fill_matrix (translate1, 1, 0, 0, 1, 50, 90);
+    s = sin (-45 * M_PI / 180.0);
+    c = cos (-45 * M_PI / 180.0);
+    fill_matrix (rotate1, c, s, -s, c, 0, 0);
+    fill_matrix (translate2, 1, 0, 0, 1, 130, 160);
+
+    document = dax_dom_document_new_from_file ("07_07.svg", NULL);
+    g_assert (DAX_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
+
+    /* <desc> */
+    tmp = dax_dom_node_get_first_child (svg);
+    g_assert (DAX_IS_ELEMENT_DESC (tmp));
+
+    /* <g> */
+    g = dax_dom_node_get_next_sibling (tmp);
+    g_assert (DAX_IS_ELEMENT_G (g));
+
+    /* <g> */
+    g = dax_dom_node_get_next_sibling (g);
+    g_assert (DAX_IS_ELEMENT_G (g));
+    g_object_get (g, "transform", &matrix, NULL);
+    dax_assert_matrix_equal (matrix, &translate1);
+    dax_matrix_free (matrix);
+
+    /* <g> */
+    tmp = dax_dom_node_get_first_child (g);
+    g_assert (DAX_IS_ELEMENT_G (tmp));
+
+    /* <text> */
+    tmp = dax_dom_node_get_next_sibling (tmp);
+    g_assert (DAX_IS_ELEMENT_TEXT (tmp));
+
+    /* <g> */
+    g = dax_dom_node_get_next_sibling (tmp);
+    g_assert (DAX_IS_ELEMENT_G (g));
+    g_object_get (g, "transform", &matrix, NULL);
+    dax_assert_matrix_equal (matrix, &rotate1);
+    dax_matrix_free (matrix);
+
+    /* <g> */
+    tmp = dax_dom_node_get_first_child (g);
+    g_assert (DAX_IS_ELEMENT_G (tmp));
+
+    /* <text> */
+    tmp = dax_dom_node_get_next_sibling (tmp);
+    g_assert (DAX_IS_ELEMENT_TEXT (tmp));
+
+    /* <g> */
+    g = dax_dom_node_get_next_sibling (tmp);
+    g_assert (DAX_IS_ELEMENT_G (g));
+    g_object_get (g, "transform", &matrix, NULL);
+    dax_assert_matrix_equal (matrix, &translate2);
+    dax_matrix_free (matrix);
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -578,6 +686,7 @@ main (int   argc,
     g_test_add_func ("/parser/element/image", test_image);
     g_test_add_func ("/parser/xml-base", test_base);
     g_test_add_func ("/parser/preserve-aspect-ratio", test_preserve_ar);
+    g_test_add_func ("/parser/transform", test_transform);
 
     return g_test_run ();
 }

@@ -20,11 +20,258 @@
 
 #include <string.h>
 
+#include "dax-affine.h"
 #include "dax-enum-types.h"
 #include "dax-internals.h"
 #include "dax-utils.h"
 
 #include "dax-types.h"
+
+/*
+ * DaxMatrix
+ */
+
+DaxMatrix *
+dax_matrix_copy (const DaxMatrix *matrix)
+{
+    if (matrix == NULL)
+        return NULL;
+
+    return g_slice_dup (DaxMatrix, matrix);
+}
+
+void
+dax_matrix_free (DaxMatrix *matrix)
+{
+    if (matrix == NULL)
+        return;
+
+    g_slice_free (DaxMatrix, matrix);
+}
+
+void
+dax_matrix_from_array (DaxMatrix *matrix,
+                       double     src[6])
+{
+    g_return_if_fail (matrix != NULL);
+
+    memcpy (matrix->affine, src, 6 * sizeof (double));
+}
+
+double *
+dax_matrix_get_affine (const DaxMatrix *matrix)
+{
+    g_return_val_if_fail (matrix != NULL, NULL);
+
+    return matrix->affine;
+}
+
+/*
+ * Parse an SVG transform string into an affine matrix. Reference: SVG
+ * working draft dated 1999-07-06, section 8.5. Return TRUE on
+ * success.
+ *
+ * Taken from libsrvg, srvg-styles.c, LGPLv2+,
+ * Copyright (C) 2000 Eazel, Inc.
+ * Copyright (C) 2002 Dom Lachowicz <cinamod@hotmail.com>
+ */
+static gboolean
+dax_parse_transform (double      dst[6],
+                     const char *src)
+{
+    int idx;
+    char keyword[32];
+    double args[6];
+    int n_args;
+    guint key_len;
+    double tmp_affine[6];
+
+    _dax_affine_identity (dst);
+
+    idx = 0;
+    while (src[idx]) {
+        /* skip initial whitespace */
+        while (g_ascii_isspace (src[idx]))
+            idx++;
+
+        if (src[idx] == '\0')
+            break;
+
+        /* parse keyword */
+        for (key_len = 0; key_len < sizeof (keyword); key_len++) {
+            char c;
+
+            c = src[idx];
+            if (g_ascii_isalpha (c) || c == '-')
+                keyword[key_len] = src[idx++];
+            else
+                break;
+        }
+        if (key_len >= sizeof (keyword))
+            return FALSE;
+        keyword[key_len] = '\0';
+
+        /* skip whitespace */
+        while (g_ascii_isspace (src[idx]))
+            idx++;
+
+        if (src[idx] != '(')
+            return FALSE;
+        idx++;
+
+        for (n_args = 0;; n_args++) {
+            char c;
+            char *end_ptr;
+
+            /* skip whitespace */
+            while (g_ascii_isspace (src[idx]))
+                idx++;
+            c = src[idx];
+            if (g_ascii_isdigit (c) || c == '+' || c == '-' || c == '.') {
+                if (n_args == sizeof (args) / sizeof (args[0]))
+                    return FALSE;       /* too many args */
+                args[n_args] = g_ascii_strtod (src + idx, &end_ptr);
+                idx = end_ptr - src;
+
+                while (g_ascii_isspace (src[idx]))
+                    idx++;
+
+                /* skip optional comma */
+                if (src[idx] == ',')
+                    idx++;
+            } else if (c == ')')
+                break;
+            else
+                return FALSE;
+        }
+        idx++;
+
+        /* ok, have parsed keyword and args, now modify the transform */
+        if (!strcmp (keyword, "matrix")) {
+            if (n_args != 6)
+                return FALSE;
+            _dax_affine_multiply (dst, args, dst);
+        } else if (!strcmp (keyword, "translate")) {
+            if (n_args == 1)
+                args[1] = 0;
+            else if (n_args != 2)
+                return FALSE;
+            _dax_affine_translate (tmp_affine, args[0], args[1]);
+            _dax_affine_multiply (dst, tmp_affine, dst);
+        } else if (!strcmp (keyword, "scale")) {
+            if (n_args == 1)
+                args[1] = args[0];
+            else if (n_args != 2)
+                return FALSE;
+            _dax_affine_scale (tmp_affine, args[0], args[1]);
+            _dax_affine_multiply (dst, tmp_affine, dst);
+        } else if (!strcmp (keyword, "rotate")) {
+            if (n_args == 1) {
+                _dax_affine_rotate (tmp_affine, args[0]);
+                _dax_affine_multiply (dst, tmp_affine, dst);
+            } else if (n_args == 3) {
+                _dax_affine_translate (tmp_affine, args[1], args[2]);
+                _dax_affine_multiply (dst, tmp_affine, dst);
+
+                _dax_affine_rotate (tmp_affine, args[0]);
+                _dax_affine_multiply (dst, tmp_affine, dst);
+
+                _dax_affine_translate (tmp_affine, -args[1], -args[2]);
+                _dax_affine_multiply (dst, tmp_affine, dst);
+            } else
+                return FALSE;
+        } else if (!strcmp (keyword, "skewX")) {
+            if (n_args != 1)
+                return FALSE;
+            _dax_affine_shear (tmp_affine, args[0]);
+            _dax_affine_multiply (dst, tmp_affine, dst);
+        } else if (!strcmp (keyword, "skewY")) {
+            if (n_args != 1)
+                return FALSE;
+            _dax_affine_shear (tmp_affine, args[0]);
+            /* transpose the affine, given that we know [1] is zero */
+            tmp_affine[1] = tmp_affine[2];
+            tmp_affine[2] = 0;
+            _dax_affine_multiply (dst, tmp_affine, dst);
+        } else
+            return FALSE;       /* unknown keyword */
+    }
+    return TRUE;
+}
+
+gboolean
+dax_matrix_from_string (DaxMatrix   *matrix,
+                        const gchar *string)
+{
+    g_return_val_if_fail (matrix != NULL, FALSE);
+    g_return_val_if_fail (matrix != NULL, FALSE);
+
+    return dax_parse_transform (matrix->affine, string);
+}
+
+gchar *
+dax_matrix_to_string (const DaxMatrix *matrix)
+{
+    g_return_val_if_fail (matrix != NULL, NULL);
+
+    return g_strdup_printf ("[%.02lf %.02lf %.02lf %.02lf %.02lf %.02lf]",
+                            matrix->affine[0], matrix->affine[1],
+                            matrix->affine[2], matrix->affine[3],
+                            matrix->affine[4], matrix->affine[5]);
+}
+
+void
+dax_matrix_transform_point (const DaxMatrix    *m,
+                            const ClutterPoint *point,
+                            ClutterPoint       *out)
+{
+    out->x = m->affine[0] * point->x + m->affine[2] * point->y + m->affine[4];
+    out->y = m->affine[1] * point->x + m->affine[3] * point->y + m->affine[5];
+}
+
+static void
+_transform_matrix_string (const GValue *src,
+                          GValue       *dest)
+{
+    gchar *string = dax_matrix_to_string (src->data[0].v_pointer);
+
+    g_value_take_string (dest, string);
+}
+
+static void
+_transform_string_matrix (const GValue *src,
+                          GValue       *dest)
+{
+    DaxMatrix matrix;
+
+    dax_matrix_from_string (&matrix, g_value_get_string (src));
+
+    dest->data[0].v_pointer = dax_matrix_copy (&matrix);
+}
+
+GType
+dax_matrix_get_type (void)
+{
+    static volatile gsize dax_matrix_type__volatile = 0;
+
+    if (g_once_init_enter (&dax_matrix_type__volatile)) {
+        GType dax_matrix_type =
+            g_boxed_type_register_static (I_("DaxMatrix"),
+                                          (GBoxedCopyFunc)dax_matrix_copy,
+                                          (GBoxedFreeFunc)dax_matrix_free);
+
+        g_value_register_transform_func (dax_matrix_type,
+                                         G_TYPE_STRING,
+                                         _transform_matrix_string);
+        g_value_register_transform_func (G_TYPE_STRING,
+                                         dax_matrix_type,
+                                         _transform_string_matrix);
+        g_once_init_leave (&dax_matrix_type__volatile,
+                           dax_matrix_type);
+    }
+
+    return dax_matrix_type__volatile;
+}
 
 /*
  * DaxDuration

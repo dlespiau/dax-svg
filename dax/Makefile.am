@@ -23,6 +23,7 @@ BUILT_SOURCES = $(ENUMFILES)
 
 source_c =				\
 	dax-actor.c			\
+	dax-affine.c			\
 	dax-cache.c			\
 	dax-cache-entry.c		\
 	dax-core.c			\
@@ -56,6 +57,7 @@ source_c =				\
 	dax-gjs-context.c		\
 	dax-gjs-function-listener.c	\
 	dax-gjs-udom.c			\
+	dax-group.c			\
 	dax-knot-sequence.c		\
 	dax-paramspec.c			\
 	dax-parser.c			\
@@ -104,6 +106,7 @@ source_h =				\
 	dax-element-tspan.h		\
 	dax-gjs-context.h		\
 	dax-gjs-function-listener.h	\
+	dax-group.h			\
 	dax-knot-sequence.h		\
 	dax-parser.h			\
 	dax-svg-exception.h		\
@@ -118,6 +121,7 @@ source_h =				\
 	$(NULL)
 
 source_h_private = 		\
+	dax-affine.h		\
 	dax-cache.h		\
 	dax-cache-entry.h	\
 	dax-debug.h		\
@@ -219,7 +223,7 @@ DISTCLEANFILES = 	\
 	$(ENUMFILES) 	\
 	$(NULL)
 
-EXTRA_DIS =			\
+EXTRA_DIST =			\
 	dax-enum-types.h.in	\
 	dax-enum-types.c.in	\
 	$(NULL)

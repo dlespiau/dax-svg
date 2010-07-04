@@ -38,6 +38,15 @@ gboolean    _dax_utils_parse_float              (char   **string,
                                                  gfloat  *x);
 gboolean    _dax_utils_is_iri                   (const gchar *str);
 void        _dax_utils_dump_path_2d             (ClutterPath2D *path);
+void        _dax_utils_dump_cogl_matrix         (CoglMatrix *m);
+
+typedef enum {
+    _DAX_PROP_TRANSFORM = 1,
+} _DaxProp;
+
+void        _dax_utils_install_properties       (GObjectClass *klass,
+                                                 _DaxProp      first_property,
+                                                 ...);
 
 G_END_DECLS
 

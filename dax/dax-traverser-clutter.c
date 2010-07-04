@@ -1,7 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -23,6 +23,7 @@
 #include "clutter-shape.h"
 #include "dax-debug.h"
 #include "dax-enum-types.h"
+#include "dax-group.h"
 #include "dax-knot-sequence.h"
 #include "dax-utils.h"
 
@@ -76,6 +77,37 @@ xml_event_from_clutter_event (DaxXmlEvent       *xml_event,
         g_warning (G_STRLOC ": Unhandled event of type %d",
                    clutter_event->type);
     }
+}
+
+static void
+set_container_internal (DaxTraverserClutter *self,
+                        ClutterContainer    *container)
+{
+    DaxTraverserClutterPrivate *priv = self->priv;
+
+    if (priv->container)
+        g_object_unref (priv->container);
+    priv->container = g_object_ref (container);
+}
+
+static void
+dax_traverser_clutter_traverse_g (DaxTraverser *traverser,
+                                  DaxElementG  *node)
+{
+    DaxTraverserClutter *build = DAX_TRAVERSER_CLUTTER (traverser);
+    DaxTraverserClutterPrivate *priv = build->priv;
+    ClutterActor *group;
+    DaxMatrix *matrix;
+
+    group = dax_group_new ();
+    clutter_container_add_actor (priv->container, group);
+    set_container_internal (build, CLUTTER_CONTAINER (group));
+
+    g_object_get (node, "transform", &matrix, NULL);
+    if (matrix == NULL)
+        return;
+
+    dax_group_set_matrix (DAX_GROUP (group), matrix);
 }
 
 static void
@@ -713,6 +745,7 @@ dax_traverser_clutter_class_init (DaxTraverserClutterClass *klass)
     object_class->dispose = dax_traverser_clutter_dispose;
     object_class->finalize = dax_traverser_clutter_finalize;
 
+    traverser_class->traverse_g = dax_traverser_clutter_traverse_g;
     traverser_class->traverse_path = dax_traverser_clutter_traverse_path;
     traverser_class->traverse_rect = dax_traverser_clutter_traverse_rect;
     traverser_class->traverse_polyline =
@@ -753,14 +786,9 @@ void
 dax_traverser_clutter_set_container (DaxTraverserClutter *self,
                                      ClutterContainer    *container)
 {
-    DaxTraverserClutterPrivate *priv;
-
     g_return_if_fail (DAX_IS_TRAVERSER_CLUTTER (self));
-    priv = self->priv;
 
-    if (priv->container)
-        g_object_unref (priv->container);
-    priv->container = g_object_ref (container);
+    set_container_internal (self, container);
 }
 
 ClutterScore *

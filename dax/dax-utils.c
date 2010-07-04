@@ -22,6 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "dax-paramspec.h"
+#include "dax-private.h"
+#include "dax-types.h"
+
 #include "dax-utils.h"
 
 void
@@ -267,4 +271,63 @@ _dax_utils_dump_path_2d (ClutterPath2D *path)
     }
 
   g_slist_free (nodes);
+}
+
+void
+_dax_utils_dump_cogl_matrix (CoglMatrix *m)
+{
+    g_message("matrix %p", m);
+
+    g_print ("% 3.2f % 3.2f % 3.2f % 3.2f\n"
+             "% 3.2f % 3.2f % 3.2f % 3.2f\n"
+             "% 3.2f % 3.2f % 3.2f % 3.2f\n"
+             "% 3.2f % 3.2f % 3.2f % 3.2f\n",
+             m->xx, m->xy, m->xz, m->xw,
+             m->yx, m->yy, m->yz, m->yw,
+             m->zx, m->zy, m->zz, m->zw,
+             m->wx, m->wy, m->wz, m->ww);
+}
+
+static void
+install_properties_valist (GObjectClass *klass,
+                           _DaxProp      first_property,
+                           va_list       var_args)
+{
+    GParamSpec *pspec;
+    _DaxProp prop;
+    guint property_id;
+
+    prop = first_property;
+    while (prop) {
+        property_id = va_arg (var_args, guint);
+        switch (prop) {
+        case _DAX_PROP_TRANSFORM:
+            pspec = dax_param_spec_boxed ("transform",
+                                          "transform",
+                                          "Specifies a coordinate system "
+                                          "transformation",
+                                          DAX_TYPE_MATRIX,
+                                          DAX_GPARAM_READWRITE,
+                                          DAX_PARAM_ANIMATABLE,
+                                          svg_ns);
+            g_object_class_install_property (klass, property_id, pspec);
+            break;
+        default:
+            g_assert_not_reached ();
+
+        }
+        prop = va_arg (var_args, int);
+    }
+}
+
+void
+_dax_utils_install_properties (GObjectClass *klass,
+                               _DaxProp      first_property,
+                               ...)
+{
+    va_list var_args;
+
+    va_start (var_args, first_property);
+    install_properties_valist (klass, first_property, var_args);
+    va_end (var_args);
 }

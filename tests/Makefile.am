@@ -20,7 +20,14 @@ AM_CFLAGS = -g
 TESTS_ENVIRONMENT = srcdir=$(srcdir)
 
 TEST_PROGS          += test-utils
-test_utils_SOURCES  = $(top_srcdir)/dax/dax-utils.c test-utils.c
+test_utils_CPPFLAGS = $(AM_CPPFLAGS) -DDAX_COMPILATION
+test_utils_SOURCES  =				\
+	$(top_srcdir)/dax/dax-affine.c		\
+	$(top_srcdir)/dax/dax-enum-types.c	\
+	$(top_srcdir)/dax/dax-paramspec.c 	\
+	$(top_srcdir)/dax/dax-types.c 		\
+	$(top_srcdir)/dax/dax-utils.c 		\
+	test-utils.c
 test_utils_LDADD    = $(DAX_LIBS)
 
 TEST_PROGS          += test-types

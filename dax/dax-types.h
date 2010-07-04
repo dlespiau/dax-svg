@@ -26,8 +26,40 @@
 #define __DAX_TYPES_H__
 
 #include <glib-object.h>
+#include <clutter/clutter.h>
 
 G_BEGIN_DECLS
+
+/*
+ * DaxMatrix
+ */
+
+#define DAX_TYPE_MATRIX        (dax_matrix_get_type ())
+#define DAX_VALUE_HOLDS_MATRIX (G_VALUE_HOLDS ((x), DAX_TYPE_MATRIX))
+
+typedef struct _DaxMatrix DaxMatrix;
+
+struct _DaxMatrix
+{
+    double affine[6];
+};
+
+GType           dax_matrix_get_type         (void) G_GNUC_CONST;
+
+DaxMatrix *     dax_matrix_copy             (const DaxMatrix *matrix);
+void            dax_matrix_free             (DaxMatrix *matrix);
+
+void            dax_matrix_from_array       (DaxMatrix *matrix,
+                                             double     src[6]);
+
+double *        dax_matrix_get_affine       (const DaxMatrix *matrix);
+
+gboolean        dax_matrix_from_string      (DaxMatrix   *matrix,
+                                             const gchar *string);
+gchar *         dax_matrix_to_string        (const DaxMatrix *matrix);
+void            dax_matrix_transform_point  (const DaxMatrix    *matrix,
+                                             const ClutterPoint *point,
+                                             ClutterPoint       *out);
 
 /*
  * Animation types
@@ -59,21 +91,21 @@ struct _DaxDuration
 };
 
 GType               dax_duration_get_type        (void) G_GNUC_CONST;
-DaxDurationType  dax_duration_get_unit_type   (const DaxDuration *dur);
+DaxDurationType     dax_duration_get_unit_type   (const DaxDuration *dur);
 gfloat              dax_duration_get_unit_value  (const DaxDuration *dur);
 
-DaxDuration *    dax_duration_copy            (const DaxDuration *dur);
+DaxDuration *       dax_duration_copy            (const DaxDuration *dur);
 void                dax_duration_free            (DaxDuration *dur);
 
 void                dax_duration_from_s          (DaxDuration *dur,
-                                                     gfloat          seconds);
+                                                  gfloat       seconds);
 void                dax_duration_from_ms         (DaxDuration *dur,
-                                                     gfloat          ms);
+                                                  gfloat       ms);
 
 gfloat              dax_duration_to_ms           (DaxDuration *dur);
 
 gboolean            dax_duration_from_string     (DaxDuration *dur,
-                                                     const gchar    *string);
+                                                  const gchar *string);
 gchar *             dax_duration_to_string       (const DaxDuration *dur);
 
 /*
