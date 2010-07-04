@@ -287,9 +287,6 @@ clutter_shape_init (ClutterShape *self)
     ClutterShapePrivate  *priv;
 
     self->priv = priv = CLUTTER_SHAPE_GET_PRIVATE (self);
-
-    /* We default to displaying black bordered shapes */
-    priv->border_color = clutter_color_new (0, 0, 0, 0xff);
 }
 
 /**

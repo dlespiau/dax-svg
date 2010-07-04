@@ -55,6 +55,7 @@ enum
     PROP_FILL,
     PROP_FILL_OPACITY,
     PROP_STROKE,
+    PROP_STYLE,
 
     /* legacy event handlers */
     PROP_ONLOAD,
@@ -65,6 +66,7 @@ struct _DaxElementPrivate
     ClutterColor *fill;
     gfloat fill_opacity;
     ClutterColor *stroke;
+    gchar *style;
 
     gchar *onload_handler;
 };
@@ -113,6 +115,45 @@ dax_element_set_onload_handler (DaxElement  *element,
     } else  {
         g_signal_connect (element, "loaded",
                           G_CALLBACK (on_load_event), NULL);
+    }
+}
+
+static void
+dax_element_set_attribute (DaxDomElement  *self,
+                           const gchar    *name,
+                           const gchar    *value,
+                           GError        **err);
+
+static void
+dax_element_set_style (DaxElement  *element,
+                       const gchar *style)
+{
+    DaxElementPrivate *priv = element->priv;
+    gchar **props;
+    guint i;
+
+    g_free (priv->style);
+    priv->style = g_strdup (style);
+
+    props = g_strsplit (style, ";", 0);
+
+    for (i = 0; props[i]; i++) {
+        gchar *value;
+
+        if (strcmp (props[i], "") == 0)
+            continue;
+
+        value = strchr (props[i], ':');
+        if (value == NULL) {
+            g_warning ("Could not parse '%s'", props[i]);
+            continue;
+        }
+        *value = '\0';
+        value++;
+        dax_element_set_attribute (DAX_DOM_ELEMENT (element),
+                                   props[i],
+                                   value,
+                                   NULL);
     }
 }
 
@@ -253,6 +294,9 @@ dax_element_get_property (GObject    *object,
     case PROP_FILL_OPACITY:
         g_value_set_float (value, priv->fill_opacity);
         break;
+    case PROP_STYLE:
+        g_value_set_string (value, priv->style);
+        break;
 
     case PROP_ONLOAD:
         g_value_set_string (value, priv->onload_handler);
@@ -290,6 +334,9 @@ dax_element_set_property (GObject      *object,
     }
     case PROP_FILL_OPACITY:
         priv->fill_opacity = g_value_get_float (value);
+        break;
+    case PROP_STYLE:
+        dax_element_set_style (element, g_value_get_string (value));
         break;
 
     case PROP_ONLOAD:
@@ -329,6 +376,18 @@ dax_element_class_init (DaxElementClass *klass)
 
     dom_element_class->get_attribute = dax_element_get_attribute;
     dom_element_class->set_attribute = dax_element_set_attribute;
+
+    /* FIXME: This is of course wrong, setting properties on elements has to
+     * be reworked */
+    pspec = dax_param_spec_string ("style",
+                                   "Style",
+                                   "Style to apply to an element",
+                                   NULL,
+                                   DAX_GPARAM_READWRITE,
+                                   DAX_PARAM_VERSION_1_0 |
+                                   DAX_PARAM_VERSION_1_1,
+                                   svg_ns);
+    g_object_class_install_property (object_class, PROP_STYLE, pspec);
 
     pspec = g_param_spec_boxed ("fill",
                                 "Fill color",
