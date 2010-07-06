@@ -72,7 +72,7 @@ dax_element_g_set_property (GObject      *object,
     case PROP_TRANSFORM:
         if (priv->transform)
             dax_matrix_free (priv->transform);
-        priv->transform = dax_matrix_copy (g_value_get_boxed (value));
+        priv->transform = dax_matrix_deep_copy (g_value_get_boxed (value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -118,4 +118,12 @@ DaxDomElement *
 dax_element_g_new (void)
 {
     return g_object_new (DAX_TYPE_ELEMENT_G, NULL);
+}
+
+const DaxMatrix *
+dax_element_g_get_transform (DaxElementG *g)
+{
+    g_return_val_if_fail (DAX_IS_ELEMENT_G (g), NULL);
+
+    return g->priv->transform;
 }

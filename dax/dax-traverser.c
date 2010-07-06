@@ -92,6 +92,12 @@ dax_traverser_traverse_animate_real (DaxTraverser      *self,
 }
 
 static void
+dax_traverser_traverse_animate_transform_real (DaxTraverser               *self,
+                                               DaxElementAnimateTransform *node)
+{
+}
+
+static void
 dax_traverser_traverse_circle_real (DaxTraverser     *self,
                                     DaxElementCircle *node)
 {
@@ -187,6 +193,8 @@ dax_traverser_class_init (DaxTraverserClass *klass)
     klass->traverse_rect = dax_traverser_traverse_rect_real;
     klass->traverse_polyline = dax_traverser_traverse_polyline_real;
     klass->traverse_animate = dax_traverser_traverse_animate_real;
+    klass->traverse_animate_transform =
+        dax_traverser_traverse_animate_transform_real;
     klass->traverse_circle = dax_traverser_traverse_circle_real;
     klass->traverse_script = dax_traverser_traverse_script_real;
     klass->traverse_handler = dax_traverser_traverse_handler_real;
@@ -258,7 +266,12 @@ dax_traverse_node (DaxTraverser *traverser,
         dax_traverser_traverse_polyline (traverser, (DaxElementPolyline *)node);
     else if (DAX_IS_ELEMENT_ANIMATE (node))
         dax_traverser_traverse_animate (traverser, (DaxElementAnimate *)node);
-    else if (DAX_IS_ELEMENT_IMAGE (node))
+    else if (DAX_IS_ELEMENT_ANIMATE_TRANSFORM (node)) {
+        DaxElementAnimateTransform *element;
+
+        element = DAX_ELEMENT_ANIMATE_TRANSFORM (node);
+        dax_traverser_traverse_animate_transform (traverser, element);
+    } else if (DAX_IS_ELEMENT_IMAGE (node))
         dax_traverser_traverse_image (traverser, (DaxElementImage *)node);
     else if (DAX_IS_ELEMENT_CIRCLE (node))
         dax_traverser_traverse_circle (traverser, (DaxElementCircle *)node);
@@ -348,6 +361,15 @@ dax_traverser_traverse_animate (DaxTraverser      *self,
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
     klass->traverse_animate (self, node);
+}
+
+void
+dax_traverser_traverse_animate_transform (DaxTraverser               *self,
+                                          DaxElementAnimateTransform *node)
+{
+    DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_animate_transform (self, node);
 }
 
 void

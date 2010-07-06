@@ -69,10 +69,11 @@ struct _DaxElementPathClass
     DaxElementClass parent_class;
 };
 
-GType               dax_element_path_get_type    (void) G_GNUC_CONST;
+GType               dax_element_path_get_type       (void) G_GNUC_CONST;
 
-DaxDomElement *     dax_element_path_new         (void);
-ClutterPath2D *     dax_element_path_get_path    (DaxElementPath *self);
+DaxDomElement *     dax_element_path_new            (void);
+ClutterPath2D *     dax_element_path_get_path       (DaxElementPath *self);
+const DaxMatrix *   dax_element_path_get_transform  (DaxElementPath *path);
 
 G_END_DECLS
 

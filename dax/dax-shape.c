@@ -20,14 +20,14 @@
 
 #include "dax-utils.h"
 
-#include "dax-group.h"
+#include "dax-shape.h"
 
-G_DEFINE_TYPE (DaxGroup, dax_group, CLUTTER_TYPE_GROUP)
+G_DEFINE_TYPE (DaxShape, dax_shape, CLUTTER_TYPE_SHAPE)
 
-#define GROUP_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAX_TYPE_GROUP, DaxGroupPrivate))
+#define SHAPE_PRIVATE(o) \
+  (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAX_TYPE_SHAPE, DaxShapePrivate))
 
-struct _DaxGroupPrivate
+struct _DaxShapePrivate
 {
     CoglMatrix cogl_matrix;
 };
@@ -37,11 +37,11 @@ struct _DaxGroupPrivate
  */
 
 static void
-dax_group_apply_transform (ClutterActor *self,
+dax_shape_apply_transform (ClutterActor *self,
                            CoglMatrix   *matrix)
 {
-    DaxGroup *group = DAX_GROUP (self);
-    DaxGroupPrivate *priv = group->priv;
+    DaxShape *shape = DAX_SHAPE (self);
+    DaxShapePrivate *priv = shape->priv;
 
     cogl_matrix_multiply (matrix, matrix, &priv->cogl_matrix);
 }
@@ -51,38 +51,38 @@ dax_group_apply_transform (ClutterActor *self,
  */
 
 static void
-dax_group_class_init (DaxGroupClass *klass)
+dax_shape_class_init (DaxShapeClass *klass)
 {
     ClutterActorClass *actor_class = CLUTTER_ACTOR_CLASS (klass);
 
-    g_type_class_add_private (klass, sizeof (DaxGroupPrivate));
+    g_type_class_add_private (klass, sizeof (DaxShapePrivate));
 
-    actor_class->apply_transform = dax_group_apply_transform;
+    actor_class->apply_transform = dax_shape_apply_transform;
 }
 
 static void
-dax_group_init (DaxGroup *self)
+dax_shape_init (DaxShape *self)
 {
-    DaxGroupPrivate *priv;
+    DaxShapePrivate *priv;
 
-    self->priv = priv = GROUP_PRIVATE (self);
+    self->priv = priv = SHAPE_PRIVATE (self);
     cogl_matrix_init_identity (&priv->cogl_matrix);
 }
 
 ClutterActor *
-dax_group_new (void)
+dax_shape_new (void)
 {
-    return g_object_new (DAX_TYPE_GROUP, NULL);
+    return g_object_new (DAX_TYPE_SHAPE, NULL);
 }
 
 void
-dax_group_set_matrix (DaxGroup        *self,
+dax_shape_set_matrix (DaxShape        *self,
                       const DaxMatrix *matrix)
 {
-    DaxGroupPrivate *priv;
+    DaxShapePrivate *priv;
     float cogl_matrix[16];
 
-    g_return_if_fail (DAX_IS_GROUP (self));
+    g_return_if_fail (DAX_IS_SHAPE (self));
     priv = self->priv;
 
     /* column 0 */

@@ -25,6 +25,7 @@
 #include "dax-enum-types.h"
 #include "dax-group.h"
 #include "dax-knot-sequence.h"
+#include "dax-shape.h"
 #include "dax-utils.h"
 
 #include "dax-traverser-clutter.h"
@@ -91,6 +92,18 @@ set_container_internal (DaxTraverserClutter *self,
 }
 
 static void
+on_g_transform_changed (DaxElementG *element,
+                        GParamSpec  *pspec,
+                        gpointer     user_data)
+{
+    DaxGroup *group = DAX_GROUP (user_data);
+    const DaxMatrix *matrix;
+
+    matrix = dax_element_g_get_transform (element);
+    dax_group_set_matrix (group, matrix);
+}
+
+static void
 dax_traverser_clutter_traverse_g (DaxTraverser *traverser,
                                   DaxElementG  *node)
 {
@@ -103,11 +116,27 @@ dax_traverser_clutter_traverse_g (DaxTraverser *traverser,
     clutter_container_add_actor (priv->container, group);
     set_container_internal (build, CLUTTER_CONTAINER (group));
 
+    g_signal_connect (node, "notify::transform",
+                      G_CALLBACK (on_g_transform_changed), group);
+
     g_object_get (node, "transform", &matrix, NULL);
     if (matrix == NULL)
         return;
 
     dax_group_set_matrix (DAX_GROUP (group), matrix);
+    dax_matrix_free (matrix);
+}
+
+static void
+on_path_transform_changed (DaxElementPath *element,
+                           GParamSpec     *pspec,
+                           gpointer        user_data)
+{
+    DaxShape *shape = DAX_SHAPE (user_data);
+    const DaxMatrix *matrix;
+
+    matrix = dax_element_path_get_transform (element);
+    dax_shape_set_matrix (shape, matrix);
 }
 
 static void
@@ -120,8 +149,9 @@ dax_traverser_clutter_traverse_path (DaxTraverser   *traverser,
     const ClutterColor *fill_color, *stroke_color;
     ClutterActor *shape;
     ClutterPath2D *path;
+    DaxMatrix *matrix;
 
-    shape = clutter_shape_new ();
+    shape = dax_shape_new ();
 
     fill_color = dax_element_get_fill_color (element);
     stroke_color = dax_element_get_stroke_color (element);
@@ -134,6 +164,16 @@ dax_traverser_clutter_traverse_path (DaxTraverser   *traverser,
     g_object_set (shape, "path", path, NULL);
 
     clutter_container_add_actor (priv->container, shape);
+
+    g_signal_connect (node, "notify::transform",
+                      G_CALLBACK (on_path_transform_changed), shape);
+
+    g_object_get (node, "transform", &matrix, NULL);
+    if (matrix == NULL)
+        return;
+
+    dax_shape_set_matrix (DAX_SHAPE (shape), matrix);
+    dax_matrix_free (matrix);
 }
 
 static void
@@ -392,7 +432,10 @@ _animation_setup_property (ClutterAnimation *animation,
     g_value_init (&to_value, pspec->value_type);
     _string_to_value (to, &to_value);
 
-    g_warning ("setting up interval from %s to %s", from, to);
+    DAX_NOTE (ANIMATION, "setting up animation of %s on %s with interval "
+              "going from %s to %s", property, G_OBJECT_TYPE_NAME (element),
+              from, to);
+
     interval = clutter_interval_new_with_values (pspec->value_type,
                                                  &from_value,
                                                  &to_value);
@@ -400,23 +443,17 @@ _animation_setup_property (ClutterAnimation *animation,
     clutter_animation_bind_interval (animation, property, interval);
 }
 
-static void
-dax_traverser_clutter_traverse_animate (DaxTraverser      *traverser,
-                                        DaxElementAnimate *node)
+static ClutterAnimation *
+_clutter_animation_new_from_dax_animation (DaxElementAnimation *node,
+                                           DaxDomElement       *target_element)
 {
-    DaxTraverserClutter *build = DAX_TRAVERSER_CLUTTER (traverser);
-    DaxTraverserClutterPrivate *priv = build->priv;
     ClutterAnimation *animation;
-    ClutterTimeline *tl;
     DaxDuration *duration;
     const DaxRepeatCount *count;
-    DaxDomElement *target_element;
-    const gchar *attribute_name, *from, *to;
 
     /* create a new animation */
-    duration = dax_element_animate_get_duration (node);
-    target_element = dax_element_animate_get_target (node);
-    count = dax_element_animate_get_repeat_count (node);
+    duration = dax_element_animation_get_duration (node);
+    count = dax_element_animation_get_repeat_count (node);
 
     animation = clutter_animation_new ();
     clutter_animation_set_duration (animation,
@@ -426,10 +463,71 @@ dax_traverser_clutter_traverse_animate (DaxTraverser      *traverser,
     if (dax_repeat_count_is_indefinite (count))
         clutter_animation_set_loop (animation, TRUE);
 
+    return animation;
+}
+
+static void
+dax_traverser_clutter_traverse_animate (DaxTraverser      *traverser,
+                                        DaxElementAnimate *node)
+{
+    DaxTraverserClutter *build = DAX_TRAVERSER_CLUTTER (traverser);
+    DaxTraverserClutterPrivate *priv = build->priv;
+    DaxElementAnimation *animation_node = DAX_ELEMENT_ANIMATION (node);
+    const gchar *attribute_name, *from, *to;
+    DaxDomElement *target_element;
+    ClutterAnimation *animation;
+    ClutterTimeline *tl;
+
+    target_element = dax_element_animation_get_target (animation_node);
+    animation = _clutter_animation_new_from_dax_animation (animation_node,
+                                                           target_element);
+
     /* setup the interval */
-    attribute_name = dax_element_animate_get_attribute_name (node);
-    from = dax_element_animate_get_from (node);
-    to = dax_element_animate_get_to (node);
+    attribute_name = dax_element_animation_get_attribute_name (animation_node);
+    from = dax_element_animation_get_from (animation_node);
+    to = dax_element_animation_get_to (animation_node);
+    _animation_setup_property (animation,
+                               target_element,
+                               attribute_name,
+                               from, to);
+
+    /* Add the timeline to the global score */
+    tl = clutter_animation_get_timeline (animation);
+    clutter_score_append (priv->score, NULL, tl);
+}
+
+static void
+dax_traverser_clutter_traverse_animate_transform (
+    DaxTraverser               *traverser,
+    DaxElementAnimateTransform *node
+)
+{
+    DaxTraverserClutter *build = DAX_TRAVERSER_CLUTTER (traverser);
+    DaxTraverserClutterPrivate *priv = build->priv;
+    DaxElementAnimation *animation_node = DAX_ELEMENT_ANIMATION (node);
+    const gchar *attribute_name, *from, *to;
+    DaxDomElement *target_element;
+    DaxAnimateTransformType type;
+    ClutterAnimation *animation;
+    ClutterTimeline *tl;
+
+    target_element = dax_element_animation_get_target (animation_node);
+    animation = _clutter_animation_new_from_dax_animation (animation_node,
+                                                           target_element);
+
+    /* setup the interval */
+    type = dax_element_animate_transform_get_matrix_type (node);
+    attribute_name = dax_element_animation_get_attribute_name (animation_node);
+    from =
+        g_strdup_printf("%s(%s)",
+                        dax_enum_to_string (DAX_TYPE_ANIMATE_TRANSFORM_TYPE,
+                                            type),
+                        dax_element_animation_get_from (animation_node));
+    to =
+        g_strdup_printf("%s(%s)",
+                        dax_enum_to_string (DAX_TYPE_ANIMATE_TRANSFORM_TYPE,
+                                            type),
+                        dax_element_animation_get_to (animation_node));
     _animation_setup_property (animation,
                                target_element,
                                attribute_name,
@@ -751,6 +849,8 @@ dax_traverser_clutter_class_init (DaxTraverserClutterClass *klass)
     traverser_class->traverse_polyline =
         dax_traverser_clutter_traverse_polyline;
     traverser_class->traverse_animate = dax_traverser_clutter_traverse_animate;
+    traverser_class->traverse_animate_transform =
+        dax_traverser_clutter_traverse_animate_transform;
     traverser_class->traverse_circle = dax_traverser_clutter_traverse_circle;
     traverser_class->traverse_handler = dax_traverser_clutter_traverse_handler;
     traverser_class->traverse_line = dax_traverser_clutter_traverse_line;

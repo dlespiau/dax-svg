@@ -38,21 +38,42 @@ G_BEGIN_DECLS
 #define DAX_VALUE_HOLDS_MATRIX (G_VALUE_HOLDS ((x), DAX_TYPE_MATRIX))
 
 typedef struct _DaxMatrix DaxMatrix;
+typedef struct _DaxElementaryMatrix DaxElementaryMatrix;
+
+typedef enum /*< skip >*/
+{
+    DAX_MATRIX_TYPE_GENERIC,       /* free form matrix */
+    DAX_MATRIX_TYPE_ROTATE,
+    DAX_MATRIX_TYPE_ROTATE_AROUND,
+    DAX_MATRIX_TYPE_TRANSLATE,
+    DAX_MATRIX_TYPE_SCALE,
+    DAX_MATRIX_TYPE_SKEW_X,
+    DAX_MATRIX_TYPE_SKEW_Y
+} DaxMatrixType;
+
+struct _DaxElementaryMatrix
+{
+    DaxMatrixType type;
+    float params[3];                            /* up to 3 paramaters */
+};
 
 struct _DaxMatrix
 {
+    volatile gint refcount;
+    GList *elementary_matrices;
     double affine[6];
 };
 
 GType           dax_matrix_get_type         (void) G_GNUC_CONST;
 
-DaxMatrix *     dax_matrix_copy             (const DaxMatrix *matrix);
+DaxMatrix *     dax_matrix_copy             (DaxMatrix *matrix);
+DaxMatrix *     dax_matrix_deep_copy        (const DaxMatrix *matrix);
 void            dax_matrix_free             (DaxMatrix *matrix);
 
 void            dax_matrix_from_array       (DaxMatrix *matrix,
                                              double     src[6]);
 
-double *        dax_matrix_get_affine       (const DaxMatrix *matrix);
+double *        dax_matrix_get_affine       (DaxMatrix *matrix);
 
 gboolean        dax_matrix_from_string      (DaxMatrix   *matrix,
                                              const gchar *string);

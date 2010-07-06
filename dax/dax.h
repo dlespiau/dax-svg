@@ -32,6 +32,8 @@
 #include "dax-dom-text.h"
 #include "dax-element.h"
 #include "dax-element-animate.h"
+#include "dax-element-animate-transform.h"
+#include "dax-element-animation.h"
 #include "dax-element-circle.h"
 #include "dax-element-desc.h"
 #include "dax-element-g.h"

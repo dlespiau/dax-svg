@@ -31,13 +31,98 @@
  * DaxMatrix
  */
 
+static DaxElementaryMatrix *
+dax_elementary_matrix_new (DaxMatrixType type,
+                           float         param0,
+                           float         param1,
+                           float         param2)
+{
+    DaxElementaryMatrix *em;
+
+    em = g_slice_new (DaxElementaryMatrix);
+    em->type = type;
+    em->params[0] = param0;
+    em->params[1] = param1;
+    em->params[2] = param2;
+
+    return em;
+}
+
+static void
+dax_elementary_matrix_free (DaxElementaryMatrix *em)
+{
+    g_slice_free (DaxElementaryMatrix, em);
+}
+
+static DaxElementaryMatrix *
+dax_elementary_matrix_copy (DaxElementaryMatrix *em)
+{
+    return g_slice_dup (DaxElementaryMatrix, em);
+}
+
+static void
+dax_matrix_prepend_elementary (DaxMatrix           *matrix,
+                               DaxElementaryMatrix *em)
+{
+    matrix->elementary_matrices = g_list_prepend (matrix->elementary_matrices,
+                                                  em);
+}
+
 DaxMatrix *
-dax_matrix_copy (const DaxMatrix *matrix)
+dax_matrix_deep_copy (const DaxMatrix *matrix)
+{
+    DaxMatrix *new_matrix;
+    GList *cur;
+
+    if (matrix == NULL)
+        return NULL;
+
+    new_matrix = g_slice_dup (DaxMatrix, matrix);
+    new_matrix->elementary_matrices = NULL;
+    new_matrix->refcount = 1;
+    for (cur = matrix->elementary_matrices; cur; cur = g_list_next (cur)) {
+        DaxElementaryMatrix *em;
+
+        em = dax_elementary_matrix_copy (cur->data);
+        dax_matrix_prepend_elementary (new_matrix, em);
+    }
+
+    new_matrix->elementary_matrices =
+        g_list_reverse (new_matrix->elementary_matrices);
+
+    return new_matrix;
+}
+
+DaxMatrix *
+dax_matrix_copy (DaxMatrix *matrix)
 {
     if (matrix == NULL)
         return NULL;
 
-    return g_slice_dup (DaxMatrix, matrix);
+    g_atomic_int_inc (&matrix->refcount);
+
+    return matrix;
+}
+
+static void
+dax_matrix_free_elementary_matrices (DaxMatrix *matrix)
+{
+    GList *cur;
+
+    if (matrix->elementary_matrices == NULL)
+        return;
+
+    for (cur = matrix->elementary_matrices; cur; cur = g_list_next (cur))
+        dax_elementary_matrix_free (cur->data);
+    g_list_free (matrix->elementary_matrices);
+    matrix->elementary_matrices = NULL;
+}
+
+static void
+dax_matrix_destroy (DaxMatrix *matrix)
+{
+    dax_matrix_free_elementary_matrices (matrix);
+    g_slice_free (DaxMatrix, matrix);
 }
 
 void
@@ -46,7 +131,8 @@ dax_matrix_free (DaxMatrix *matrix)
     if (matrix == NULL)
         return;
 
-    g_slice_free (DaxMatrix, matrix);
+    if (g_atomic_int_dec_and_test (&matrix->refcount))
+        dax_matrix_destroy (matrix);
 }
 
 void
@@ -55,11 +141,13 @@ dax_matrix_from_array (DaxMatrix *matrix,
 {
     g_return_if_fail (matrix != NULL);
 
+    matrix->refcount = 1;
+    matrix->elementary_matrices = NULL;
     memcpy (matrix->affine, src, 6 * sizeof (double));
 }
 
 double *
-dax_matrix_get_affine (const DaxMatrix *matrix)
+dax_matrix_get_affine (DaxMatrix *matrix)
 {
     g_return_val_if_fail (matrix != NULL, NULL);
 
@@ -74,9 +162,14 @@ dax_matrix_get_affine (const DaxMatrix *matrix)
  * Taken from libsrvg, srvg-styles.c, LGPLv2+,
  * Copyright (C) 2000 Eazel, Inc.
  * Copyright (C) 2002 Dom Lachowicz <cinamod@hotmail.com>
+ *
+ * I made some changes to the original function. We now populate a GList of
+ * elementary transformation that the resulting matrix can be decomposed into.
+ * This is useful when, say, we want to interpolate between "rotate(0)
+ * scale(1)" and "rotate(90) scale(10)"
  */
 static gboolean
-dax_parse_transform (double      dst[6],
+dax_parse_transform (DaxMatrix  *matrix,
                      const char *src)
 {
     int idx;
@@ -85,6 +178,8 @@ dax_parse_transform (double      dst[6],
     int n_args;
     guint key_len;
     double tmp_affine[6];
+    double *dst = matrix->affine;
+    DaxElementaryMatrix *em;
 
     _dax_affine_identity (dst);
 
@@ -150,12 +245,19 @@ dax_parse_transform (double      dst[6],
         if (!strcmp (keyword, "matrix")) {
             if (n_args != 6)
                 return FALSE;
+            em = dax_elementary_matrix_new (DAX_MATRIX_TYPE_GENERIC, 0, 0, 0);
+            dax_matrix_prepend_elementary (matrix, em);
             _dax_affine_multiply (dst, args, dst);
         } else if (!strcmp (keyword, "translate")) {
             if (n_args == 1)
                 args[1] = 0;
             else if (n_args != 2)
                 return FALSE;
+            em = dax_elementary_matrix_new (DAX_MATRIX_TYPE_TRANSLATE,
+                                            args[0],
+                                            args[1],
+                                            0);
+            dax_matrix_prepend_elementary (matrix, em);
             _dax_affine_translate (tmp_affine, args[0], args[1]);
             _dax_affine_multiply (dst, tmp_affine, dst);
         } else if (!strcmp (keyword, "scale")) {
@@ -163,13 +265,28 @@ dax_parse_transform (double      dst[6],
                 args[1] = args[0];
             else if (n_args != 2)
                 return FALSE;
+            em = dax_elementary_matrix_new (DAX_MATRIX_TYPE_SCALE,
+                                            args[0],
+                                            args[1],
+                                            0);
+            dax_matrix_prepend_elementary (matrix, em);
             _dax_affine_scale (tmp_affine, args[0], args[1]);
             _dax_affine_multiply (dst, tmp_affine, dst);
         } else if (!strcmp (keyword, "rotate")) {
             if (n_args == 1) {
+                em = dax_elementary_matrix_new (DAX_MATRIX_TYPE_ROTATE,
+                                                args[0],
+                                                0,
+                                                0);
+                dax_matrix_prepend_elementary (matrix, em);
                 _dax_affine_rotate (tmp_affine, args[0]);
                 _dax_affine_multiply (dst, tmp_affine, dst);
             } else if (n_args == 3) {
+                em = dax_elementary_matrix_new (DAX_MATRIX_TYPE_ROTATE_AROUND,
+                                                args[0],
+                                                args[1],
+                                                args[2]);
+                dax_matrix_prepend_elementary (matrix, em);
                 _dax_affine_translate (tmp_affine, args[1], args[2]);
                 _dax_affine_multiply (dst, tmp_affine, dst);
 
@@ -183,11 +300,21 @@ dax_parse_transform (double      dst[6],
         } else if (!strcmp (keyword, "skewX")) {
             if (n_args != 1)
                 return FALSE;
+            em = dax_elementary_matrix_new (DAX_MATRIX_TYPE_SKEW_X,
+                                            args[0],
+                                            0,
+                                            0);
+            dax_matrix_prepend_elementary (matrix, em);
             _dax_affine_shear (tmp_affine, args[0]);
             _dax_affine_multiply (dst, tmp_affine, dst);
         } else if (!strcmp (keyword, "skewY")) {
             if (n_args != 1)
                 return FALSE;
+            em = dax_elementary_matrix_new (DAX_MATRIX_TYPE_SKEW_X,
+                                            args[0],
+                                            0,
+                                            0);
+            dax_matrix_prepend_elementary (matrix, em);
             _dax_affine_shear (tmp_affine, args[0]);
             /* transpose the affine, given that we know [1] is zero */
             tmp_affine[1] = tmp_affine[2];
@@ -196,6 +323,7 @@ dax_parse_transform (double      dst[6],
         } else
             return FALSE;       /* unknown keyword */
     }
+    matrix->elementary_matrices = g_list_reverse (matrix->elementary_matrices);
     return TRUE;
 }
 
@@ -203,10 +331,18 @@ gboolean
 dax_matrix_from_string (DaxMatrix   *matrix,
                         const gchar *string)
 {
+    gboolean res;
+
     g_return_val_if_fail (matrix != NULL, FALSE);
     g_return_val_if_fail (matrix != NULL, FALSE);
 
-    return dax_parse_transform (matrix->affine, string);
+    matrix->refcount = 1;
+    matrix->elementary_matrices = NULL;
+    res = dax_parse_transform (matrix, string);
+    if (res == FALSE)
+        dax_matrix_free_elementary_matrices (matrix);
+
+    return res;
 }
 
 gchar *
@@ -246,7 +382,90 @@ _transform_string_matrix (const GValue *src,
 
     dax_matrix_from_string (&matrix, g_value_get_string (src));
 
-    dest->data[0].v_pointer = dax_matrix_copy (&matrix);
+    dest->data[0].v_pointer = dax_matrix_deep_copy (&matrix);
+}
+
+static gboolean
+dax_matrices_can_be_interpolated (DaxMatrix *a,
+                                  DaxMatrix *b)
+{
+    GList *cur_a, *cur_b;
+
+    if (g_list_length (a->elementary_matrices) !=
+        g_list_length (b->elementary_matrices) &&
+        g_list_length (a->elementary_matrices) != 0)
+    {
+        return FALSE;
+    }
+
+    for (cur_a = a->elementary_matrices, cur_b = b->elementary_matrices;
+         cur_a;
+         cur_a = g_list_next (cur_a), cur_b = g_list_next (cur_b))
+    {
+        DaxElementaryMatrix *em_a = cur_a->data;
+        DaxElementaryMatrix *em_b = cur_b->data;
+
+        if (em_a->type != em_b->type)
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+static gboolean
+dax_matrix_progress (const GValue *a,
+                     const GValue *b,
+                     gdouble       progress,
+                     GValue       *retval)
+{
+    DaxMatrix *matrix_a = g_value_get_boxed (a);
+    DaxMatrix *matrix_b = g_value_get_boxed (b);
+    DaxElementaryMatrix *em_a;
+    DaxElementaryMatrix *em_b;
+    DaxMatrix matrix, *result;
+    double tmp_affine[6], result_affine[6];
+
+    if (dax_matrices_can_be_interpolated (matrix_a, matrix_b) == FALSE) {
+        /* FIXME: more useful message... */
+        g_warning ("Can not interpolate between those two matrices");
+        return FALSE;
+    }
+
+    _dax_affine_identity (result_affine);
+
+    /* FIXME: should really support interpolating between two lists of
+     * similar elementary matrices */
+    em_a = matrix_a->elementary_matrices->data;
+    em_b = matrix_b->elementary_matrices->data;
+
+    switch (em_b->type) {
+    case DAX_MATRIX_TYPE_ROTATE:
+        {
+            float angle, angle_a, angle_b;
+
+            angle_a = em_a->params[0];
+            angle_b = em_b->params[0];
+            angle = progress * (angle_b - angle_a) + angle_a;
+
+            _dax_affine_rotate (tmp_affine, angle);
+            _dax_affine_multiply (result_affine, tmp_affine, result_affine);
+        }
+        break;
+    case DAX_MATRIX_TYPE_GENERIC:
+    case DAX_MATRIX_TYPE_ROTATE_AROUND:
+    case DAX_MATRIX_TYPE_TRANSLATE:
+    case DAX_MATRIX_TYPE_SCALE:
+    case DAX_MATRIX_TYPE_SKEW_X:
+    case DAX_MATRIX_TYPE_SKEW_Y:
+    default:
+        g_assert_not_reached ();
+    }
+
+    dax_matrix_from_array (&matrix, result_affine);
+    result = dax_matrix_deep_copy (&matrix);
+    g_value_set_boxed (retval, result);
+
+    return TRUE;
 }
 
 GType
@@ -266,6 +485,8 @@ dax_matrix_get_type (void)
         g_value_register_transform_func (G_TYPE_STRING,
                                          dax_matrix_type,
                                          _transform_string_matrix);
+        clutter_interval_register_progress_func (dax_matrix_type,
+                                                 dax_matrix_progress);
         g_once_init_leave (&dax_matrix_type__volatile,
                            dax_matrix_type);
     }

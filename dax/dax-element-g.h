@@ -62,9 +62,10 @@ struct _DaxElementGClass
     DaxElementClass parent_class;
 };
 
-GType		dax_element_g_get_type	(void) G_GNUC_CONST;
+GType		    dax_element_g_get_type	(void) G_GNUC_CONST;
 
-DaxDomElement *	dax_element_g_new	(void);
+DaxDomElement *	    dax_element_g_new	        (void);
+const DaxMatrix *   dax_element_g_get_transform (DaxElementG *g);
 
 G_END_DECLS
 

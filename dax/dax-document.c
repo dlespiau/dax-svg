@@ -21,6 +21,7 @@
 #include "dax-dom.h"
 
 #include "dax-element-animate.h"
+#include "dax-element-animate-transform.h"
 #include "dax-element-circle.h"
 #include "dax-element-desc.h"
 #include "dax-element-g.h"
@@ -75,6 +76,8 @@ dax_document_create_element(DaxDomDocument  *self,
         return dax_element_tspan_new ();
     if (strcmp (tag_name, "animate") == 0)
         return dax_element_animate_new ();
+    if (strcmp (tag_name, "animateTransform") == 0)
+        return dax_element_animate_transform_new ();
     if (strcmp (tag_name, "polyline") == 0)
         return dax_element_polyline_new ();
     if (strcmp (tag_name, "image") == 0)

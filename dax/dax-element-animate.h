@@ -1,7 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
@@ -27,8 +27,7 @@
 
 #include <glib-object.h>
 
-#include "dax-element.h"
-#include "dax-types.h"
+#include "dax-element-animation.h"
 
 G_BEGIN_DECLS
 
@@ -61,25 +60,19 @@ typedef struct _DaxElementAnimatePrivate DaxElementAnimatePrivate;
 
 struct _DaxElementAnimate
 {
-    DaxElement parent;
+    DaxElementAnimation parent;
 
     DaxElementAnimatePrivate *priv;
 };
 
 struct _DaxElementAnimateClass
 {
-    DaxElementClass parent_class;
+    DaxElementAnimationClass parent_class;
 };
 
-GType                   dax_element_animate_get_type            (void) G_GNUC_CONST;
+GType               dax_element_animate_get_type    (void) G_GNUC_CONST;
 
-DaxDomElement *         dax_element_animate_new                 (void);
-DaxDuration *           dax_element_animate_get_duration        (DaxElementAnimate *self);
-const gchar *           dax_element_animate_get_attribute_name  (DaxElementAnimate *self);
-const gchar *           dax_element_animate_get_from            (DaxElementAnimate *self);
-const gchar *           dax_element_animate_get_to              (DaxElementAnimate *self);
-const DaxRepeatCount *	dax_element_animate_get_repeat_count	(DaxElementAnimate *self);
-DaxDomElement *         dax_element_animate_get_target          (DaxElementAnimate *self);
+DaxDomElement *     dax_element_animate_new         (void);
 
 G_END_DECLS
 

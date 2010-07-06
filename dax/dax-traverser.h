@@ -24,6 +24,7 @@
 #include "dax-dom-node.h"
 
 #include "dax-element-animate.h"
+#include "dax-element-animate-transform.h"
 #include "dax-element-circle.h"
 #include "dax-element-g.h"
 #include "dax-element-handler.h"
@@ -71,64 +72,68 @@ struct _DaxTraverserClass
 {
     GObjectClass parent_class;
 
-    void (*traverse_svg)        (DaxTraverser  *traverser,
-                                 DaxElementSvg *node);
-    void (*traverse_g)          (DaxTraverser *traverser,
-                                 DaxElementG  *node);
-    void (*traverse_path)       (DaxTraverser   *traverser,
-                                 DaxElementPath *node);
-    void (*traverse_rect)       (DaxTraverser   *traverser,
-                                 DaxElementRect *node);
-    void (*traverse_polyline)   (DaxTraverser       *traverser,
-                                 DaxElementPolyline *node);
-    void (*traverse_animate)    (DaxTraverser      *traverser,
-                                 DaxElementAnimate *node);
-    void (*traverse_circle)     (DaxTraverser     *traverser,
-                                 DaxElementCircle *node);
-    void (*traverse_script)     (DaxTraverser     *traverser,
-                                 DaxElementScript *node);
-    void (*traverse_handler)    (DaxTraverser      *traverser,
-                                 DaxElementHandler *node);
-    void (*traverse_line)       (DaxTraverser   *traverser,
-                                 DaxElementLine *node);
-    void (*traverse_text)       (DaxTraverser   *traverser,
-                                 DaxElementText *node);
-    void (*traverse_image)      (DaxTraverser    *traverser,
-                                 DaxElementImage *node);
+    void (*traverse_svg)                (DaxTraverser  *traverser,
+                                         DaxElementSvg *node);
+    void (*traverse_g)                  (DaxTraverser *traverser,
+                                         DaxElementG  *node);
+    void (*traverse_path)               (DaxTraverser   *traverser,
+                                         DaxElementPath *node);
+    void (*traverse_rect)               (DaxTraverser   *traverser,
+                                         DaxElementRect *node);
+    void (*traverse_polyline)           (DaxTraverser       *traverser,
+                                         DaxElementPolyline *node);
+    void (*traverse_animate)            (DaxTraverser      *traverser,
+                                         DaxElementAnimate *node);
+    void (*traverse_animate_transform)  (DaxTraverser               *traverser,
+                                         DaxElementAnimateTransform *node);
+    void (*traverse_circle)             (DaxTraverser     *traverser,
+                                         DaxElementCircle *node);
+    void (*traverse_script)             (DaxTraverser     *traverser,
+                                         DaxElementScript *node);
+    void (*traverse_handler)            (DaxTraverser      *traverser,
+                                         DaxElementHandler *node);
+    void (*traverse_line)               (DaxTraverser   *traverser,
+                                         DaxElementLine *node);
+    void (*traverse_text)               (DaxTraverser   *traverser,
+                                         DaxElementText *node);
+    void (*traverse_image)              (DaxTraverser    *traverser,
+                                         DaxElementImage *node);
 };
 
 GType               dax_traverser_get_type          (void) G_GNUC_CONST;
 
-DaxTraverser *      dax_traverser_new               (DaxDomNode *root);
-const DaxMatrix *   dax_traverser_get_ctm           (DaxTraverser *self);
-void                dax_traverser_set_root          (DaxTraverser *self,
-                                                     DaxDomNode   *root);
-void                dax_traverser_apply             (DaxTraverser *self);
+DaxTraverser *      dax_traverser_new                           (DaxDomNode *root);
+const DaxMatrix *   dax_traverser_get_ctm                       (DaxTraverser *self);
+void                dax_traverser_set_root                      (DaxTraverser *self,
+                                                                 DaxDomNode   *root);
+void                dax_traverser_apply                         (DaxTraverser *self);
 
-void                dax_traverser_traverse_svg      (DaxTraverser  *self,
-                                                     DaxElementSvg *node);
-void                dax_traverser_traverse_g        (DaxTraverser *self,
-                                                     DaxElementG  *node);
-void                dax_traverser_traverse_path     (DaxTraverser   *self,
-                                                     DaxElementPath *node);
-void                dax_traverser_traverse_rect     (DaxTraverser   *self,
-                                                     DaxElementRect *node);
-void                dax_traverser_traverse_polyline (DaxTraverser      *self,
-                                                     DaxElementPolyline *node);
-void                dax_traverser_traverse_animate  (DaxTraverser      *self,
-                                                     DaxElementAnimate *node);
-void                dax_traverser_traverse_circle   (DaxTraverser     *self,
-                                                     DaxElementCircle *node);
-void                dax_traverser_traverse_script   (DaxTraverser     *self,
-                                                     DaxElementScript *node);
-void                dax_traverser_traverse_handler  (DaxTraverser      *self,
-                                                     DaxElementHandler *node);
-void                dax_traverser_traverse_line     (DaxTraverser   *self,
-                                                     DaxElementLine *node);
-void                dax_traverser_traverse_text     (DaxTraverser   *self,
-                                                     DaxElementText *node);
-void                dax_traverser_traverse_image    (DaxTraverser    *self,
-                                                     DaxElementImage *image);
+void                dax_traverser_traverse_svg                  (DaxTraverser  *self,
+                                                                 DaxElementSvg *node);
+void                dax_traverser_traverse_g                    (DaxTraverser *self,
+                                                                 DaxElementG  *node);
+void                dax_traverser_traverse_path                 (DaxTraverser   *self,
+                                                                 DaxElementPath *node);
+void                dax_traverser_traverse_rect                 (DaxTraverser   *self,
+                                                                 DaxElementRect *node);
+void                dax_traverser_traverse_polyline             (DaxTraverser      *self,
+                                                                 DaxElementPolyline *node);
+void                dax_traverser_traverse_animate              (DaxTraverser      *self,
+                                                                 DaxElementAnimate *node);
+void                dax_traverser_traverse_animate_transform    (DaxTraverser      *self,
+                                                                 DaxElementAnimateTransform *node);
+void                dax_traverser_traverse_circle               (DaxTraverser     *self,
+                                                                 DaxElementCircle *node);
+void                dax_traverser_traverse_script               (DaxTraverser     *self,
+                                                                 DaxElementScript *node);
+void                dax_traverser_traverse_handler              (DaxTraverser      *self,
+                                                                 DaxElementHandler *node);
+void                dax_traverser_traverse_line                 (DaxTraverser   *self,
+                                                                 DaxElementLine *node);
+void                dax_traverser_traverse_text                 (DaxTraverser   *self,
+                                                                 DaxElementText *node);
+void                dax_traverser_traverse_image                (DaxTraverser    *self,
+                                                                 DaxElementImage *image);
 G_END_DECLS
 
 #endif /* __DAX_TRAVERSER_H__ */

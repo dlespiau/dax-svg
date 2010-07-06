@@ -64,8 +64,8 @@ struct _DaxGroupClass
 GType           dax_group_get_type      (void) G_GNUC_CONST;
 
 ClutterActor *  dax_group_new           (void);
-void            dax_group_set_matrix    (DaxGroup  *self,
-                                         DaxMatrix *matrix);
+void            dax_group_set_matrix    (DaxGroup        *self,
+                                         const DaxMatrix *matrix);
 
 G_END_DECLS
 

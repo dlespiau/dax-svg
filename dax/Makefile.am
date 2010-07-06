@@ -38,6 +38,8 @@ source_c =				\
 	dax-document.c			\
 	dax-element.c			\
 	dax-element-animate.c		\
+	dax-element-animate-transform.c	\
+	dax-element-animation.c		\
 	dax-element-circle.c		\
 	dax-element-desc.c		\
 	dax-element-g.c			\
@@ -61,6 +63,7 @@ source_c =				\
 	dax-knot-sequence.c		\
 	dax-paramspec.c			\
 	dax-parser.c			\
+	dax-shape.c			\
 	dax-svg-exception.c		\
 	dax-traverser.c			\
 	dax-traverser-clutter.c		\
@@ -89,6 +92,8 @@ source_h =				\
 	dax-document.h			\
 	dax-element.h			\
 	dax-element-animate.h		\
+	dax-element-animate-transform.h	\
+	dax-element-animation.h		\
 	dax-element-circle.h		\
 	dax-element-desc.h		\
 	dax-element-g.h			\
@@ -109,6 +114,7 @@ source_h =				\
 	dax-group.h			\
 	dax-knot-sequence.h		\
 	dax-parser.h			\
+	dax-shape.h			\
 	dax-svg-exception.h		\
 	dax-traverser.h			\
 	dax-traverser-clutter.h		\

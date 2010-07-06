@@ -86,7 +86,7 @@ dax_element_path_set_property (GObject      *object,
     case PROP_TRANSFORM:
         if (priv->transform)
             dax_matrix_free (priv->transform);
-        priv->transform = dax_matrix_copy (g_value_get_boxed (value));
+        priv->transform = dax_matrix_deep_copy (g_value_get_boxed (value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -148,4 +148,12 @@ dax_element_path_get_path (DaxElementPath *self)
     g_return_val_if_fail (DAX_IS_ELEMENT_PATH (self), NULL);
 
     return g_object_ref (self->priv->path);
+}
+
+const DaxMatrix *
+dax_element_path_get_transform (DaxElementPath *path)
+{
+    g_return_val_if_fail (DAX_IS_ELEMENT_PATH (path), NULL);
+
+    return path->priv->transform;
 }
