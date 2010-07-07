@@ -61,6 +61,12 @@ typedef struct _DaxTraverser DaxTraverser;
 typedef struct _DaxTraverserClass DaxTraverserClass;
 typedef struct _DaxTraverserPrivate DaxTraverserPrivate;
 
+typedef enum /*< skip >*/
+{
+    DAX_TRAVERSER_WAY_START,
+    DAX_TRAVERSER_WAY_END
+} DaxTraverserWay;
+
 struct _DaxTraverser
 {
     GObject parent;
@@ -74,8 +80,9 @@ struct _DaxTraverserClass
 
     void (*traverse_svg)                (DaxTraverser  *traverser,
                                          DaxElementSvg *node);
-    void (*traverse_g)                  (DaxTraverser *traverser,
-                                         DaxElementG  *node);
+    void (*traverse_g)                  (DaxTraverser    *traverser,
+                                         DaxElementG     *node,
+                                         DaxTraverserWay  way);
     void (*traverse_path)               (DaxTraverser   *traverser,
                                          DaxElementPath *node);
     void (*traverse_rect)               (DaxTraverser   *traverser,
@@ -110,8 +117,9 @@ void                dax_traverser_apply                         (DaxTraverser *s
 
 void                dax_traverser_traverse_svg                  (DaxTraverser  *self,
                                                                  DaxElementSvg *node);
-void                dax_traverser_traverse_g                    (DaxTraverser *self,
-                                                                 DaxElementG  *node);
+void                dax_traverser_traverse_g                    (DaxTraverser    *self,
+                                                                 DaxElementG     *node,
+                                                                 DaxTraverserWay  way);
 void                dax_traverser_traverse_path                 (DaxTraverser   *self,
                                                                  DaxElementPath *node);
 void                dax_traverser_traverse_rect                 (DaxTraverser   *self,

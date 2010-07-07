@@ -104,13 +104,22 @@ on_g_transform_changed (DaxElementG *element,
 }
 
 static void
-dax_traverser_clutter_traverse_g (DaxTraverser *traverser,
-                                  DaxElementG  *node)
+dax_traverser_clutter_traverse_g (DaxTraverser    *traverser,
+                                  DaxElementG     *node,
+                                  DaxTraverserWay  way)
 {
     DaxTraverserClutter *build = DAX_TRAVERSER_CLUTTER (traverser);
     DaxTraverserClutterPrivate *priv = build->priv;
     ClutterActor *group;
     DaxMatrix *matrix;
+
+    if (way == DAX_TRAVERSER_WAY_END) {
+        ClutterActor *parent;
+
+        parent = clutter_actor_get_parent (CLUTTER_ACTOR (priv->container));
+        set_container_internal (build, CLUTTER_CONTAINER (parent));
+        return;
+    }
 
     group = dax_group_new ();
     clutter_container_add_actor (priv->container, group);

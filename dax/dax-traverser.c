@@ -62,8 +62,9 @@ dax_traverser_traverse_svg_real (DaxTraverser  *self,
 }
 
 static void
-dax_traverser_traverse_g_real (DaxTraverser *self,
-                               DaxElementG  *node)
+dax_traverser_traverse_g_real (DaxTraverser    *self,
+                               DaxElementG     *node,
+                               DaxTraverserWay  way)
 {
 }
 
@@ -247,15 +248,23 @@ dax_traverser_set_root (DaxTraverser *self,
 }
 
 static void
-dax_traverse_node (DaxTraverser *traverser,
-                   DaxDomNode   *node)
+dax_traverse_node (DaxTraverser    *traverser,
+                   DaxDomNode      *node,
+                   DaxTraverserWay  way)
 {
     DAX_NOTE (TRAVERSER, "traversing %s %p", G_OBJECT_TYPE_NAME (node), node);
+
+    if (way == DAX_TRAVERSER_WAY_END) {
+        if (DAX_IS_ELEMENT_G (node)) {
+            dax_traverser_traverse_g (traverser, (DaxElementG *)node, way);
+        }
+        return;
+    }
 
     if (DAX_IS_ELEMENT_SVG (node))
         dax_traverser_traverse_svg (traverser, (DaxElementSvg *)node);
     else if (DAX_IS_ELEMENT_G (node))
-        dax_traverser_traverse_g (traverser, (DaxElementG *)node);
+        dax_traverser_traverse_g (traverser, (DaxElementG *)node, way);
     else if (DAX_IS_ELEMENT_PATH (node))
         dax_traverser_traverse_path (traverser, (DaxElementPath *)node);
     else if (DAX_IS_ELEMENT_RECT (node))
@@ -287,12 +296,15 @@ static void
 dax_traverser_walk_tree (DaxTraverser *traverser,
                          DaxDomNode   *node)
 {
-    dax_traverse_node (traverser, node);
-    node = node->first_child;
-    while (node) {
-        dax_traverser_walk_tree (traverser, node);
-        node = node->next_sibling;
+    DaxDomNode *cur;
+
+    dax_traverse_node (traverser, node, DAX_TRAVERSER_WAY_START);
+    cur = node->first_child;
+    while (cur) {
+        dax_traverser_walk_tree (traverser, cur);
+        cur = cur->next_sibling;
     }
+    dax_traverse_node (traverser, node, DAX_TRAVERSER_WAY_END);
 }
 
 void
@@ -317,13 +329,14 @@ dax_traverser_traverse_svg (DaxTraverser  *self,
 }
 
 void
-dax_traverser_traverse_g (DaxTraverser *self,
-                          DaxElementG  *node)
+dax_traverser_traverse_g (DaxTraverser    *self,
+                          DaxElementG     *node,
+                          DaxTraverserWay  way)
 {
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
     apply_transform (self, DAX_ELEMENT (node));
-    klass->traverse_g (self, node);
+    klass->traverse_g (self, node, way);
 }
 
 void

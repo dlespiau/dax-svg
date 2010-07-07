@@ -1,7 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -53,7 +53,7 @@ dax_actor_rebuild_scene_graph (DaxActor *self)
     clutter_container_foreach (CLUTTER_CONTAINER (self), remove_actor, self);
 
     traverser = dax_traverser_clutter_new (DAX_DOM_NODE (priv->document),
-                                            CLUTTER_CONTAINER (self));
+                                           CLUTTER_CONTAINER (self));
     dax_traverser_apply (traverser);
 
     traverser_clutter = DAX_TRAVERSER_CLUTTER (traverser);
