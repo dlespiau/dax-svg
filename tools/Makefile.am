@@ -14,5 +14,5 @@ AM_CPPFLAGS = 			\
 	$(NULL)
 
 TOOLS             += dax-viewer
-dax_viewer_SOURCES = viewer-main.c
+dax_viewer_SOURCES = viewer-main.c pp-super-aa.c pp-super-aa.h
 dax_viewer_LDADD   = $(progs_ldadd)

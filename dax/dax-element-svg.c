@@ -227,3 +227,19 @@ dax_element_svg_new (void)
 {
     return g_object_new (DAX_TYPE_ELEMENT_SVG, NULL);
 }
+
+ClutterUnits *
+dax_element_svg_get_width (DaxElementSvg *svg)
+{
+    g_return_val_if_fail (DAX_IS_ELEMENT_SVG (svg), NULL);
+
+    return svg->priv->width;
+}
+
+ClutterUnits *
+dax_element_svg_get_height (DaxElementSvg *svg)
+{
+    g_return_val_if_fail (DAX_IS_ELEMENT_SVG (svg), NULL);
+
+    return svg->priv->height;
+}

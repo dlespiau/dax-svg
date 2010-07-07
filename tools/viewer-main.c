@@ -23,11 +23,13 @@
 #include <clutter/clutter.h>
 #include <dax.h>
 
+#include "pp-super-aa.h"
+
 int
 main (int   argc,
       char *argv[])
 {
-    ClutterActor *stage, *svg;
+    ClutterActor *stage, *svg, *aa;
 
     dax_init (&argc, &argv);
     clutter_init (&argc, &argv);
@@ -44,7 +46,10 @@ main (int   argc,
     }
 
     stage = clutter_stage_get_default ();
-    clutter_container_add_actor (CLUTTER_CONTAINER (stage), svg);
+    aa = pp_super_aa_new ();
+    pp_super_aa_set_resolution (PP_SUPER_AA (aa), 2, 2);
+    clutter_container_add_actor (CLUTTER_CONTAINER (aa), svg);
+    clutter_container_add_actor (CLUTTER_CONTAINER (stage), aa);
     clutter_actor_show_all (stage);
 #if 0
     clutter_actor_animate (svg, CLUTTER_LINEAR, 5000, "x", 1000.0f, NULL);

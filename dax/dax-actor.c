@@ -151,6 +151,8 @@ dax_actor_set_document (DaxActor       *actor,
                         DaxDomDocument *document)
 {
     DaxActorPrivate *priv;
+    DaxElementSvg *svg;
+    ClutterUnits *width, *height;
 
     g_return_if_fail (DAX_IS_ACTOR (actor));
 
@@ -158,6 +160,17 @@ dax_actor_set_document (DaxActor       *actor,
     priv->document = document;
 
     dax_actor_rebuild_scene_graph (actor);
+
+    /* set the size of the viewport as defined by <svg> */
+    svg = DAX_ELEMENT_SVG (dax_dom_document_get_document_element (document));
+    width = dax_element_svg_get_width (svg);
+    height = dax_element_svg_get_height (svg);
+    clutter_actor_set_size (CLUTTER_ACTOR (actor),
+                            clutter_units_to_pixels (width),
+                            clutter_units_to_pixels (height));
+
+    /* be sure not to draw anything not in the viewport */
+    clutter_actor_set_clip_to_allocation (CLUTTER_ACTOR (actor), TRUE);
 }
 
 /* FIXME a real play/pause/stop api or hand back the ClutterScore ? */

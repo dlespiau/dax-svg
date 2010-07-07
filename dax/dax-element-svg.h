@@ -83,9 +83,11 @@ struct _DaxElementSvgClass
     DaxElementClass parent_class;
 };
 
-GType dax_element_svg_get_type (void) G_GNUC_CONST;
+GType               dax_element_svg_get_type    (void) G_GNUC_CONST;
 
-DaxDomElement *dax_element_svg_new (void);
+DaxDomElement *     dax_element_svg_new         (void);
+ClutterUnits *      dax_element_svg_get_width   (DaxElementSvg *svg);
+ClutterUnits *      dax_element_svg_get_height  (DaxElementSvg *svg);
 
 G_END_DECLS
 
