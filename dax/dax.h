@@ -48,6 +48,7 @@
 #include "dax-element-text.h"
 #include "dax-element-title.h"
 #include "dax-element-traversal.h"
+#include "dax-element-video.h"
 #include "dax-enum-types.h"
 #include "dax-knot-sequence.h"
 #include "dax-parser.h"

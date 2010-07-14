@@ -36,6 +36,7 @@
 #include "dax-element-text.h"
 #include "dax-element-title.h"
 #include "dax-element-tspan.h"
+#include "dax-element-video.h"
 #include "dax-internals.h"
 #include "dax-paramspec.h"
 #include "dax-private.h"
@@ -94,6 +95,8 @@ dax_document_create_element(DaxDomDocument  *self,
         return dax_element_title_new ();
     if (strcmp (tag_name, "line") == 0)
         return dax_element_line_new ();
+    if (strcmp (tag_name, "video") == 0)
+        return dax_element_video_new ();
 
     return NULL;
 }

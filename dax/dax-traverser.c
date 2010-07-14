@@ -134,6 +134,12 @@ dax_traverser_traverse_image_real (DaxTraverser    *self,
 {
 }
 
+static void
+dax_traverser_traverse_video_real (DaxTraverser    *self,
+                                   DaxElementVideo *node)
+{
+}
+
 /*
  * GObject overloading
  */
@@ -202,6 +208,7 @@ dax_traverser_class_init (DaxTraverserClass *klass)
     klass->traverse_line = dax_traverser_traverse_line_real;
     klass->traverse_text = dax_traverser_traverse_text_real;
     klass->traverse_image = dax_traverser_traverse_image_real;
+    klass->traverse_video = dax_traverser_traverse_video_real;
 }
 
 static void
@@ -282,6 +289,8 @@ dax_traverse_node (DaxTraverser    *traverser,
         dax_traverser_traverse_animate_transform (traverser, element);
     } else if (DAX_IS_ELEMENT_IMAGE (node))
         dax_traverser_traverse_image (traverser, (DaxElementImage *)node);
+    else if (DAX_IS_ELEMENT_VIDEO (node))
+        dax_traverser_traverse_video (traverser, (DaxElementVideo *)node);
     else if (DAX_IS_ELEMENT_CIRCLE (node))
         dax_traverser_traverse_circle (traverser, (DaxElementCircle *)node);
     else if (DAX_IS_ELEMENT_SCRIPT (node))
@@ -437,4 +446,13 @@ dax_traverser_traverse_image (DaxTraverser    *self,
     DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
 
     klass->traverse_image (self, node);
+}
+
+void
+dax_traverser_traverse_video (DaxTraverser    *self,
+                              DaxElementVideo *node)
+{
+    DaxTraverserClass *klass = DAX_TRAVERSER_GET_CLASS (self);
+
+    klass->traverse_video (self, node);
 }

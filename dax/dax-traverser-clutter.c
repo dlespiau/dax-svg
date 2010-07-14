@@ -18,6 +18,8 @@
 
 #include <string.h>
 
+#include <clutter-gst/clutter-gst.h>
+
 #include "dax-dom.h"
 
 #include "clutter-shape.h"
@@ -784,9 +786,44 @@ dax_traverser_clutter_traverse_image (DaxTraverser    *traverser,
 {
     DaxTraverserClutter *build = DAX_TRAVERSER_CLUTTER (traverser);
 
-    if (dax_dom_element_is_loaded ((DaxDomElement *) node))
+    if (dax_dom_element_is_loaded (DAX_DOM_ELEMENT (node)))
         on_image_loaded (node, TRUE, build);
     g_signal_connect (node, "loaded", G_CALLBACK (on_image_loaded), build);
+}
+
+
+static void
+dax_traverser_clutter_traverse_video (DaxTraverser    *traverser,
+                                      DaxElementVideo *node)
+{
+    DaxTraverserClutter *build = DAX_TRAVERSER_CLUTTER (traverser);
+    DaxTraverserClutterPrivate *priv = build->priv;
+    ClutterActor *video;
+    ClutterUnits *x_u, *y_u, *width_u, *height_u;
+    gfloat x, y, width, height;
+    const gchar *uri;
+
+    x_u = dax_element_video_get_x (node);
+    y_u = dax_element_video_get_y (node);
+    width_u = dax_element_video_get_width (node);
+    height_u = dax_element_video_get_height (node);
+
+    x = clutter_units_to_pixels (x_u);
+    y = clutter_units_to_pixels (y_u);
+    width = clutter_units_to_pixels (width_u);
+    height = clutter_units_to_pixels (height_u);
+
+    video = clutter_gst_video_texture_new ();
+    clutter_actor_set_x (video, x);
+    clutter_actor_set_y (video, x);
+    clutter_actor_set_width (video, width);
+    clutter_actor_set_height (video, height);
+
+    uri = dax_element_video_get_uri (node);
+    clutter_media_set_uri (CLUTTER_MEDIA (video), uri);
+    clutter_media_set_playing (CLUTTER_MEDIA (video), TRUE);
+
+    clutter_container_add_actor (priv->container, video);
 }
 
 /*
@@ -865,6 +902,7 @@ dax_traverser_clutter_class_init (DaxTraverserClutterClass *klass)
     traverser_class->traverse_line = dax_traverser_clutter_traverse_line;
     traverser_class->traverse_text = dax_traverser_clutter_traverse_text;
     traverser_class->traverse_image = dax_traverser_clutter_traverse_image;
+    traverser_class->traverse_video = dax_traverser_clutter_traverse_video;
 }
 
 static void

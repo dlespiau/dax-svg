@@ -72,11 +72,11 @@ GType                   dax_element_image_get_type          (void) G_GNUC_CONST;
 
 DaxDomElement *         dax_element_image_new               (void);
 
-ClutterUnits *          dax_element_image_get_x             (const DaxElementImage *image);
-ClutterUnits *          dax_element_image_get_y             (const DaxElementImage *image);
-ClutterUnits *          dax_element_image_get_width         (const DaxElementImage *image);
-ClutterUnits *          dax_element_image_get_height        (const DaxElementImage *image);
-const DaxCacheEntry *   dax_element_image_get_cache_entry   (const DaxElementImage *image);
+ClutterUnits *          dax_element_image_get_x             (DaxElementImage *image);
+ClutterUnits *          dax_element_image_get_y             (DaxElementImage *image);
+ClutterUnits *          dax_element_image_get_width         (DaxElementImage *image);
+ClutterUnits *          dax_element_image_get_height        (DaxElementImage *image);
+const DaxCacheEntry *   dax_element_image_get_cache_entry   (DaxElementImage *image);
 
 G_END_DECLS
 

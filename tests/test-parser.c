@@ -462,6 +462,53 @@ test_image (void)
 }
 
 static void
+test_video (void)
+{
+    DaxDomDocument *document;
+    DaxDomNode *svg, *desc, *g, *circle, *video_node;
+    DaxElementVideo *video;
+    ClutterUnits *units;
+    gfloat value;
+
+    document = dax_dom_document_new_from_file ("media02.svg", NULL);
+    g_assert (DAX_IS_DOM_DOCUMENT (document));
+
+    /* <svg> */
+    svg = DAX_DOM_NODE (dax_dom_document_get_document_element (document));
+    g_assert (DAX_IS_ELEMENT_SVG (svg));
+
+    /* <desc> */
+    desc = dax_dom_node_get_first_child (svg);
+    g_assert (DAX_IS_ELEMENT_DESC (desc));
+
+    /* <g> */
+    g = dax_dom_node_get_next_sibling (desc);
+    g_assert (DAX_IS_ELEMENT_G (g));
+
+    /* <circle> */
+    circle = dax_dom_node_get_first_child (g);
+    g_assert (DAX_IS_ELEMENT_CIRCLE (circle));
+
+    /* <video> */
+    video_node = dax_dom_node_get_next_sibling (circle);
+    g_assert (DAX_IS_ELEMENT_VIDEO (video_node));
+    video = DAX_ELEMENT_VIDEO (video_node);
+
+    units = dax_element_video_get_x (video);
+    value = clutter_units_to_pixels (units);
+    g_assert_cmpfloat (value, ==, 50.0f);
+    units = dax_element_video_get_y (video);
+    value = clutter_units_to_pixels (units);
+    g_assert_cmpfloat (value, ==, 50.0f);
+    units = dax_element_video_get_width (video);
+    value = clutter_units_to_pixels (units);
+    g_assert_cmpfloat (value, ==, 320.0f);
+    units = dax_element_video_get_height (video);
+    value = clutter_units_to_pixels (units);
+    g_assert_cmpfloat (value, ==, 240.0f);
+}
+
+static void
 test_base (void)
 {
     DaxDomDocument *document;
@@ -684,6 +731,7 @@ main (int   argc,
     g_test_add_func ("/parser/element/line", test_line);
     g_test_add_func ("/parser/element/text", test_text);
     g_test_add_func ("/parser/element/image", test_image);
+    g_test_add_func ("/parser/element/video", test_video);
     g_test_add_func ("/parser/xml-base", test_base);
     g_test_add_func ("/parser/preserve-aspect-ratio", test_preserve_ar);
     g_test_add_func ("/parser/transform", test_transform);

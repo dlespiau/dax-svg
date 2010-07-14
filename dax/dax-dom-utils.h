@@ -3,6 +3,8 @@
  *
  * Copyright © 2009 Intel Corporation.
  *
+ * Authored by: Damien Lespiau <damien.lespiau@intel.com>
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
  * version 2.1, as published by the Free Software Foundation.
@@ -16,29 +18,18 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __DAX_DOM_H__
-#define __DAX_DOM_H__
+#ifndef __DAX_DOM_UTILS_H__
+#define __DAX_DOM_UTILS_H__
 
 #include <glib.h>
 
+#include "dax-dom-element.h"
+
 G_BEGIN_DECLS
 
-#include "dax-cache.h"
-#include "dax-cache-entry.h"
-#include "dax-dom-character-data.h"
-#include "dax-dom-core.h"
-#include "dax-dom-forward.h"
-#include "dax-dom-document.h"
-#include "dax-dom-element.h"
-#include "dax-dom-exception.h"
-#include "dax-dom-node.h"
-#include "dax-dom-text.h"
-#include "dax-dom-utils.h"
-#include "dax-xml-forward.h"
-#include "dax-xml-event.h"
-#include "dax-xml-event-listener.h"
-#include "dax-xml-event-target.h"
+gchar *     dax_dom_utils_get_uri_for_href  (DaxDomElement *element,
+                                             const gchar   *href);
 
 G_END_DECLS
 
-#endif /* __DAX_DOM_H__ */
+#endif /* __DAX_DOM_UTILS_H__ */

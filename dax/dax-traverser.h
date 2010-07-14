@@ -36,6 +36,7 @@
 #include "dax-element-script.h"
 #include "dax-element-svg.h"
 #include "dax-element-text.h"
+#include "dax-element-video.h"
 #include "dax-types.h"
 
 G_BEGIN_DECLS
@@ -105,6 +106,8 @@ struct _DaxTraverserClass
                                          DaxElementText *node);
     void (*traverse_image)              (DaxTraverser    *traverser,
                                          DaxElementImage *node);
+    void (*traverse_video)              (DaxTraverser    *traverser,
+                                         DaxElementVideo *node);
 };
 
 GType               dax_traverser_get_type          (void) G_GNUC_CONST;
@@ -142,6 +145,8 @@ void                dax_traverser_traverse_text                 (DaxTraverser   
                                                                  DaxElementText *node);
 void                dax_traverser_traverse_image                (DaxTraverser    *self,
                                                                  DaxElementImage *image);
+void                dax_traverser_traverse_video                (DaxTraverser    *self,
+                                                                 DaxElementVideo *image);
 G_END_DECLS
 
 #endif /* __DAX_TRAVERSER_H__ */

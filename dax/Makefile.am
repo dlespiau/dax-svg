@@ -36,6 +36,7 @@ source_c =				\
 	dax-dom-node.c			\
 	dax-dom-text.c			\
 	dax-document.c			\
+	dax-dom-utils.c			\
 	dax-element.c			\
 	dax-element-animate.c		\
 	dax-element-animate-transform.c	\
@@ -55,6 +56,7 @@ source_c =				\
 	dax-element-title.c		\
 	dax-element-traversal.c		\
 	dax-element-tspan.c		\
+	dax-element-video.c		\
 	dax-enum-types.c		\
 	dax-gjs-context.c		\
 	dax-gjs-function-listener.c	\
@@ -89,6 +91,7 @@ source_h =				\
 	dax-dom-exception.h		\
 	dax-dom-node.h			\
 	dax-dom-text.h			\
+	dax-dom-utils.h			\
 	dax-document.h			\
 	dax-element.h			\
 	dax-element-animate.h		\
@@ -109,6 +112,7 @@ source_h =				\
 	dax-element-title.h		\
 	dax-element-traversal.h		\
 	dax-element-tspan.h		\
+	dax-element-video.h		\
 	dax-gjs-context.h		\
 	dax-gjs-function-listener.h	\
 	dax-group.h			\

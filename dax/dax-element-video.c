@@ -1,7 +1,9 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009, 2010 Intel Corporation.
+ * Copyright © 2010 Intel Corporation.
+ *
+ * Authored by: Damien Lespiau <damien.lespiau@intel.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -18,20 +20,19 @@
 
 #include "dax-dom.h"
 
-#include "dax-cache.h"
 #include "dax-paramspec.h"
 #include "dax-private.h"
 #include "dax-types.h"
 #include "dax-utils.h"
 
-#include "dax-element-image.h"
+#include "dax-element-video.h"
 
-G_DEFINE_TYPE (DaxElementImage, dax_element_image, DAX_TYPE_ELEMENT)
+G_DEFINE_TYPE (DaxElementVideo, dax_element_video, DAX_TYPE_ELEMENT)
 
-#define ELEMENT_IMAGE_PRIVATE(o)                                \
+#define ELEMENT_VIDEO_PRIVATE(o)                                \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                      \
-                                      DAX_TYPE_ELEMENT_IMAGE,   \
-                                      DaxElementImagePrivate))
+                                      DAX_TYPE_ELEMENT_VIDEO,   \
+                                      DaxElementVideoPrivate))
 
 enum
 {
@@ -46,10 +47,8 @@ enum
     PROP_TYPE
 };
 
-struct _DaxElementImagePrivate
+struct _DaxElementVideoPrivate
 {
-    DaxCacheEntry *cached_file;
-
     /* properties */
     ClutterUnits *x;
     ClutterUnits *y;
@@ -58,13 +57,15 @@ struct _DaxElementImagePrivate
     DaxPreserveAspectRatio *par;
     gchar *href;
     gchar *type;
+
+    gchar *uri;
 };
 
 static void
-dax_element_image_set_x (DaxElementImage    *image,
+dax_element_video_set_x (DaxElementVideo    *video,
                          const ClutterUnits *x)
 {
-    DaxElementImagePrivate *priv = image->priv;
+    DaxElementVideoPrivate *priv = video->priv;
 
     if (priv->x)
         clutter_units_free (priv->x);
@@ -73,10 +74,10 @@ dax_element_image_set_x (DaxElementImage    *image,
 }
 
 static void
-dax_element_image_set_y (DaxElementImage    *image,
+dax_element_video_set_y (DaxElementVideo    *video,
                          const ClutterUnits *y)
 {
-    DaxElementImagePrivate *priv = image->priv;
+    DaxElementVideoPrivate *priv = video->priv;
 
     if (priv->y)
         clutter_units_free (priv->y);
@@ -85,10 +86,10 @@ dax_element_image_set_y (DaxElementImage    *image,
 }
 
 static void
-dax_element_image_set_width (DaxElementImage    *image,
+dax_element_video_set_width (DaxElementVideo    *video,
                              const ClutterUnits *width)
 {
-    DaxElementImagePrivate *priv = image->priv;
+    DaxElementVideoPrivate *priv = video->priv;
 
     if (priv->width)
         clutter_units_free (priv->width);
@@ -97,10 +98,10 @@ dax_element_image_set_width (DaxElementImage    *image,
 }
 
 static void
-dax_element_image_set_height (DaxElementImage    *image,
+dax_element_video_set_height (DaxElementVideo    *video,
                               const ClutterUnits *height)
 {
-    DaxElementImagePrivate *priv = image->priv;
+    DaxElementVideoPrivate *priv = video->priv;
 
     if (priv->height)
         clutter_units_free (priv->height);
@@ -109,10 +110,10 @@ dax_element_image_set_height (DaxElementImage    *image,
 }
 
 static void
-dax_element_image_set_par (DaxElementImage              *image,
+dax_element_video_set_par (DaxElementVideo              *video,
                            const DaxPreserveAspectRatio *par)
 {
-    DaxElementImagePrivate *priv = image->priv;
+    DaxElementVideoPrivate *priv = video->priv;
 
     if (priv->par)
         dax_preserve_aspect_ratio_free (priv->par);
@@ -121,47 +122,17 @@ dax_element_image_set_par (DaxElementImage              *image,
 }
 
 /*
- * DaxDomElement implementation
- */
-
-static void
-on_cache_entry_ready (DaxCacheEntry   *entry,
-                      GParamSpec      *pspec,
-                      DaxDomElement   *element)
-{
-    dax_dom_element_set_loaded (element, TRUE);
-}
-
-static void
-dax_element_image_parsed (DaxDomElement *element)
-{
-    DaxElementImage *image = (DaxElementImage *) element;
-    DaxElementImagePrivate *priv = image->priv;
-    DaxCache *cache;
-
-    cache = dax_cache_get_default ();
-    priv->cached_file =
-        dax_cache_get_entry_for_href (cache, element, priv->href);
-
-    if (!dax_cache_entry_is_ready (priv->cached_file)) {
-        dax_dom_element_set_loaded (element, FALSE);
-        g_signal_connect (priv->cached_file, "notify::ready",
-                          G_CALLBACK (on_cache_entry_ready), element);
-    }
-}
-
-/*
  * GObject implementation
  */
 
 static void
-dax_element_image_get_property (GObject    *object,
+dax_element_video_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-    DaxElementImage *image = (DaxElementImage *) object;
-    DaxElementImagePrivate *priv = image->priv;
+    DaxElementVideo *video = (DaxElementVideo *) object;
+    DaxElementVideoPrivate *priv = video->priv;
 
     switch (property_id)
     {
@@ -193,30 +164,30 @@ dax_element_image_get_property (GObject    *object,
 }
 
 static void
-dax_element_image_set_property (GObject      *object,
+dax_element_video_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-    DaxElementImage *image = (DaxElementImage *) object;
-    DaxElementImagePrivate *priv = image->priv;
+    DaxElementVideo *video = (DaxElementVideo *) object;
+    DaxElementVideoPrivate *priv = video->priv;
 
     switch (property_id)
     {
     case PROP_X:
-        dax_element_image_set_x (image, clutter_value_get_units (value));
+        dax_element_video_set_x (video, clutter_value_get_units (value));
         break;
     case PROP_Y:
-        dax_element_image_set_y (image, clutter_value_get_units (value));
+        dax_element_video_set_y (video, clutter_value_get_units (value));
         break;
     case PROP_WIDTH:
-        dax_element_image_set_width (image, clutter_value_get_units (value));
+        dax_element_video_set_width (video, clutter_value_get_units (value));
         break;
     case PROP_HEIGHT:
-        dax_element_image_set_height (image, clutter_value_get_units (value));
+        dax_element_video_set_height (video, clutter_value_get_units (value));
         break;
     case PROP_PAR:
-        dax_element_image_set_par (image, g_value_get_boxed (value));
+        dax_element_video_set_par (video, g_value_get_boxed (value));
         break;
     case PROP_HREF:
         g_free (priv->href);
@@ -233,16 +204,16 @@ dax_element_image_set_property (GObject      *object,
 }
 
 static void
-dax_element_image_dispose (GObject *object)
+dax_element_video_dispose (GObject *object)
 {
-    G_OBJECT_CLASS (dax_element_image_parent_class)->dispose (object);
+    G_OBJECT_CLASS (dax_element_video_parent_class)->dispose (object);
 }
 
 static void
-dax_element_image_finalize (GObject *object)
+dax_element_video_finalize (GObject *object)
 {
-    DaxElementImage *image = (DaxElementImage *) object;
-    DaxElementImagePrivate *priv = image->priv;
+    DaxElementVideo *video = (DaxElementVideo *) object;
+    DaxElementVideoPrivate *priv = video->priv;
 
     clutter_units_free (priv->x);
     clutter_units_free (priv->y);
@@ -253,25 +224,23 @@ dax_element_image_finalize (GObject *object)
 
     g_free (priv->href);
     g_free (priv->type);
+    g_free (priv->uri);
 
-    G_OBJECT_CLASS (dax_element_image_parent_class)->finalize (object);
+    G_OBJECT_CLASS (dax_element_video_parent_class)->finalize (object);
 }
 
 static void
-dax_element_image_class_init (DaxElementImageClass *klass)
+dax_element_video_class_init (DaxElementVideoClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
-    DaxDomElementClass *dom_element_class = DAX_DOM_ELEMENT_CLASS (klass);
     GParamSpec *pspec;
 
-    g_type_class_add_private (klass, sizeof (DaxElementImagePrivate));
+    g_type_class_add_private (klass, sizeof (DaxElementVideoPrivate));
 
-    object_class->get_property = dax_element_image_get_property;
-    object_class->set_property = dax_element_image_set_property;
-    object_class->dispose = dax_element_image_dispose;
-    object_class->finalize = dax_element_image_finalize;
-
-    dom_element_class->parsed = dax_element_image_parsed;
+    object_class->get_property = dax_element_video_get_property;
+    object_class->set_property = dax_element_video_set_property;
+    object_class->dispose = dax_element_video_dispose;
+    object_class->finalize = dax_element_video_finalize;
 
     pspec = dax_param_spec_boxed ("x",
                                   "x",
@@ -322,7 +291,7 @@ dax_element_image_class_init (DaxElementImageClass *klass)
 
     pspec = dax_param_spec_string ("href",
                                    "href",
-                                   "An IRI reference to the image",
+                                   "An IRI reference to the video content",
                                    NULL,
                                    DAX_GPARAM_READWRITE,
                                    DAX_PARAM_ANIMATABLE,
@@ -331,8 +300,7 @@ dax_element_image_class_init (DaxElementImageClass *klass)
 
     pspec = dax_param_spec_string ("type",
                                    "type",
-                                   "A hint about the expected Internet Media "
-                                   "Type of the raster image",
+                                   "The video format",
                                    NULL,
                                    DAX_GPARAM_READWRITE,
                                    DAX_PARAM_ANIMATABLE,
@@ -341,13 +309,13 @@ dax_element_image_class_init (DaxElementImageClass *klass)
 }
 
 static void
-dax_element_image_init (DaxElementImage *self)
+dax_element_video_init (DaxElementVideo *self)
 {
-    DaxElementImagePrivate *priv;
+    DaxElementVideoPrivate *priv;
     DaxPreserveAspectRatio par;
     ClutterUnits zero;
 
-    self->priv = priv = ELEMENT_IMAGE_PRIVATE (self);
+    self->priv = priv = ELEMENT_VIDEO_PRIVATE (self);
 
     clutter_units_from_pixels (&zero, 0.0f);
     priv->x = clutter_units_copy (&zero);
@@ -360,9 +328,9 @@ dax_element_image_init (DaxElementImage *self)
 }
 
 DaxDomElement *
-dax_element_image_new (void)
+dax_element_video_new (void)
 {
-    return g_object_new (DAX_TYPE_ELEMENT_IMAGE, NULL);
+    return g_object_new (DAX_TYPE_ELEMENT_VIDEO, NULL);
 }
 
 /*
@@ -370,41 +338,49 @@ dax_element_image_new (void)
  */
 
 ClutterUnits *
-dax_element_image_get_x (DaxElementImage *image)
+dax_element_video_get_x (DaxElementVideo *video)
 {
-    g_return_val_if_fail (DAX_IS_ELEMENT_IMAGE (image), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_VIDEO (video), NULL);
 
-    return image->priv->x;
+    return video->priv->x;
 }
 
 ClutterUnits *
-dax_element_image_get_y (DaxElementImage *image)
+dax_element_video_get_y (DaxElementVideo *video)
 {
-    g_return_val_if_fail (DAX_IS_ELEMENT_IMAGE (image), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_VIDEO (video), NULL);
 
-    return image->priv->y;
+    return video->priv->y;
 }
 
 ClutterUnits *
-dax_element_image_get_width (DaxElementImage *image)
+dax_element_video_get_width (DaxElementVideo *video)
 {
-    g_return_val_if_fail (DAX_IS_ELEMENT_IMAGE (image), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_VIDEO (video), NULL);
 
-    return image->priv->width;
+    return video->priv->width;
 }
 
 ClutterUnits *
-dax_element_image_get_height (DaxElementImage *image)
+dax_element_video_get_height (DaxElementVideo *video)
 {
-    g_return_val_if_fail (DAX_IS_ELEMENT_IMAGE (image), NULL);
+    g_return_val_if_fail (DAX_IS_ELEMENT_VIDEO (video), NULL);
 
-    return image->priv->height;
+    return video->priv->height;
 }
 
-const DaxCacheEntry *
-dax_element_image_get_cache_entry (DaxElementImage *image)
+const gchar *
+dax_element_video_get_uri (DaxElementVideo *video)
 {
-    g_return_val_if_fail (DAX_IS_ELEMENT_IMAGE (image), NULL);
+    DaxElementVideoPrivate *priv;
 
-    return image->priv->cached_file;
+    g_return_val_if_fail (DAX_IS_ELEMENT_VIDEO (video), NULL);
+    priv = video->priv;
+
+    if (priv->uri)
+        return priv->uri;
+
+    priv->uri = dax_dom_utils_get_uri_for_href (DAX_DOM_ELEMENT (video),
+                                                priv->href);
+    return priv->uri;
 }

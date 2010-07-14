@@ -20,6 +20,7 @@
 
 #include <glib-object.h>
 #include <clutter/clutter.h>
+#include <clutter-gst/clutter-gst.h>
 
 #include "dax-dom-core.h"
 #include "dax-internals.h"
@@ -148,6 +149,7 @@ dax_init (gint    *argc,
 
     g_type_init ();
     clutter_init (argc, argv);
+    clutter_gst_init (argc, argv);
 
     dax_dom_init (argc, argv, NULL);
     svg_ns = I_(SVG_NS_URI);
