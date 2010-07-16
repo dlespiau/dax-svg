@@ -29,6 +29,12 @@
 
 static gboolean nugget = FALSE;
 
+typedef struct {
+    ClutterActor *stage;
+    ClutterActor *context_menu;
+    gulong captured_event_handler;
+} DaxViewer;
+
 static GOptionEntry entries[] =
 {
     { "nugget", 'a', 0, G_OPTION_ARG_NONE, &nugget,
@@ -76,16 +82,42 @@ hide_decorations (ClutterStage *stage)
                          32, PropModeReplace, (guchar*) hints,
                          sizeof(PropMotifWmHints)/ sizeof (long));
     }
+}
 
+static gboolean
+on_stage_captured_event (ClutterActor *actor,
+                         ClutterEvent *event,
+                         DaxViewer    *viewer)
+{
+    if (event->type == CLUTTER_BUTTON_PRESS &&
+        clutter_event_get_button (event) == 3)
+    {
+        ClutterButtonEvent *bevent = (ClutterButtonEvent *) event;
+
+        mx_menu_show_with_position (MX_MENU (viewer->context_menu),
+                                    bevent->x, bevent->y);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void
+on_quit_clicked (MxAction  *action,
+                 DaxViewer *viewer)
+{
+    clutter_main_quit ();
 }
 
 int
 main (int   argc,
       char *argv[])
 {
-    ClutterActor *stage, *svg, *aa;
+    ClutterActor *stage, *svg, *aa, *overlay;
     GOptionContext *context;
     GError *error = NULL;
+    DaxViewer viewer;
+    MxAction *action;
 
     clutter_x11_set_use_argb_visual (TRUE);
 
@@ -106,29 +138,51 @@ main (int   argc,
         return EXIT_FAILURE;
     }
 
+    /* Setup the stage */
     stage = clutter_stage_get_default ();
+    viewer.stage = stage;
     if (nugget) {
         clutter_stage_set_use_alpha (CLUTTER_STAGE (stage), TRUE);
         clutter_actor_set_opacity (stage, 0);
         hide_decorations (CLUTTER_STAGE (stage));
     }
 
+    viewer.captured_event_handler =
+        g_signal_connect (stage, "captured-event",
+                          G_CALLBACK (on_stage_captured_event), &viewer);
 
+    /* Create the context menu */
+    viewer.context_menu = mx_menu_new();
+    action = mx_action_new_full ("quit", "Quit",
+                                 G_CALLBACK (on_quit_clicked), &viewer);
+    mx_menu_add_action (MX_MENU (viewer.context_menu), action);
+
+    /* Create the SVG actor */
     svg = dax_actor_new_from_file (argv[1], NULL);
     if (svg == NULL) {
         g_printf ("Could not create the SVG actor: %s\n", argv[1]);
         return EXIT_FAILURE;
     }
 
+    /* Pack the DaxActor into a PPSuperAA for 2x2 multisampling */
     aa = pp_super_aa_new ();
     pp_super_aa_set_resolution (PP_SUPER_AA (aa), 2, 2);
     clutter_container_add_actor (CLUTTER_CONTAINER (aa), svg);
     clutter_container_add_actor (CLUTTER_CONTAINER (stage), aa);
+
+    /* Pack the context menu into an overlay group */
+    overlay = clutter_group_new ();
+    clutter_container_add_actor (CLUTTER_CONTAINER (overlay),
+                                 viewer.context_menu);
+    clutter_container_add_actor (CLUTTER_CONTAINER (stage), overlay);
+
     clutter_actor_show_all (stage);
 
     dax_actor_play (DAX_ACTOR (svg));
 
     clutter_main();
+
+    g_signal_handler_disconnect (stage, viewer.captured_event_handler);
 
     return EXIT_SUCCESS;
 }
