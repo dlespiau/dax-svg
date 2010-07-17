@@ -124,6 +124,7 @@ source_h =				\
 	dax-traverser-clutter.h		\
 	dax-types.h			\
 	dax-udom-svg-timer.h		\
+	dax-xml-forward.h		\
 	dax-xml-event.h			\
 	dax-xml-event-target.h		\
 	dax-xml-event-listener.h	\
