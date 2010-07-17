@@ -173,11 +173,17 @@ dax_actor_set_document (DaxActor       *actor,
     clutter_actor_set_clip_to_allocation (CLUTTER_ACTOR (actor), TRUE);
 }
 
-/* FIXME a real play/pause/stop api or hand back the ClutterScore ? */
 void
-dax_actor_play (DaxActor *actor)
+dax_actor_set_playing (DaxActor *actor,
+                       gboolean  playing)
 {
-    g_return_if_fail (DAX_IS_ACTOR (actor));
+    DaxActorPrivate *priv;
 
-    clutter_score_start (actor->priv->score);
+    g_return_if_fail (DAX_IS_ACTOR (actor));
+    priv = actor->priv;
+
+    if (playing)
+        clutter_score_start (priv->score);
+    else
+        clutter_score_pause (priv->score);
 }

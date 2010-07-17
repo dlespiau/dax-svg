@@ -178,7 +178,7 @@ main (int   argc,
 
     clutter_actor_show_all (stage);
 
-    dax_actor_play (DAX_ACTOR (svg));
+    dax_actor_set_playing (DAX_ACTOR (svg), TRUE);
 
     clutter_main();
 

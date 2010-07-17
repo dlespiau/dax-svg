@@ -70,7 +70,8 @@ ClutterActor *  dax_actor_new_from_file     (const gchar  *filename,
                                              GError      **error);
 void            dax_actor_set_document      (DaxActor       *actor,
                                              DaxDomDocument *document);
-void            dax_actor_play              (DaxActor *self);
+void            dax_actor_set_playing       (DaxActor *self,
+                                             gboolean  playing);
 
 G_END_DECLS
 
