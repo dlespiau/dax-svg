@@ -81,6 +81,8 @@ source_c =				\
 source_h =				\
 	dax.h				\
 	dax-actor.h			\
+	dax-cache.h			\
+	dax-cache-entry.h		\
 	dax-core.h			\
 	dax-dom.h			\
 	dax-dom-character-data.h	\
