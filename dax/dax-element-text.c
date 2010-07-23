@@ -36,7 +36,12 @@ enum {
     PROP_X,
     PROP_Y,
     PROP_EDITABLE,
-    PROP_ROTATE
+    PROP_ROTATE,
+
+    PROP_FONT_FAMILY,
+    PROP_FONT_STYLE,
+    PROP_FONT_WEIGHT,
+    PROP_FONT_SIZE,
 };
 
 struct _DaxElementTextPrivate
@@ -45,6 +50,11 @@ struct _DaxElementTextPrivate
     GArray *y;
     DaxTextEditable editable;
     GArray *rotate;
+
+    gchar *font_family;
+    gchar *font_style;
+    gchar *font_weight;
+    gchar *font_size;
 };
 
 
@@ -70,6 +80,18 @@ dax_element_text_get_property (GObject    *object,
         break;
     case PROP_ROTATE:
         g_value_set_boxed (value, priv->rotate);
+        break;
+    case PROP_FONT_FAMILY:
+        g_value_set_string (value, priv->font_family);
+        break;
+    case PROP_FONT_STYLE:
+        g_value_set_string (value, priv->font_style);
+        break;
+    case PROP_FONT_WEIGHT:
+        g_value_set_string (value, priv->font_weight);
+        break;
+    case PROP_FONT_SIZE:
+        g_value_set_string (value, priv->font_size);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -104,6 +126,22 @@ dax_element_text_set_property (GObject      *object,
         if (priv->rotate)
             g_array_free (priv->rotate, TRUE);
         priv->rotate = g_value_get_boxed (value);
+        break;
+    case PROP_FONT_FAMILY:
+        g_free (priv->font_family);
+        priv->font_family = g_value_dup_string (value);
+        break;
+    case PROP_FONT_STYLE:
+        g_free (priv->font_style);
+        priv->font_style = g_value_dup_string (value);
+        break;
+    case PROP_FONT_WEIGHT:
+        g_free (priv->font_weight);
+        priv->font_weight = g_value_dup_string (value);
+        break;
+    case PROP_FONT_SIZE:
+        g_free (priv->font_size);
+        priv->font_size = g_value_dup_string (value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -184,6 +222,44 @@ dax_element_text_class_init (DaxElementTextClass *klass)
                                   DAX_PARAM_NONE,
                                   svg_ns);
     g_object_class_install_property (object_class, PROP_ROTATE, pspec);
+
+    pspec = dax_param_spec_string ("font-family",
+                                   "Font family",
+                                   "Which font family is to be used",
+                                   NULL,
+                                   DAX_GPARAM_READWRITE,
+                                   DAX_PARAM_NONE,
+                                   svg_ns);
+    g_object_class_install_property (object_class, PROP_FONT_FAMILY, pspec);
+
+    pspec = dax_param_spec_string ("font-style",
+                                   "Font style",
+                                   "Whether the text is to be rendered using "
+                                   "a normal, italic or oblique face",
+                                   NULL,
+                                   DAX_GPARAM_READWRITE,
+                                   DAX_PARAM_NONE,
+                                   svg_ns);
+    g_object_class_install_property (object_class, PROP_FONT_STYLE, pspec);
+
+    pspec = dax_param_spec_string ("font-weight",
+                                   "Font weight",
+                                   "Boldness or lightness of the glyphs used "
+                                   "to render the text",
+                                   NULL,
+                                   DAX_GPARAM_READWRITE,
+                                   DAX_PARAM_NONE,
+                                   svg_ns);
+    g_object_class_install_property (object_class, PROP_FONT_WEIGHT, pspec);
+
+    pspec = dax_param_spec_string ("font-size",
+                                   "Font size",
+                                   "The size of the font",
+                                   NULL,
+                                   DAX_GPARAM_READWRITE,
+                                   DAX_PARAM_NONE,
+                                   svg_ns);
+    g_object_class_install_property (object_class, PROP_FONT_SIZE, pspec);
 }
 
 static void

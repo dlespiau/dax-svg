@@ -700,6 +700,9 @@ clutter_text_new_from_dax_text (DaxElementText *text)
     ClutterUnits *x_u, *y_u;
     gfloat x, y;
     gchar *flatten_text;
+    PangoLayout *layout;
+    gchar *font_family, *font_size;
+    GString *font_name;
 
     xs = dax_element_text_get_x (text);
     ys = dax_element_text_get_y (text);
@@ -715,7 +718,22 @@ clutter_text_new_from_dax_text (DaxElementText *text)
     text_actor = clutter_text_new ();
     clutter_text_set_text (CLUTTER_TEXT (text_actor), flatten_text);
 
-    clutter_actor_set_position (text_actor, x, y);
+    /* font name */
+    g_object_get (text,
+                  "font-family", &font_family,
+                  "font-size", &font_size,
+                  NULL);
+    font_name = g_string_new (font_family);
+    g_string_append_c (font_name, ' ');
+    g_string_append (font_name, font_size);
+    clutter_text_set_font_name (CLUTTER_TEXT (text_actor), font_name->str);
+    g_string_free (font_name, TRUE);
+
+    /* SVG text is position relatively to its baseline */
+    layout = clutter_text_get_layout (CLUTTER_TEXT (text_actor));
+    clutter_actor_set_position (text_actor,
+                                x,
+                                y  - pango_layout_get_baseline (layout) / 1024);
 
     return text_actor;
 }
