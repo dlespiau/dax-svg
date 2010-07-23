@@ -26,7 +26,9 @@
 #include <glib-object.h>
 #include <clutter/clutter.h>
 
-#include "dax-dom-document.h"
+#include "dax-dom.h"
+
+#include "dax-group.h"
 
 G_BEGIN_DECLS
 
@@ -53,14 +55,14 @@ typedef struct _DaxActorPrivate DaxActorPrivate;
 
 struct _DaxActor
 {
-    ClutterGroup parent;
+    DaxGroup parent;
 
     DaxActorPrivate *priv;
 };
 
 struct _DaxActorClass
 {
-    ClutterGroupClass parent_class;
+    DaxGroupClass parent_class;
 };
 
 GType           dax_actor_get_type          (void) G_GNUC_CONST;

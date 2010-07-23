@@ -16,11 +16,14 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dax-traverser-clutter.h"
+#include "dax-affine.h"
+#include "dax-debug.h"
 #include "dax-parser.h"
+#include "dax-traverser-clutter.h"
+
 #include "dax-actor.h"
 
-G_DEFINE_TYPE (DaxActor, dax_actor, CLUTTER_TYPE_GROUP)
+G_DEFINE_TYPE (DaxActor, dax_actor, DAX_TYPE_GROUP)
 
 #define ACTOR_PRIVATE(o)                                \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),              \
@@ -129,6 +132,7 @@ dax_actor_new (void)
     return g_object_new (DAX_TYPE_ACTOR, NULL);
 }
 
+/* FIXME: filename property, no code in constructors... */
 ClutterActor *
 dax_actor_new_from_file (const gchar  *filename,
                          GError      **error)
@@ -153,6 +157,10 @@ dax_actor_set_document (DaxActor       *actor,
     DaxActorPrivate *priv;
     DaxElementSvg *svg;
     ClutterUnits *width, *height;
+    DaxMatrix matrix;
+    GArray *viewbox;
+    double affine[6], scale_x = 1.0, scale_y = 1.0;
+    float width_px = 0.f, height_px = 0.f;
 
     g_return_if_fail (DAX_IS_ACTOR (actor));
 
@@ -161,16 +169,49 @@ dax_actor_set_document (DaxActor       *actor,
 
     dax_actor_rebuild_scene_graph (actor);
 
-    /* set the size of the viewport as defined by <svg> */
+    /* set the size of the actor as defined by <svg> width and height */
     svg = DAX_ELEMENT_SVG (dax_dom_document_get_document_element (document));
     width = dax_element_svg_get_width (svg);
     height = dax_element_svg_get_height (svg);
-    clutter_actor_set_size (CLUTTER_ACTOR (actor),
-                            clutter_units_to_pixels (width),
-                            clutter_units_to_pixels (height));
+    if (width) {
+        width_px = clutter_units_to_pixels (width);
+        clutter_actor_set_width(CLUTTER_ACTOR (actor), width_px);
+    }
+    if (height) {
+        height_px = clutter_units_to_pixels (height);
+        clutter_actor_set_height(CLUTTER_ACTOR (actor), height_px);
+    }
 
-    /* be sure not to draw anything not in the viewport */
-    clutter_actor_set_clip_to_allocation (CLUTTER_ACTOR (actor), TRUE);
+    g_object_get (svg, "viewBox", &viewbox, NULL);
+    if (width && height && viewbox) {
+        float vb_x, vb_y, vb_width, vb_height;
+
+        vb_x = g_array_index (viewbox, float, 0);
+        vb_y = g_array_index (viewbox, float, 1);
+        vb_width = g_array_index (viewbox, float, 2);
+        vb_height = g_array_index (viewbox, float, 3);
+
+        _dax_affine_identity (affine);
+        scale_x = width_px / (vb_width);
+        scale_y = height_px / (vb_height);
+        _dax_affine_translate (affine, -vb_x, -vb_y);
+        _dax_affine_scale (affine, scale_x, scale_y);
+
+        dax_matrix_from_array (&matrix, affine);
+        dax_group_set_matrix (DAX_GROUP (actor), &matrix);
+    }
+
+    /* FIXME: still something wrong in the size, can't clip just yet... */
+#if 0
+    if (width && height)
+        clutter_actor_set_clip_to_allocation (CLUTTER_ACTOR (actor), TRUE);
+#endif
+
+    if (width && height)
+        DAX_NOTE (TRANSFORM, "Setting size %.02fx%.02f scale %.02fx%.02f",
+                   clutter_units_to_pixels (width),
+                   clutter_units_to_pixels (height),
+                   scale_x, scale_y);
 }
 
 void

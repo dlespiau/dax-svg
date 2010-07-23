@@ -41,7 +41,8 @@ typedef enum
     DAX_DEBUG_EVENT           = 1 << 4,
     DAX_DEBUG_LOADING         = 1 << 5,
     DAX_DEBUG_SCRIPT          = 1 << 6,
-    DAX_DEBUG_ANIMATION       = 1 << 7
+    DAX_DEBUG_ANIMATION       = 1 << 7,
+    DAX_DEBUG_TRANSFORM       = 1 << 8
 } DaxDebugFlag;
 
 #ifdef __GNUC__
