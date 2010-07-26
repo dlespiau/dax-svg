@@ -76,6 +76,7 @@ DaxTraverser *  dax_traverser_clutter_new               (DaxDomNode    *node,
 void            dax_traverser_clutter_set_container     (DaxTraverserClutter *self,
                                                          ClutterContainer     *container);
 ClutterScore *  dax_traverser_clutter_get_score         (DaxTraverserClutter *self);
+GPtrArray *     dax_traverser_clutter_get_media         (DaxTraverserClutter *self);
 
 G_END_DECLS
 

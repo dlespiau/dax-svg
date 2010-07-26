@@ -48,6 +48,7 @@ struct _DaxTraverserClutterPrivate
     ClutterContainer *container;
     ClutterColor *fill_color;
     ClutterScore *score;
+    GPtrArray *media;               /* Array of ClutterMedia objects */
 };
 
 static void
@@ -839,7 +840,7 @@ dax_traverser_clutter_traverse_video (DaxTraverser    *traverser,
 
     uri = dax_element_video_get_uri (node);
     clutter_media_set_uri (CLUTTER_MEDIA (video), uri);
-    clutter_media_set_playing (CLUTTER_MEDIA (video), TRUE);
+    g_ptr_array_add (priv->media, video);
 
     clutter_container_add_actor (priv->container, video);
 }
@@ -931,6 +932,7 @@ dax_traverser_clutter_init (DaxTraverserClutter *self)
     self->priv = priv = TRAVERSER_CLUTTER_PRIVATE (self);
 
     priv->score = clutter_score_new ();
+    priv->media = g_ptr_array_new ();
 }
 
 DaxTraverser *
@@ -962,4 +964,12 @@ dax_traverser_clutter_get_score (DaxTraverserClutter *self)
     g_return_val_if_fail (DAX_IS_TRAVERSER_CLUTTER (self), NULL);
 
     return self->priv->score;
+}
+
+GPtrArray *
+dax_traverser_clutter_get_media (DaxTraverserClutter *self)
+{
+    g_return_val_if_fail (DAX_IS_TRAVERSER_CLUTTER (self), NULL);
+
+    return self->priv->media;
 }

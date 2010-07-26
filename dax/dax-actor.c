@@ -34,6 +34,7 @@ struct _DaxActorPrivate
 {
     DaxDomDocument *document;
     ClutterScore *score;
+    GPtrArray *media;
 };
 
 static void
@@ -60,7 +61,10 @@ dax_actor_rebuild_scene_graph (DaxActor *self)
     dax_traverser_apply (traverser);
 
     traverser_clutter = DAX_TRAVERSER_CLUTTER (traverser);
-    priv->score = g_object_ref (dax_traverser_clutter_get_score (traverser_clutter));
+    priv->score =
+        g_object_ref (dax_traverser_clutter_get_score (traverser_clutter));
+    priv->media =
+        g_ptr_array_ref (dax_traverser_clutter_get_media (traverser_clutter));
 
     g_object_unref (traverser);
 }
@@ -104,7 +108,13 @@ dax_actor_dispose (GObject *object)
 static void
 dax_actor_finalize (GObject *object)
 {
+    DaxActor *actor = DAX_ACTOR (object);
+    DaxActorPrivate *priv = actor->priv;
+
     G_OBJECT_CLASS (dax_actor_parent_class)->finalize (object);
+
+    g_object_unref (priv->score);
+    g_ptr_array_unref (priv->media);
 }
 
 static void
@@ -221,12 +231,20 @@ dax_actor_set_playing (DaxActor *actor,
                        gboolean  playing)
 {
     DaxActorPrivate *priv;
+    guint i;
 
     g_return_if_fail (DAX_IS_ACTOR (actor));
     priv = actor->priv;
 
-    if (playing)
+    if (playing) {
+        for (i = 0; i < priv->media->len; i++)
+            clutter_media_set_playing (g_ptr_array_index (priv->media, i),
+                                       TRUE);
         clutter_score_start (priv->score);
-    else
+    } else {
+        for (i = 0; i < priv->media->len; i++)
+            clutter_media_set_playing (g_ptr_array_index (priv->media, i),
+                                       FALSE);
         clutter_score_pause (priv->score);
+    }
 }
