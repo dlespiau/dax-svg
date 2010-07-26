@@ -30,9 +30,10 @@
 static gboolean nugget = FALSE;
 
 typedef struct {
-    ClutterActor *stage;
+    ClutterActor *stage, *svg;
     ClutterActor *context_menu;
     gulong captured_event_handler;
+    MxAction *pause_action, *play_action, *quit_action;
 } DaxViewer;
 
 static GOptionEntry entries[] =
@@ -109,11 +110,33 @@ on_quit_clicked (MxAction  *action,
     clutter_main_quit ();
 }
 
+static void
+on_play_clicked (MxAction  *action,
+                 DaxViewer *viewer)
+{
+    dax_actor_set_playing (DAX_ACTOR (viewer->svg), TRUE);
+    clutter_actor_hide (viewer->context_menu);
+    mx_menu_remove_all (MX_MENU (viewer->context_menu));
+    mx_menu_add_action (MX_MENU (viewer->context_menu), viewer->pause_action);
+    mx_menu_add_action (MX_MENU (viewer->context_menu), viewer->quit_action);
+}
+
+static void
+on_pause_clicked (MxAction  *action,
+                  DaxViewer *viewer)
+{
+    dax_actor_set_playing (DAX_ACTOR (viewer->svg), FALSE);
+    clutter_actor_hide (viewer->context_menu);
+    mx_menu_remove_all (MX_MENU (viewer->context_menu));
+    mx_menu_add_action (MX_MENU (viewer->context_menu), viewer->play_action);
+    mx_menu_add_action (MX_MENU (viewer->context_menu), viewer->quit_action);
+}
+
 int
 main (int   argc,
       char *argv[])
 {
-    ClutterActor *stage, *svg, *aa, *overlay;
+    ClutterActor *stage, *aa, *overlay;
     GOptionContext *context;
     GError *error = NULL;
     DaxViewer viewer;
@@ -153,13 +176,21 @@ main (int   argc,
 
     /* Create the context menu */
     viewer.context_menu = mx_menu_new();
+    action = mx_action_new_full ("pause", "Pause",
+                                 G_CALLBACK (on_pause_clicked), &viewer);
+    mx_menu_add_action (MX_MENU (viewer.context_menu), action);
+    viewer.pause_action = g_object_ref (action);
     action = mx_action_new_full ("quit", "Quit",
                                  G_CALLBACK (on_quit_clicked), &viewer);
     mx_menu_add_action (MX_MENU (viewer.context_menu), action);
+    viewer.quit_action = g_object_ref (action);
+    action = mx_action_new_full ("play", "Play",
+                                 G_CALLBACK (on_play_clicked), &viewer);
+    viewer.play_action = g_object_ref (action);
 
     /* Create the SVG actor */
-    svg = dax_actor_new_from_file (argv[1], NULL);
-    if (svg == NULL) {
+    viewer.svg = dax_actor_new_from_file (argv[1], NULL);
+    if (viewer.svg == NULL) {
         g_printf ("Could not create the SVG actor: %s\n", argv[1]);
         return EXIT_FAILURE;
     }
@@ -168,7 +199,7 @@ main (int   argc,
     aa = pp_super_aa_new ();
     pp_super_aa_set_resolution (PP_SUPER_AA (aa), 2, 2);
     mx_offscreen_set_pick_child (MX_OFFSCREEN (aa), TRUE);
-    clutter_container_add_actor (CLUTTER_CONTAINER (aa), svg);
+    clutter_container_add_actor (CLUTTER_CONTAINER (aa), viewer.svg);
     clutter_container_add_actor (CLUTTER_CONTAINER (stage), aa);
 
     /* Pack the context menu into an overlay group */
@@ -179,11 +210,13 @@ main (int   argc,
 
     clutter_actor_show_all (stage);
 
-    dax_actor_set_playing (DAX_ACTOR (svg), TRUE);
+    dax_actor_set_playing (DAX_ACTOR (viewer.svg), TRUE);
 
     clutter_main();
 
     g_signal_handler_disconnect (stage, viewer.captured_event_handler);
+    g_object_unref (viewer.play_action);
+    g_object_unref (viewer.pause_action);
 
     return EXIT_SUCCESS;
 }
