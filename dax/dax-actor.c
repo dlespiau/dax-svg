@@ -199,6 +199,13 @@ dax_actor_set_document (DaxActor       *actor,
 
         dax_matrix_from_array (&matrix, affine);
         dax_group_set_matrix (DAX_GROUP (actor), &matrix);
+
+        DAX_NOTE (TRANSFORM, "Setting size %.02fx%.02f translate %.02f,%.02f "
+                  "scale %.02fx%.02f",
+                  clutter_units_to_pixels (width),
+                  clutter_units_to_pixels (height),
+                  -vb_x, -vb_y,
+                  scale_x, scale_y);
     }
 
     /* FIXME: still something wrong in the size, can't clip just yet... */
@@ -207,11 +214,6 @@ dax_actor_set_document (DaxActor       *actor,
         clutter_actor_set_clip_to_allocation (CLUTTER_ACTOR (actor), TRUE);
 #endif
 
-    if (width && height)
-        DAX_NOTE (TRANSFORM, "Setting size %.02fx%.02f scale %.02fx%.02f",
-                   clutter_units_to_pixels (width),
-                   clutter_units_to_pixels (height),
-                   scale_x, scale_y);
 }
 
 void
