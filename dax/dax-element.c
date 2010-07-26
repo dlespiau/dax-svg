@@ -238,6 +238,10 @@ dax_element_set_attribute (DaxDomElement  *self,
         return;
     }
 
+    /* skip leading white space */
+    while (g_ascii_isspace (*value))
+        value++;
+
     /* we don't want to duplicate the string here */
     g_value_init (&string_value, G_TYPE_STRING);
     g_value_set_static_string (&string_value, value);
