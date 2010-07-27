@@ -159,7 +159,7 @@ AC_SUBST(DAX_DEBUG_CFLAGS)
 
 dnl === GObject-Introspection check ===========================================
 
-GOBJECT_INTROSPECTION_REQUIRE([0.6.4])
+GOBJECT_INTROSPECTION_REQUIRE([0.6.14])
 
 dnl === Disable compilation of tests ==========================================
 

@@ -1,5 +1,7 @@
 include $(top_srcdir)/build/autotools/Makefile.am.silent
 
+include $(INTROSPECTION_MAKEFILE)
+
 NULL = #
 CLEANFILES = #
 
@@ -188,44 +190,33 @@ dax-enum-types.c: dax-enum-types.h dax-enum-types.c.in
 	rm -f xgen-cetc
 
 if HAVE_INTROSPECTION
-BUILT_GIRSOURCES =
+GIRS =
+TYPELIBS = $(GIRS:.gir=.typelib)
+INTROSPECTION_GIRS = $(GIRS)
 
-Dax-@DAX_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libdax-@DAX_API_VERSION@.la
-	$(QUIET_GEN)$(INTROSPECTION_SCANNER) -v \
-		--namespace Dax --nsversion=@DAX_API_VERSION@ \
-		$(AM_CFLAGS) \
-		--c-include='dax/dax.h' \
-		--include=GObject-2.0 \
-		--include=Clutter-1.0 \
-		--library=libdax-@DAX_API_VERSION@.la \
-		--libtool="$(top_builddir)/libtool" \
-	        --pkg gobject-2.0 \
-	        --output $@ \
-		$(dax_HEADERS) \
-		$(source_c)
+INTROSPECTION_COMPILER_ARGS = --includedir=$(builddir)/glib-controller
 
-BUILT_GIRSOURCES += Dax-@DAX_API_VERSION@.gir
-#
-# INTROSPECTION_GIRDIR/INTROSPECTION_TYPELIBDIR aren't the right place to
-# install anything - we need to install inside our prefix.
+Dax-@DAX_API_VERSION@.gir: libdax-@DAX_API_VERSION@.la
+Dax_0_2_gir_PACKAGES = gobject-2.0 clutter-1.0
+Dax_0_2_gir_LIBS = libdax-@DAX_API_VERSION@.la
+Dax_0_2_gir_FILES = $(dax_HEADERS) $(source_c)
+Dax_0_2_gir_SCANNERFLAGS = \
+	--strip-prefix=Dax \
+	--add-include-path=$(builddir)/glib-controller
+Dax_0_2_gir_CFLAGS = $(AM_CFLAGS)
+Dax_0_2_gir_INCLUDES = GObject-2.0 Clutter-1.0
+
+GIRS += Dax-@DAX_API_VERSION@.gir
+
+endif
+
 girdir = $(datadir)/gir-1.0
-gir_DATA = $(BUILT_GIRSOURCES)
+dist_gir_DATA = $(INTROSPECTION_GIRS)
 
-typelibsdir = $(libdir)/girepository-1.0/
+typelibsdir = $(libdir)/girepository-1.0
+typelibs_DATA = $(TYPELIBS)
 
-typelibs_DATA = $(BUILT_GIRSOURCES:.gir=.typelib)
-
-%.typelib: %.gir $(INTROSPECTION_COMPILER)
-	$(QUIET_GEN) \
-	LD_LIBRARY_PATH=.libs$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH} \
-	$(INTROSPECTION_COMPILER) \
-		--includedir=$(srcdir) \
-		--includedir=. \
-		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
-
-CLEANFILES += $(BUILT_GIRSOURCES) $(typelibs_DATA)
-
-endif # HAVE_INTROSPECTION
+CLEANFILES += $(dist_gir_DATA) $(typelibs_DATA)
 
 CLEANFILES +=		\
 	$(ENUMFILES)	\
