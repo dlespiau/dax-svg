@@ -719,15 +719,20 @@ clutter_text_new_from_dax_text (DaxElementText *text)
     text_actor = clutter_text_new ();
     clutter_text_set_text (CLUTTER_TEXT (text_actor), flatten_text);
 
-    /* font name */
+    /* font name. FIXME: inherit the properties */
     g_object_get (text,
                   "font-family", &font_family,
                   "font-size", &font_size,
                   NULL);
-    font_name = g_string_new (font_family);
-    g_string_append_c (font_name, ' ');
-    g_string_append (font_name, font_size);
-    clutter_text_set_font_name (CLUTTER_TEXT (text_actor), font_name->str);
+    font_name = g_string_new ("");
+    if (font_family)
+        g_string_append (font_name, font_family);
+    if (font_size) {
+        g_string_append_c (font_name, ' ');
+        g_string_append (font_name, font_size);
+    }
+    if (font_name->len > 1)
+        clutter_text_set_font_name (CLUTTER_TEXT (text_actor), font_name->str);
     g_string_free (font_name, TRUE);
 
     /* SVG text is position relatively to its baseline */
