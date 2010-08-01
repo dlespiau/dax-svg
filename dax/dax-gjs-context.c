@@ -146,7 +146,8 @@ dax_js_context_init (DaxJsContext *self)
 {
     DaxJsContextPrivate *priv;
     JSObject *xml_event_prototype;
-    static const gchar *import = "const Dax = imports.gi.Dax";
+    static const gchar import[] = "const Dax = imports.gi.Dax;"
+                                  "const Dox = imports.gi.Dox;";
 
     self->priv = priv = JS_CONTEXT_PRIVATE (self);
 
@@ -154,8 +155,12 @@ dax_js_context_init (DaxJsContext *self)
     priv->js_context =
         (JSContext *) gjs_context_get_native_context (priv->gjs_context);
 
-    /* import Dax typelib */
-    gjs_context_eval (priv->gjs_context, import, 26, "dax", NULL, NULL);
+    /* import Dax and Dox typelibs */
+    /* FIXME: The JS context belongs to the lower level DOM library (Dox),
+     * leave the refactoring for later */
+    gjs_context_eval (priv->gjs_context,
+                      import, sizeof (import) - 1,
+                      "dax", NULL, NULL);
 
     xml_event_prototype = JS_InitClass (priv->js_context,
                                         JS_GetGlobalObject (priv->js_context),
@@ -175,17 +180,6 @@ DaxJsContext *
 dax_js_context_new (void)
 {
     return g_object_new (DAX_TYPE_JS_CONTEXT, NULL);
-}
-
-DaxJsContext *
-dax_js_context_get_default (void)
-{
-    static DaxJsContext *context = NULL;
-
-    if (G_UNLIKELY (context == NULL))
-        context = dax_js_context_new ();
-
-    return context;
 }
 
 void *
@@ -321,14 +315,19 @@ dax_js_context_add_global_object (DaxJsContext *context,
     DaxJsContextPrivate *priv;
     JSObject *js_object = (JSObject *) object;
     jsval js_val;
+    JSBool ok;
 
     g_return_val_if_fail (DAX_IS_JS_CONTEXT (context), FALSE);
-
     priv = context->priv;
+
     js_val = OBJECT_TO_JSVAL (js_object);
 
-    return JS_SetProperty (priv->js_context,
-                           JS_GetGlobalObject (priv->js_context),
-                           name,
-                           &js_val);
+    ok = JS_SetProperty (priv->js_context,
+                         JS_GetGlobalObject (priv->js_context),
+                         name,
+                         &js_val);
+    if (!ok)
+        gjs_log_exception (priv->js_context, NULL);
+
+    return ok;
 }

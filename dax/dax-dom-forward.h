@@ -35,6 +35,8 @@ typedef struct _DaxDomDocument      DaxDomDocument;
 typedef struct _DaxCache            DaxCache;
 typedef struct _DaxCacheEntry       DaxCacheEntry;
 
+typedef struct _DaxJsContext DaxJsContext;
+
 G_END_DECLS
 
 #endif /* __DAX_DOM_FORWARD_H__ */

@@ -39,6 +39,9 @@ add_event_listener (JSContext *cx,
     JSFunction *listener_func;
     JSBool use_capture;
     DaxXmlEventTarget *target;
+    DaxDomNode *node;
+    DaxDomDocument *document;
+    DaxJsContext *js_context;
 
     if (!JS_ConvertArguments (cx, argc, argv,
                               "sfb", &type, &listener_func, &use_capture))
@@ -47,7 +50,11 @@ add_event_listener (JSContext *cx,
         }
 
     target = DAX_XML_EVENT_TARGET (gjs_g_object_from_object (cx, obj));
-    listener = dax_js_function_listener_new ((DaxJsFunction *) listener_func);
+    node = DAX_DOM_NODE (target);
+    document = node->owner_document;
+    js_context = dax_dom_document_get_js_context (document);
+    listener = dax_js_function_listener_new (js_context,
+                                             (DaxJsFunction *) listener_func);
 
     dax_xml_event_target_add_event_listener (target,
                                              type,
@@ -101,7 +108,6 @@ gboolean
 _dax_js_udom_setup_document (DaxJsContext   *context,
                              DaxDomDocument *document)
 {
-    DaxJsContext *dax_js_context;
     JSContext *js_context;
     DaxJsObject *js_object;
     JSBool ret;
@@ -109,9 +115,7 @@ _dax_js_udom_setup_document (DaxJsContext   *context,
     g_return_val_if_fail (DAX_IS_JS_CONTEXT (context), FALSE);
     g_return_val_if_fail (DAX_IS_DOM_DOCUMENT (document), FALSE);
 
-    dax_js_context = dax_js_context_get_default ();
-    js_context =
-        (JSContext *) dax_js_context_get_native_context (dax_js_context);
+    js_context = (JSContext *) dax_js_context_get_native_context (context);
 
     js_object = dax_js_context_new_object_from_gobject (context,
                                                         (GObject *) document);
@@ -137,12 +141,9 @@ gboolean
 _dax_js_udom_setup_element (DaxJsContext  *context,
                             DaxDomElement *element)
 {
-    DaxJsContext *dax_js_context;
     JSContext *js_context;
 
-    dax_js_context = dax_js_context_get_default ();
-    js_context =
-        (JSContext *) dax_js_context_get_native_context (dax_js_context);
+    js_context = (JSContext *) dax_js_context_get_native_context (context);
 
     if (!JS_DefineFunctions(js_context,
                             JS_GetGlobalObject (js_context),

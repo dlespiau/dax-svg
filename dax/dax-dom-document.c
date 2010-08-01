@@ -44,6 +44,8 @@ struct _DaxDomDocumentPrivate
     GPtrArray *namespaces;
     GHashTable *id2element;
     gchar *base_iri;
+
+    DaxJsContext *js_context;
 };
 
 /*
@@ -250,6 +252,8 @@ dax_dom_document_init (DaxDomDocument *self)
     _dax_dom_document_add_namespace_static (self, xmlns_ns, "xmlns");
 
     priv->id2element = g_hash_table_new (g_str_hash, g_str_equal);
+
+    priv->js_context = dax_js_context_new ();
 }
 
 DaxDomDocument *
@@ -261,6 +265,14 @@ dax_dom_document_new (void)
 /*
  * DaxDomDocument
  */
+
+DaxJsContext *
+dax_dom_document_get_js_context (DaxDomDocument *document)
+{
+    g_return_val_if_fail (DAX_IS_DOM_DOCUMENT (document), NULL);
+
+    return document->priv->js_context;
+}
 
 DaxDomElement *
 dax_dom_document_get_document_element (DaxDomDocument *document)

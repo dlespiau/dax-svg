@@ -9,6 +9,7 @@ TAGS
 aclocal.m4
 autom4te.cache
 dax*.pc
+dox*.pc
 config.guess
 config.h
 config.h.in

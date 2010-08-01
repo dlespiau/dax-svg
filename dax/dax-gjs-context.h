@@ -50,7 +50,6 @@ G_BEGIN_DECLS
 #define DAX_JS_CONTEXT_GET_CLASS(obj) \
     (G_TYPE_INSTANCE_GET_CLASS ((obj), DAX_TYPE_JS_CONTEXT, DaxJsContextClass))
 
-typedef struct _DaxJsContext DaxJsContext;
 typedef struct _DaxJsContextClass DaxJsContextClass;
 typedef struct _DaxJsContextPrivate DaxJsContextPrivate;
 
@@ -72,7 +71,6 @@ struct _DaxJsContextClass
 GType           dax_js_context_get_type             (void) G_GNUC_CONST;
 
 DaxJsContext*   dax_js_context_new                  (void);
-DaxJsContext*   dax_js_context_get_default          (void);
 void *          dax_js_context_get_gjs_context      (DaxJsContext *context);
 void *          dax_js_context_get_native_context   (DaxJsContext *context);
 gboolean        dax_js_context_eval                 (DaxJsContext  *context,

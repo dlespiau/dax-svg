@@ -163,6 +163,14 @@ dax_element_set_style (DaxElement  *element,
 
 /* handle legacy event attributes */
 
+static DaxDomDocument *
+dax_element_get_document (DaxElement *element)
+{
+    DaxDomNode *node = DAX_DOM_NODE (element);
+
+    return node->owner_document;
+}
+
 static void
 dax_element_handle_event (DaxXmlEventListener *listener,
                           DaxXmlEvent         *xml_event)
@@ -170,6 +178,7 @@ dax_element_handle_event (DaxXmlEventListener *listener,
     DaxElement *element = DAX_ELEMENT (listener);
     DaxElementPrivate *priv = element->priv;
     DaxDomElement *target;
+    DaxDomDocument *document;
     DaxJsContext *js_context;
     DaxJsObject *event;
     gchar *code;
@@ -189,7 +198,8 @@ dax_element_handle_event (DaxXmlEventListener *listener,
         return;
     }
 
-    js_context = dax_js_context_get_default ();
+    document = dax_element_get_document (element);
+    js_context = dax_dom_document_get_js_context (document);
     event = dax_js_context_new_object_from_xml_event (js_context, xml_event);
 
     dax_js_context_eval (js_context, code, strlen (code), "svg", NULL, NULL);

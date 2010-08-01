@@ -8,11 +8,12 @@ progs_ldadd =							\
 	$(top_builddir)/dax/libdax-$(DAX_API_VERSION).la	\
 	$(DAX_LIBS)
 
-AM_CPPFLAGS = 			\
-	-I$(top_srcdir)		\
-	-I$(top_srcdir)/dax	\
-	$(DAX_CFLAGS)		\
-	$(MAINTAINER_CFLAGS)	\
+AM_CPPFLAGS = 						\
+	-I$(top_srcdir)					\
+	-I$(top_srcdir)/dax				\
+	-DDAX_ABS_TOP_SRCDIR=\"$(abs_top_srcdir)\"	\
+	$(DAX_CFLAGS)					\
+	$(MAINTAINER_CFLAGS)				\
 	$(NULL)
 
 AM_CFLAGS = -g
@@ -41,3 +42,7 @@ test_dom_LDADD       = $(progs_ldadd)
 TEST_PROGS          += test-parser
 test_parser_SOURCES  = test-parser.c test-common.h
 test_parser_LDADD    = $(progs_ldadd)
+
+TEST_PROGS          += test-js
+test_js_SOURCES      = test-js.c
+test_js_LDADD        = $(progs_ldadd)

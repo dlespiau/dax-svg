@@ -21,7 +21,6 @@
 #include "dax-internals.h"
 #include "dax-debug.h"
 
-#include "dax-gjs-context.h"
 #include "dax-gjs-function-listener.h"
 
 static void dax_xml_event_listener_init (DaxXmlEventListenerIface *iface);
@@ -41,6 +40,7 @@ enum
 {
     PROP_0,
 
+    PROP_CONTEXT,
     PROP_FUNCTION
 };
 
@@ -50,6 +50,16 @@ struct _DaxJsFunctionListenerPrivate
     JSContext *native_context;
     jsval function;
 };
+
+static void
+dax_js_function_listener_set_context (DaxJsFunctionListener *listener,
+                                      DaxJsContext          *context)
+{
+    DaxJsFunctionListenerPrivate *priv = listener->priv;
+
+    priv->js_context = context;
+    priv->native_context = dax_js_context_get_native_context (context);
+}
 
 static JSFunction *
 dax_js_function_listener_get_function (DaxJsFunctionListener *listener)
@@ -128,9 +138,13 @@ dax_js_function_listener_get_property (GObject    *object,
                                        GParamSpec *pspec)
 {
     DaxJsFunctionListener *listener = (DaxJsFunctionListener *) object;
+    DaxJsFunctionListenerPrivate *priv = listener->priv;
 
     switch (property_id)
     {
+    case PROP_CONTEXT:
+        g_value_set_pointer (value, priv->js_context);
+        break;
     case PROP_FUNCTION:
         g_value_set_pointer (value,
                              dax_js_function_listener_get_function (listener));
@@ -151,6 +165,10 @@ dax_js_function_listener_set_property (GObject      *object,
 
     switch (property_id)
     {
+    case PROP_CONTEXT:
+        dax_js_function_listener_set_context (listener,
+                                              g_value_get_pointer (value));
+        break;
     case PROP_FUNCTION:
         dax_js_function_listener_set_function (listener,
                                                g_value_get_pointer (value));
@@ -182,8 +200,14 @@ dax_js_function_listener_class_init (DaxJsFunctionListenerClass *klass)
     pspec = g_param_spec_pointer ("function",
                                   "Function",
                                   "JS callback of the listener",
-                                  DAX_GPARAM_READWRITE);
+                                  DAX_GPARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
     g_object_class_install_property (object_class, PROP_FUNCTION, pspec);
+
+    pspec = g_param_spec_pointer ("context",
+                                  "Context",
+                                  "JS context to use",
+                                  DAX_GPARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+    g_object_class_install_property (object_class, PROP_CONTEXT, pspec);
 }
 
 static void
@@ -192,15 +216,14 @@ dax_js_function_listener_init (DaxJsFunctionListener *self)
     DaxJsFunctionListenerPrivate *priv;
 
     self->priv = priv = JS_FUNCTION_LISTENER_PRIVATE (self);
-
-    priv->js_context = dax_js_context_get_default ();
-    priv->native_context = dax_js_context_get_native_context (priv->js_context);
 }
 
 DaxJsFunctionListener *
-dax_js_function_listener_new (DaxJsFunction *function)
+dax_js_function_listener_new (DaxJsContext  *context,
+                              DaxJsFunction *function)
 {
     return g_object_new (DAX_TYPE_JS_FUNCTION_LISTENER,
+                         "context", context,
                          "function", function,
                          NULL);
 }

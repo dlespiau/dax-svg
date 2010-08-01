@@ -14,10 +14,14 @@ m4_define([dax_version_major], [0])
 m4_define([dax_version_minor], [1])
 m4_define([dax_version_micro], [0])
 
-m4_define([dax_api_version], [0.2])
+m4_define([dax_api_version_major], [0])
+m4_define([dax_api_version_minor], [2])
 
 m4_define([dax_version],
           [dax_version_major.dax_version_minor.dax_version_micro])
+
+m4_define([dax_api_version], [dax_api_version_major.dax_api_version_minor])
+m4_define([dax_api_version_], [dax_api_version_major[]_[]dax_api_version_minor])
 
 # increase the interface age by 2 for each release; if the API changes,
 # set to 0. interface_age and binary_age are used to create the soname
@@ -79,6 +83,17 @@ DAX_LT_LDFLAGS="-version-info $DAX_LT_VERSION"
 AC_SUBST(DAX_LT_VERSION)
 AC_SUBST(DAX_LT_LDFLAGS)
 
+# Dox
+DOX_API_VERSION=dax_api_version
+DOX_API_VERSION_=dax_api_version_
+DOX_LT_VERSION=$DAX_LT_VERSION
+DOX_LT_LDFLAGS=$DAX_LT_LDFLAGS
+
+AC_SUBST(DOX_API_VERSION)
+AC_SUBST(DOX_API_VERSION_)
+AC_SUBST(DOX_LT_VERSION)
+AC_SUBST(DOX_LT_LDFLAGS)
+
 # Check for programs
 AC_PROG_CC
 PKG_PROG_PKG_CONFIG
@@ -90,13 +105,17 @@ AC_C_CONST
 # Check for header files
 AC_HEADER_STDC
 
+# Dax requires
 DAX_REQUIRES="gjs-gi-1.0 gjs-1.0 clutter-1.0 >= 1.3.2 clutter-gst-1.0 glib-2.0 >= 2.22 gobject-2.0 gio-2.0 mx-1.0"
 AC_SUBST(DAX_REQUIRES)
 
 PKG_CHECK_MODULES([DAX], [$DAX_REQUIRES])
 
-AC_SUBST(DAX_CFLAGS)
-AC_SUBST(DAX_LIBS)
+# Dox requires
+DOX_REQUIRES="gobject-2.0 glib-2.0"
+AC_SUBST(DOX_REQUIRES)
+
+PKG_CHECK_MODULES([DOX], [$DOX_REQUIRES])
 
 dnl === Enable maintainer cflags ==============================================
 
@@ -176,11 +195,13 @@ dnl === File generation =======================================================
 AC_CONFIG_FILES([
     Makefile
     dax.pc
+    dox.pc
     build/Makefile
     build/autotools/Makefile
     data/Makefile
     data/xsl/Makefile
     dax/Makefile
+    dox/Makefile
     tests/Makefile
     tools/Makefile
 ])

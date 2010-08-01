@@ -25,6 +25,8 @@
 
 #include <glib-object.h>
 
+#include "dax-gjs-context.h"
+
 G_BEGIN_DECLS
 
 #define DAX_TYPE_JS_FUNCTION_LISTENER dax_js_function_listener_get_type()
@@ -68,7 +70,8 @@ struct _DaxJsFunctionListenerClass
 
 GType                   dax_js_function_listener_get_type   (void) G_GNUC_CONST;
 
-DaxJsFunctionListener * dax_js_function_listener_new        (DaxJsFunction *function);
+DaxJsFunctionListener * dax_js_function_listener_new        (DaxJsContext  *context,
+                                                             DaxJsFunction *function);
 
 G_END_DECLS
 

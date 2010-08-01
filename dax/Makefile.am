@@ -8,6 +8,7 @@ CLEANFILES = #
 AM_CFLAGS =			\
 	$(DAX_CFLAGS)		\
 	$(DAX_DEBUG_CFLAGS)	\
+	-I$(top_srcdir)/dox	\
 	-DG_LOG_DOMAIN=\"Dax\"	\
 	-DDAX_COMPILATION	\
 	$(NULL)
@@ -17,6 +18,8 @@ LDADD =					\
 	-no-undefined			\
 	-export-symbol-regex "^dax.*"	\
 	$(NULL)
+
+LIBS = $(top_builddir)/dox/libdox-@DAX_API_VERSION@.la
 
 ENUMFILES = dax-enum-types.h dax-enum-types.c
 STAMPFILES = stamp-dax-marshal.h stamp-dax-enum-types.h

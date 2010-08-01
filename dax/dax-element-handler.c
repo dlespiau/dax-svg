@@ -54,8 +54,6 @@ enum
 
 struct _DaxElementHandlerPrivate
 {
-    DaxJsContext *js_context;
-
     DaxScriptType type;
     DaxXmlEventType event_type;
 };
@@ -69,26 +67,22 @@ dax_element_handler_handle_event (DaxXmlEventListener *listener,
 				  DaxXmlEvent         *xml_event)
 {
     DaxElementHandler *handler = DAX_ELEMENT_HANDLER (listener);
-    DaxElementHandlerPrivate *priv = handler->priv;
     DaxDomElement *target;
+    DaxDomNode *node;
+    DaxDomDocument *document;
+    DaxJsContext *js_context;
     DaxJsObject *event;
     gchar *code;
 
     target = dax_element_handler_get_target (handler);
+    node = DAX_DOM_NODE (target);
+    document = node->owner_document;
+    js_context = dax_dom_document_get_js_context (document);
     code = dax_element_handler_get_code (handler);
-    event = dax_js_context_new_object_from_xml_event (priv->js_context,
-                                                      xml_event);
-    dax_js_context_eval (priv->js_context,
-                         code,
-                         strlen (code),
-                         "svg",
-                         NULL,
-                         NULL);
+    event = dax_js_context_new_object_from_xml_event (js_context, xml_event);
 
-    dax_js_context_call_function (priv->js_context,
-                                  "__dax_handler",
-                                  "o",
-                                  event);
+    dax_js_context_eval (js_context, code, strlen (code), "svg", NULL, NULL);
+    dax_js_context_call_function (js_context, "__dax_handler", "o", event);
 }
 
 static void
@@ -197,8 +191,6 @@ dax_element_handler_init (DaxElementHandler *self)
     DaxElementHandlerPrivate *priv;
 
     self->priv = priv = ELEMENT_HANDLER_PRIVATE (self);
-
-    priv->js_context = dax_js_context_get_default ();
 }
 
 DaxDomElement *

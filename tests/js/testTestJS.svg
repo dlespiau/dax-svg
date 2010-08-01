@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<svg xmlns="http://www.w3.org/2000/svg" >
+  <script type="application/ecmascript" href="jsUnitCore.js" />
+  <script type="application/ecmascript" href="daxTests.js" />
+  <script type="application/ecmascript"><![CDATA[
+
+  function testTestJS () {
+    assertEquals("Tests if JS tests work", 10, 10)
+  }
+
+  daxTestsRun(this);
+  ]]></script>
+  <rect id="rect" x="0" y="0" width="100" height="100" />
+</svg>

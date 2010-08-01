@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+apiversion=@DEX_API_VERSION@
+requires=@DEX_REQUIRES@
+
+Name: Dex
+Description: A toy navigator (support library)
+Version: @VERSION@
+Libs: -L${libdir} -ldex-${apiversion}
+Cflags: -I${includedir}/dex-${apiversion}
+Requires: ${requires}

@@ -25,32 +25,33 @@
 #include "dax-dom-node.h"
 #include "dax-dom-element.h"
 #include "dax-dom-text.h"
+#include "dax-js-context.h"
 
 G_BEGIN_DECLS
 
 #define DAX_TYPE_DOM_DOCUMENT dax_dom_document_get_type()
 
-#define DAX_DOM_DOCUMENT(obj)                            \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                     \
-                                 DAX_TYPE_DOM_DOCUMENT,  \
+#define DAX_DOM_DOCUMENT(obj)                           \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj),                 \
+                                 DAX_TYPE_DOM_DOCUMENT, \
                                  DaxDomDocument))
 
-#define DAX_DOM_DOCUMENT_CLASS(klass)                \
+#define DAX_DOM_DOCUMENT_CLASS(klass)                   \
     (G_TYPE_CHECK_CLASS_CAST ((klass),                  \
-                              DAX_TYPE_DOM_DOCUMENT, \
+                              DAX_TYPE_DOM_DOCUMENT,    \
                               DaxDomDocumentClass))
 
-#define DAX_IS_DOM_DOCUMENT(obj)     \
+#define DAX_IS_DOM_DOCUMENT(obj)        \
     (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
                                  DAX_TYPE_DOM_DOCUMENT))
 
-#define DAX_IS_DOM_DOCUMENT_CLASS(klass) \
+#define DAX_IS_DOM_DOCUMENT_CLASS(klass)    \
     (G_TYPE_CHECK_CLASS_TYPE ((klass),      \
                               DAX_TYPE_DOM_DOCUMENT))
 
-#define DAX_DOM_DOCUMENT_GET_CLASS(obj)                  \
-    (G_TYPE_INSTANCE_GET_CLASS ((obj),                      \
-                                DAX_TYPE_DOM_DOCUMENT,   \
+#define DAX_DOM_DOCUMENT_GET_CLASS(obj)                 \
+    (G_TYPE_INSTANCE_GET_CLASS ((obj),                  \
+                                DAX_TYPE_DOM_DOCUMENT,  \
                                 DaxDomDocumentClass))
 
 typedef struct _DaxDomDocumentClass DaxDomDocumentClass;
@@ -75,13 +76,14 @@ struct _DaxDomDocumentClass
                                          const gchar     *qualified_name,
                                          GError         **err);
     DaxDomElement *(*get_element_by_id) (DaxDomDocument *self,
-                                         const gchar       *id);
+                                         const gchar    *id);
 };
 
 GType           dax_dom_document_get_type             (void) G_GNUC_CONST;
 
 DaxDomDocument *dax_dom_document_new                  (void);
 
+DaxJsContext *  dax_dom_document_get_js_context       (DaxDomDocument *document);
 const gchar *   dax_dom_document_get_base_iri         (DaxDomDocument *document);
 void            dax_dom_document_set_base_iri         (DaxDomDocument *document,
                                                        const char  *base_iri);

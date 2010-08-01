@@ -19,6 +19,8 @@
 #include <libxml/xmlreader.h>
 #include <gio/gio.h>
 
+#include "dox-navigator.h"
+
 #include "dax-dom-private.h"
 #include "dax-debug.h"
 #include "dax-js-context.h"
@@ -29,6 +31,7 @@ typedef struct _ParserContext ParserContext;
 
 struct _ParserContext {
     xmlTextReaderPtr reader;
+    DaxDomDocument *document;
     DaxDomNode *current_node;
 };
 
@@ -38,7 +41,7 @@ dax_dom_document_end_element (ParserContext *ctx)
     DaxJsContext *js_context;
     DaxDomElement *element;
 
-    js_context = dax_js_context_get_default ();
+    js_context = dax_dom_document_get_js_context (ctx->document);
     element = DAX_DOM_ELEMENT (ctx->current_node);
 
     DAX_NOTE (PARSING, "end of %s", G_OBJECT_TYPE_NAME (ctx->current_node));
@@ -145,8 +148,21 @@ static void
 dax_dom_document_parse_and_setup (DaxDomDocument *document,
                                   ParserContext  *ctx)
 {
+    DoxNavigator *navigator;
     DaxJsContext *js_context;
+    DaxJsObject *js_object;
     int ret;
+
+    /* setup a few JS global objects */
+    js_context = dax_dom_document_get_js_context (document);
+    _dax_js_udom_setup_document (js_context, document);
+
+    navigator = dox_navigator_get_default ();
+    js_object = dax_js_context_new_object_from_gobject (js_context,
+                                                        G_OBJECT (navigator));
+    dax_js_context_add_global_object (js_context, "navigator", js_object);
+
+    ctx->document = document;
 
     ret = xmlTextReaderRead (ctx->reader);
     while (ret == 1) {
@@ -155,10 +171,6 @@ dax_dom_document_parse_and_setup (DaxDomDocument *document,
     }
     xmlFreeTextReader(ctx->reader);
     /* FIXME: handle the error case where ret = -1 */
-
-    /* setup a few JS global objects */
-    js_context = dax_js_context_get_default ();
-    _dax_js_udom_setup_document (js_context, document);
 }
 
 /**

@@ -142,18 +142,21 @@ dax_element_script_get_href_content (DaxElementScript *script,
 static void
 dax_element_script_parsed (DaxDomElement *element)
 {
-    DaxElementScript *script = (DaxElementScript *) element;
+    DaxElementScript *script = DAX_ELEMENT_SCRIPT (element);
     DaxElementScriptPrivate *priv = script->priv;
+    DaxDomNode *node = DAX_DOM_NODE (element);
+    DaxDomDocument *document;
     DaxJsContext *js_context;
     GError *error = NULL;
     int retval;
+
+    document = node->owner_document;
+    js_context = dax_dom_document_get_js_context (document);
 
     /* If a 'script' element has both an 'xlink:href' attribute and child
      * character data, the executable content for the script is retrieved from
      * the IRI of the 'xlink:href' attribute, and the child content is not
      * added to the scripting context - REC-SVGTiny12-20081222 p.205 */
-
-    js_context = dax_js_context_get_default ();
 
     if (priv->href) {
         gchar *code;
