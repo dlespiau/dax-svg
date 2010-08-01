@@ -18,7 +18,7 @@
  */
 
 var daxVerbose = 0;
-var daxSuccess = 1;
+var daxSuccess = 2;
 var daxFailures = [];
 
 function daxSetVerbose(verbose) {
@@ -32,7 +32,9 @@ function daxTestsLog(message) {
 
 function daxTestsRun(obj, setUp, tearDown) {
   if (!obj)
-    return 1;
+    return 0;
+
+  daxSuccess = 1;
 
   if (!setUp)
     setUp = obj.setUp;

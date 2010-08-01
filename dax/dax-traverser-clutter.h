@@ -1,7 +1,7 @@
 /*
  * Dax - Load and draw SVG
  *
- * Copyright © 2009 Intel Corporation.
+ * Copyright © 2009, 2010 Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -69,14 +69,12 @@ struct _DaxTraverserClutterClass
     DaxTraverserClass parent_class;
 };
 
-GType           dax_traverser_clutter_get_type          (void) G_GNUC_CONST;
+GType           dax_traverser_clutter_get_type      (void) G_GNUC_CONST;
 
-DaxTraverser *  dax_traverser_clutter_new               (DaxDomNode    *node,
-                                                         ClutterContainer *container);
-void            dax_traverser_clutter_set_container     (DaxTraverserClutter *self,
-                                                         ClutterContainer     *container);
-ClutterScore *  dax_traverser_clutter_get_score         (DaxTraverserClutter *self);
-GPtrArray *     dax_traverser_clutter_get_media         (DaxTraverserClutter *self);
+DaxTraverser *  dax_traverser_clutter_new           (DaxDomNode       *root,
+                                                     ClutterContainer *container);
+ClutterScore *  dax_traverser_clutter_get_score     (DaxTraverserClutter *self);
+GPtrArray *     dax_traverser_clutter_get_media     (DaxTraverserClutter *self);
 
 G_END_DECLS
 

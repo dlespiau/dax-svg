@@ -51,9 +51,10 @@ static void
 test(DaxTestJSFixture *fix,
      gconstpointer     test_data)
 {
-    GError *error = NULL;
     const gchar *filename = test_data;
+    DaxTraverser *load_traverser;
     DaxJsContext *context;
+    GError *error = NULL;
     gint retval;
 
     fix->document = dax_dom_document_new_from_file (filename, &error);
@@ -62,6 +63,12 @@ test(DaxTestJSFixture *fix,
         g_clear_error (&error);
     }
     g_assert(error == NULL);
+
+    /* Apply the load traverser, a traverser that will execute "load" handler
+     * elements */
+    load_traverser = dax_traverser_load_new (DAX_DOM_NODE (fix->document));
+    dax_traverser_apply (load_traverser);
+    g_object_unref (load_traverser);
 
     context = dax_dom_document_get_js_context (fix->document);
     dax_js_context_eval (context, "daxSuccess", -1, "test-js", &retval, &error);

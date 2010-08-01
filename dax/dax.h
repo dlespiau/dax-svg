@@ -54,6 +54,7 @@
 #include "dax-parser.h"
 #include "dax-traverser.h"
 #include "dax-traverser-clutter.h"
+#include "dax-traverser-load.h"
 #include "dax-types.h"
 #include "dax-xml-forward.h"
 #include "dax-xml-event.h"

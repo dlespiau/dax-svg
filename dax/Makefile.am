@@ -74,6 +74,7 @@ source_c =				\
 	dax-svg-exception.c		\
 	dax-traverser.c			\
 	dax-traverser-clutter.c		\
+	dax-traverser-load.c		\
 	dax-types.c			\
 	dax-udom-svg-timer.c		\
 	dax-utils.c			\
@@ -129,6 +130,7 @@ source_h =				\
 	dax-svg-exception.h		\
 	dax-traverser.h			\
 	dax-traverser-clutter.h		\
+	dax-traverser-load.h		\
 	dax-types.h			\
 	dax-udom-svg-timer.h		\
 	dax-xml-forward.h		\

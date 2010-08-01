@@ -18,15 +18,23 @@
 
 #include "dax-affine.h"
 #include "dax-debug.h"
+#include "dax-internals.h"
 
 #include "dax-traverser.h"
 
-G_DEFINE_TYPE (DaxTraverser, dax_traverser, G_TYPE_OBJECT)
+G_DEFINE_ABSTRACT_TYPE (DaxTraverser, dax_traverser, G_TYPE_OBJECT)
 
 #define TRAVERSER_PRIVATE(o)                                \
         (G_TYPE_INSTANCE_GET_PRIVATE ((o),                  \
                                       DAX_TYPE_TRAVERSER,   \
                                       DaxTraverserPrivate))
+
+enum
+{
+    PROP_0,
+
+    PROP_ROOT
+};
 
 struct _DaxTraverserPrivate
 {
@@ -146,12 +154,18 @@ dax_traverser_traverse_video_real (DaxTraverser    *self,
 
 static void
 dax_traverser_get_property (GObject    *object,
-                               guint       property_id,
-                               GValue     *value,
-                               GParamSpec *pspec)
+                            guint       property_id,
+                            GValue     *value,
+                            GParamSpec *pspec)
 {
+    DaxTraverser *traverser = DAX_TRAVERSER (object);
+    DaxTraverserPrivate *priv = traverser->priv;
+
     switch (property_id)
     {
+    case PROP_ROOT:
+        g_value_set_object (value, priv->root);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -159,12 +173,20 @@ dax_traverser_get_property (GObject    *object,
 
 static void
 dax_traverser_set_property (GObject      *object,
-                               guint         property_id,
-                               const GValue *value,
-                               GParamSpec   *pspec)
+                            guint         property_id,
+                            const GValue *value,
+                            GParamSpec   *pspec)
 {
+    DaxTraverser *traverser = DAX_TRAVERSER (object);
+    DaxTraverserPrivate *priv = traverser->priv;
+
     switch (property_id)
     {
+    case PROP_ROOT:
+        if (priv->root)
+            g_object_unref (priv->root);
+        priv->root = g_value_dup_object (value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -173,6 +195,14 @@ dax_traverser_set_property (GObject      *object,
 static void
 dax_traverser_dispose (GObject *object)
 {
+    DaxTraverser *traverser = DAX_TRAVERSER (object);
+    DaxTraverserPrivate *priv = traverser->priv;
+
+    if (priv->root) {
+        g_object_unref (priv->root);
+        priv->root = NULL;
+    }
+
     G_OBJECT_CLASS (dax_traverser_parent_class)->dispose (object);
 }
 
@@ -186,6 +216,7 @@ static void
 dax_traverser_class_init (DaxTraverserClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
+    GParamSpec *pspec;
 
     g_type_class_add_private (klass, sizeof (DaxTraverserPrivate));
 
@@ -209,6 +240,14 @@ dax_traverser_class_init (DaxTraverserClass *klass)
     klass->traverse_text = dax_traverser_traverse_text_real;
     klass->traverse_image = dax_traverser_traverse_image_real;
     klass->traverse_video = dax_traverser_traverse_video_real;
+
+    pspec = g_param_spec_object ("root",
+                                 "Root",
+                                 "Root element from which the traverser "
+                                 "will be applied",
+                                 DAX_TYPE_DOM_NODE,
+                                 DAX_GPARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+    g_object_class_install_property (object_class, PROP_ROOT, pspec);
 }
 
 static void
@@ -221,37 +260,12 @@ dax_traverser_init (DaxTraverser *self)
     _dax_affine_identity (priv->ctm.affine);
 }
 
-DaxTraverser *
-dax_traverser_new (DaxDomNode *root)
-{
-    DaxTraverser *traverser;
-
-    traverser = g_object_new (DAX_TYPE_TRAVERSER, NULL);
-    dax_traverser_set_root (traverser, root);
-
-    return traverser;
-}
-
 const DaxMatrix *
 dax_traverser_get_ctm (DaxTraverser *self)
 {
     g_return_val_if_fail (DAX_IS_TRAVERSER (self), NULL);
 
     return &self->priv->ctm;
-}
-
-void
-dax_traverser_set_root (DaxTraverser *self,
-                        DaxDomNode   *root)
-{
-    DaxTraverserPrivate *priv;
-
-    g_return_if_fail (DAX_IS_TRAVERSER (self));
-
-    priv = self->priv;
-    if (priv->root)
-        g_object_unref (priv->root);
-    priv->root = g_object_ref (root);
 }
 
 static void

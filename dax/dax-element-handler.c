@@ -92,7 +92,7 @@ dax_xml_event_listener_init (DaxXmlEventListenerIface *iface)
 }
 
 /*
- * GObject overloading
+ * GObject implementation
  */
 
 static void
@@ -206,7 +206,6 @@ dax_element_handler_get_target (DaxElementHandler *handler)
 
     g_return_val_if_fail (DAX_IS_ELEMENT_HANDLER (handler), NULL);
 
-    /* FIXME: the target can also be defined with ev:target */
     element_node = dax_dom_node_get_parent_node (DAX_DOM_NODE (handler));
 
     return DAX_DOM_ELEMENT (element_node);

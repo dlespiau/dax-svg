@@ -112,7 +112,6 @@ struct _DaxTraverserClass
 
 GType               dax_traverser_get_type          (void) G_GNUC_CONST;
 
-DaxTraverser *      dax_traverser_new                           (DaxDomNode *root);
 const DaxMatrix *   dax_traverser_get_ctm                       (DaxTraverser *self);
 void                dax_traverser_set_root                      (DaxTraverser *self,
                                                                  DaxDomNode   *root);

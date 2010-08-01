@@ -26,6 +26,7 @@
 #include "dax-debug.h"
 #include "dax-enum-types.h"
 #include "dax-group.h"
+#include "dax-internals.h"
 #include "dax-knot-sequence.h"
 #include "dax-shape.h"
 #include "dax-utils.h"
@@ -42,6 +43,13 @@ G_DEFINE_TYPE (DaxTraverserClutter,
                                       DaxTraverserClutterPrivate))
 
 static GQuark quark_object_actor;
+
+enum
+{
+    PROP_0,
+
+    PROP_CONTAINER
+};
 
 struct _DaxTraverserClutterPrivate
 {
@@ -643,8 +651,6 @@ dax_traverser_clutter_traverse_handler (DaxTraverser      *traverser,
     default:
         g_warning (G_STRLOC ": Unkown event %d", event_type);
     }
-
-
 }
 
 static ClutterPath2D *
@@ -860,8 +866,15 @@ dax_traverser_clutter_get_property (GObject    *object,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
+    DaxTraverserClutter *traverser = DAX_TRAVERSER_CLUTTER (object);
+    DaxTraverserClutterPrivate *priv =  traverser->priv;
+
     switch (property_id)
     {
+    case PROP_CONTAINER:
+        g_value_set_object (value, priv->container);
+        break;
+
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -873,8 +886,14 @@ dax_traverser_clutter_set_property (GObject      *object,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
+    DaxTraverserClutter *traverser = DAX_TRAVERSER_CLUTTER (object);
+
     switch (property_id)
     {
+    case PROP_CONTAINER:
+        set_container_internal (traverser, g_value_get_object (value));
+        break;
+
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -883,6 +902,14 @@ dax_traverser_clutter_set_property (GObject      *object,
 static void
 dax_traverser_clutter_dispose (GObject *object)
 {
+    DaxTraverserClutter *traverser = DAX_TRAVERSER_CLUTTER (object);
+    DaxTraverserClutterPrivate *priv = traverser->priv;
+
+    if (priv->container) {
+        g_object_unref (priv->container);
+        priv->container = NULL;
+    }
+
     G_OBJECT_CLASS (dax_traverser_clutter_parent_class)->dispose (object);
 }
 
@@ -893,7 +920,6 @@ dax_traverser_clutter_finalize (GObject *object)
     DaxTraverserClutterPrivate *priv = self->priv;
 
     g_object_unref (priv->score);
-    g_object_unref (priv->container);
 
     G_OBJECT_CLASS (dax_traverser_clutter_parent_class)->finalize (object);
 }
@@ -903,6 +929,7 @@ dax_traverser_clutter_class_init (DaxTraverserClutterClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     DaxTraverserClass *traverser_class = DAX_TRAVERSER_CLASS (klass);
+    GParamSpec *pspec;
 
     quark_object_actor = g_quark_from_static_string ("dax-clutter-actor");
 
@@ -927,6 +954,13 @@ dax_traverser_clutter_class_init (DaxTraverserClutterClass *klass)
     traverser_class->traverse_text = dax_traverser_clutter_traverse_text;
     traverser_class->traverse_image = dax_traverser_clutter_traverse_image;
     traverser_class->traverse_video = dax_traverser_clutter_traverse_video;
+
+    pspec = g_param_spec_object ("container",
+                                 "Container",
+                                 "Container where to put the ClutterActors",
+                                 CLUTTER_TYPE_CONTAINER,
+                                 DAX_GPARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+    g_object_class_install_property (object_class, PROP_CONTAINER, pspec);
 }
 
 static void
@@ -941,26 +975,13 @@ dax_traverser_clutter_init (DaxTraverserClutter *self)
 }
 
 DaxTraverser *
-dax_traverser_clutter_new (DaxDomNode       *node,
+dax_traverser_clutter_new (DaxDomNode       *root,
                            ClutterContainer *container)
 {
-    DaxTraverser *traverser;
-
-    traverser = g_object_new (DAX_TYPE_TRAVERSER_CLUTTER, NULL);
-    dax_traverser_set_root (traverser, node);
-    dax_traverser_clutter_set_container (DAX_TRAVERSER_CLUTTER (traverser),
-                                          container);
-
-    return traverser;
-}
-
-void
-dax_traverser_clutter_set_container (DaxTraverserClutter *self,
-                                     ClutterContainer    *container)
-{
-    g_return_if_fail (DAX_IS_TRAVERSER_CLUTTER (self));
-
-    set_container_internal (self, container);
+    return g_object_new (DAX_TYPE_TRAVERSER_CLUTTER,
+                         "root", root,
+                         "container", container,
+                         NULL);
 }
 
 ClutterScore *
